@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>V29 FIREBASE CONNECT HP - KDKMP KASIH</title>
+<title>V29.1 FIX NO POPUP - KDKMP KASIH</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -28,7 +28,7 @@ function collectAllLocalData(){
   const data = {};
   for(let i=0;i<localStorage.length;i++){
     const k = localStorage.key(i);
-    if(k.startsWith('need') || k.startsWith('nama') || k.startsWith('ttd') || k.startsWith('cap') || k.startsWith('customDays') || k.startsWith('deleted_') || k.startsWith('added_') || k.startsWith('custom_text_') || k.startsWith('status_') || k.startsWith('v28_') || k.startsWith('v27_') || k.startsWith('v26_') || k.startsWith('v25_') || k.startsWith('v24_') || k.startsWith('v23_') || k.startsWith('v22_') || k.startsWith('v21_') || k.startsWith('v20_') || k.startsWith('v19_') || k.startsWith('v18_') || k.startsWith('note') || k.startsWith('kdkmp_startDate')){
+    if(k.startsWith('need') || k.startsWith('nama') || k.startsWith('ttd') || k.startsWith('cap') || k.startsWith('customDays') || k.startsWith('deleted_') || k.startsWith('added_') || k.startsWith('custom_text_') || k.startsWith('status_') || k.startsWith('v28_') || k.startsWith('v27_') || k.startsWith('v26_') || k.startsWith('v25_') || k.startsWith('note') || k.startsWith('kdkmp_startDate')){
       data[k] = localStorage.getItem(k);
     }
   }
@@ -42,44 +42,38 @@ window.saveToFirebase = () => {
     const allData = collectAllLocalData();
     set(ref(db, DB_KEY), allData).then(()=>{
       const el = document.getElementById('syncStatus');
-      if(el){ el.textContent = '● Live Tersinkron ke HP ' + new Date().toLocaleTimeString('id-ID'); el.className = 'text-[9px] font-bold bg-green-500 text-white px-2 py-1 rounded-full'; }
+      if(el){ el.textContent = '● Live Tersinkron ' + new Date().toLocaleTimeString('id-ID'); el.className = 'text-[9px] font-bold bg-green-500 text-white px-2 py-1 rounded-full'; }
     });
     const el = document.getElementById('syncStatus');
-    if(el){ el.textContent = '● Menyimpan ke HP...'; el.className = 'text-[9px] font-bold bg-yellow-400 text-black px-2 py-1 rounded-full'; }
+    if(el){ el.textContent = '● Menyimpan...'; el.className = 'text-[9px] font-bold bg-yellow-400 text-black px-2 py-1 rounded-full'; }
   }, 800);
 };
 
+// FIX POPUP - TIDAK ADA CONFIRM LAGI
 window.listenFirebase = () => {
+  let firstLoad = true;
   onValue(ref(db, DB_KEY), (snap)=>{
     const remote = snap.val();
+    const el = document.getElementById('syncStatus');
     if(remote && Object.keys(remote).length > 0){
-      const localCount = Object.keys(collectAllLocalData()).length;
-      if(localCount === 0 || confirm('Data dari HP lain ditemukan ('+Object.keys(remote).length+' item). Load data dari cloud?')){
-        isSyncingFromCloud = true;
-        Object.entries(remote).forEach(([k,v])=>{
-          localStorage.setItem(k, v);
-        });
-        setTimeout(()=>{
-          isSyncingFromCloud = false;
-          location.reload();
-        }, 500);
-      } else {
-        isSyncingFromCloud = true;
-        Object.entries(remote).forEach(([k,v])=>{
-          if(localStorage.getItem(k) === null) localStorage.setItem(k, v);
-        });
-        isSyncingFromCloud = false;
+      if(firstLoad){
+        firstLoad = false;
+        const localCount = Object.keys(collectAllLocalData()).length;
+        if(localCount === 0){
+          isSyncingFromCloud = true;
+          Object.entries(remote).forEach(([k,v])=>{ localStorage.setItem(k, v); });
+          setTimeout(()=>{ isSyncingFromCloud = false; location.reload(); }, 500);
+          return;
+        }
       }
-      const el = document.getElementById('syncStatus');
       if(el){ el.textContent = '● Live Connect HP ' + new Date().toLocaleTimeString('id-ID'); el.className = 'text-[9px] font-bold bg-green-500 text-white px-2 py-1 rounded-full'; }
+      firstLoad = false;
     } else {
-      const el = document.getElementById('syncStatus');
-      if(el){ el.textContent = '● Live - Belum ada data cloud'; el.className = 'text-[9px] font-bold bg-blue-500 text-white px-2 py-1 rounded-full'; }
+      if(el){ el.textContent = '● Live - Siap'; el.className = 'text-[9px] font-bold bg-blue-500 text-white px-2 py-1 rounded-full'; }
+      firstLoad = false;
     }
   });
 };
-
-// Auto listen
 listenFirebase();
 </script>
 </head>
@@ -87,8 +81,8 @@ listenFirebase();
 <div class="bg-[#0f5132] text-white sticky top-0 z-50">
 <div class="max-w-5xl mx-auto p-3">
 <div class="flex justify-between items-center">
-<div><h1 class="font-bold text-[11px]">KDKMP KASIH - KERJA 30 HARI V29 FIREBASE</h1><p id="tgl" class="text-[9px] font-bold text-yellow-200 mt-1"></p><span id="syncStatus" class="text-[9px] font-bold bg-white/20 text-white px-2 py-1 rounded-full mt-1 inline-block">● Menghubungkan ke HP...</span></div>
-<div class="text-right"><div class="w-24 h-2 bg-white/20 rounded-full"><div id="bar" class="h-2 bg-yellow-300 rounded-full" style="width:0%"></div></div><p id="txt" class="text-[9px] font-bold">0%</p><button onclick="if(confirm('Paksa simpan semua ke cloud HP?')) saveToFirebase()" class="mt-2 bg-yellow-300 text-black px-2 py-1 rounded text-[8px] font-bold">🔄 SYNC HP</button></div>
+<div><h1 class="font-bold text-[11px]">KDKMP KASIH - KERJA 30 HARI V29.1 FIX</h1><p id="tgl" class="text-[9px] font-bold text-yellow-200 mt-1"></p><span id="syncStatus" class="text-[9px] font-bold bg-white/20 text-white px-2 py-1 rounded-full mt-1 inline-block">● Menghubungkan...</span></div>
+<div class="text-right"><div class="w-24 h-2 bg-white/20 rounded-full"><div id="bar" class="h-2 bg-yellow-300 rounded-full" style="width:0%"></div></div><p id="txt" class="text-[9px] font-bold">0%</p><button onclick="if(window.saveToFirebase) saveToFirebase()" class="mt-2 bg-yellow-300 text-black px-2 py-1 rounded text-[8px] font-bold">🔄 SYNC HP</button></div>
 </div>
 <div class="flex gap-2 mt-3">
 <button id="tab1" onclick="switchTab(1)" class="px-4 py-2 rounded-lg text-[11px] font-bold bg-white text-[#0f5132]">TAB 1: 1-30</button>
@@ -97,29 +91,10 @@ listenFirebase();
 </div>
 </div>
 </div>
-
 <div class="max-w-5xl mx-auto p-3 space-y-3">
 <div id="content1"><div id="container1" class="grid gap-3"></div></div>
 <div id="content2" class="hidden"><div class="bg-white border-2 border-blue-200 p-3 rounded-xl"><div class="grid grid-cols-4 gap-2"><input id="newDay" type="number" min="31" max="60" placeholder="31-60" class="border rounded p-2 text-[11px]"><input id="newTitle" placeholder="Judul" class="border rounded p-2 text-[11px] col-span-2"><select id="newMode" class="border rounded p-2 text-[11px]"><option>RUMAH</option><option>DESA</option><option>GERAI</option></select></div><textarea id="newTasks" placeholder="1 baris = 1 kotak" class="mt-2 w-full border rounded p-2 text-[11px] h-14"></textarea><button onclick="addNewDay()" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded text-[11px] font-bold w-full">+ Tambah Hari 31-60</button></div><div id="container2" class="grid gap-3 mt-3"></div></div>
-
-<div id="content3" class="hidden space-y-3">
-<div class="bg-white border-2 border-[#0f5132] p-4 rounded-xl">
-<p class="font-bold text-[13px]">TTD + CAP + NAMA - FIREBASE CONNECT</p>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-<div class="border-2 border-orange-300 p-3 rounded-xl bg-orange-50"><p class="font-bold text-[11px]">BLOK KADES</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Kades</p><input id="namaKades" placeholder="Nama Kades" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdKades')"><img id="prevKades" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needKades" checked onchange="saveNeed()"> Tampilkan</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap Kades</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKades')"><img id="prevCapKades" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needCapKades" checked onchange="saveNeed()"> Tampilkan</label></div></div></div>
-<div class="border-2 border-green-300 p-3 rounded-xl bg-green-50"><p class="font-bold text-[11px]">BLOK MANAJER</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Manajer</p><input id="namaManajer" placeholder="Nama Manajer" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdManajer')"><img id="prevManajer" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needManajer" checked onchange="saveNeed()"> Tampilkan</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap KDKMP</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKoperasi')"><img id="prevCap" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needCap" checked onchange="saveNeed()"> Tampilkan</label></div></div></div>
-<div class="border-2 border-blue-300 p-3 rounded-xl bg-blue-50"><p class="font-bold text-[11px]">BLOK KETUA</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Ketua</p><input id="namaKetua" placeholder="Nama Ketua" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdKetua')"><img id="prevKetua" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needKetua" onchange="saveNeed()"> Aktif</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap Ketua</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKetua')"><img id="prevCapKetua" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needCapKetua" onchange="saveNeed()"> Tampilkan</label></div></div></div>
-<div class="border p-3 rounded-xl bg-slate-50"><p class="font-bold text-[11px]">Pengawas</p><input id="namaPengawas" placeholder="Nama Pengawas" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdPengawas')"><img id="prevPengawas" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needPengawas" onchange="saveNeed()"> Aktif</label></div>
-</div>
-</div>
-</div>
-
-<div class="bg-white p-4 rounded-xl border">
-<button onclick="exportPDF()" class="bg-[#0f5132] text-white px-5 py-3 rounded-lg text-xs font-bold w-full">📄 EXPORT PDF - FIREBASE CONNECT</button>
-<p class="text-[9px] text-center mt-2 text-slate-400">V29 Firebase Connect HP - Data sinkron antar HP</p>
-</div>
-</div>
-
+<div id="content3" class="hidden space-y-3"><div class="bg-white border-2 border-[#0f5132] p-4 rounded-xl"><p class="font-bold text-[13px]">TTD + CAP + NAMA - V29.1 FIX</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3"><div class="border-2 border-orange-300 p-3 rounded-xl bg-orange-50"><p class="font-bold text-[11px]">BLOK KADES</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Kades</p><input id="namaKades" placeholder="Nama Kades" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdKades')"><img id="prevKades" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needKades" checked onchange="saveNeed()"> Tampilkan</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap Kades</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKades')"><img id="prevCapKades" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needCapKades" checked onchange="saveNeed()"> Tampilkan</label></div></div></div><div class="border-2 border-green-300 p-3 rounded-xl bg-green-50"><p class="font-bold text-[11px]">BLOK MANAJER</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Manajer</p><input id="namaManajer" placeholder="Nama Manajer" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdManajer')"><img id="prevManajer" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needManajer" checked onchange="saveNeed()"> Tampilkan</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap KDKMP</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKoperasi')"><img id="prevCap" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needCap" checked onchange="saveNeed()"> Tampilkan</label></div></div></div><div class="border-2 border-blue-300 p-3 rounded-xl bg-blue-50"><p class="font-bold text-[11px]">BLOK KETUA</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Ketua</p><input id="namaKetua" placeholder="Nama Ketua" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdKetua')"><img id="prevKetua" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needKetua" onchange="saveNeed()"> Aktif</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap Ketua</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKetua')"><img id="prevCapKetua" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needCapKetua" onchange="saveNeed()"> Tampilkan</label></div></div></div><div class="border p-3 rounded-xl bg-slate-50"><p class="font-bold text-[11px]">Pengawas</p><input id="namaPengawas" placeholder="Nama Pengawas" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdPengawas')"><img id="prevPengawas" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px]"><input type="checkbox" id="needPengawas" onchange="saveNeed()"> Aktif</label></div></div></div></div><div class="bg-white p-4 rounded-xl border"><button onclick="exportPDF()" class="bg-[#0f5132] text-white px-5 py-3 rounded-lg text-xs font-bold w-full">📄 EXPORT PDF - V29.1 FIX</button></div></div>
 <script>
 const { jsPDF } = window.jspdf;
 let currentTab=1;
@@ -139,7 +114,7 @@ function getDeleted(day){return JSON.parse(localStorage.getItem(`deleted_${day}`
 function getAdded(day){return JSON.parse(localStorage.getItem(`added_${day}`)||'[]');}
 function getText(day,idx,def){return localStorage.getItem(`custom_text_${day}_${idx}`)||def;}
 function getStatus(day,idx,isAdd){return localStorage.getItem(isAdd?`status_${day}_add_${idx}`:`status_${day}_${idx}`)||'';}
-function isChecked(day,idx,isAdd){const prefixes=['v28','v27','v26','v25','v24','v23','v22','v21','v20','v19','v18','v17','v16']; for(let p of prefixes){const key=isAdd?`${p}_${day}_add_${idx}`:`${p}_${day}_${idx}`; if(localStorage.getItem(key)==='1') return true;} return false;}
+function isChecked(day,idx,isAdd){const prefixes=['v28','v27','v26','v25','v24','v23','v22','v21','v20','v19','v18']; for(let p of prefixes){const key=isAdd?`${p}_${day}_add_${idx}`:`${p}_${day}_${idx}`; if(localStorage.getItem(key)==='1') return true;} return false;}
 const baseDays=[
 {d:1,t:"Laporan Diri Tingkat Desa",m:"DESA",tasks:["Melaporkan keberadaan kepada Kepala Desa","Melaporkan kepada Lurah","Serah terima penugasan kepada Pengurus","Perkenalkan diri sebagai Manajer","Catat kontak Kades","Melaporkan kepada Babinsa","Catat kontak babinsa","Catat kontak ketua pengurus"]},
 {d:2,t:"Silaturahmi",m:"DESA",tasks:["Silaturahmi Ketua BPD","Silaturahmi Anggota BPD","Silaturahmi Tokoh Masyarakat","Silaturahmi Ketua RT","Silaturahmi Ketua RW","Sampaikan visi inklusif","Sampaikan visi kolaboratif","Sampaikan visi transparan","Catat aspirasi"]},
@@ -186,33 +161,12 @@ function render(){
        const text=getText(day.d,i,orig);
        const chk=isChecked(day.d,i,false);
        const status=getStatus(day.d,i,false);
-       html+=`<div class="flex items-center gap-2 py-2.5 px-2 border-b hover:bg-slate-50">
-       <input type="checkbox" data-day="${day.d}" data-idx="${i}" data-add="0" ${chk?'checked':''} class="w-5 h-5 shrink-0">
-       <span class="flex-1 text-[12px] ${chk?'line-through text-slate-400':''}">${text}</span>
-       <div class="flex gap-1 shrink-0 items-center">
-         <button onclick="setStatus(${day.d},${i},'ADA',false)" class="text-[9px] px-2 py-1 rounded-full border ${status==='ADA'?'bg-green-600 text-white':'bg-white'}">ADA</button>
-         <button onclick="setStatus(${day.d},${i},'TIDAK',false)" class="text-[9px] px-2 py-1 rounded-full border ${status==='TIDAK'?'bg-red-600 text-white':'bg-white'}">TIDAK</button>
-         <button onclick="setStatus(${day.d},${i},'BELUM',false)" class="text-[9px] px-2 py-1 rounded-full border ${status==='BELUM'?'bg-amber-500 text-white':'bg-white'}">BELUM</button>
-         <button onclick="editTask(${day.d},${i},false)" class="text-[10px] bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded" title="Edit">✏️</button>
-         <button onclick="deleteTask(${day.d},${i},false)" class="text-[10px] bg-slate-100 hover:bg-red-100 px-2 py-1 rounded" title="Hapus">🗑️</button>
-       </div>
-       </div>`;
+       html+=`<div class="flex items-center gap-2 py-2.5 px-2 border-b hover:bg-slate-50"><input type="checkbox" data-day="${day.d}" data-idx="${i}" data-add="0" ${chk?'checked':''} class="w-5 h-5 shrink-0"><span class="flex-1 text-[12px] ${chk?'line-through text-slate-400':''}">${text}</span><div class="flex gap-1 shrink-0 items-center"><button onclick="setStatus(${day.d},${i},'ADA',false)" class="text-[9px] px-2 py-1 rounded-full border ${status==='ADA'?'bg-green-600 text-white':'bg-white'}">ADA</button><button onclick="setStatus(${day.d},${i},'TIDAK',false)" class="text-[9px] px-2 py-1 rounded-full border ${status==='TIDAK'?'bg-red-600 text-white':'bg-white'}">TIDAK</button><button onclick="setStatus(${day.d},${i},'BELUM',false)" class="text-[9px] px-2 py-1 rounded-full border ${status==='BELUM'?'bg-amber-500 text-white':'bg-white'}">BELUM</button><button onclick="editTask(${day.d},${i},false)" class="text-[10px] bg-slate-100 px-2 py-1 rounded">✏️</button><button onclick="deleteTask(${day.d},${i},false)" class="text-[10px] bg-slate-100 px-2 py-1 rounded">🗑️</button></div></div>`;
      });
      added.forEach((t,i)=>{
        let clean=t.trim().replace(/^[+\-`'"]+/, '').trim().replace(/\s+/g,' ');
-       const chk=isChecked(day.d,i,true);
-       const status=getStatus(day.d,i,true);
-       html+=`<div class="flex items-center gap-2 py-2.5 px-2 border-b bg-blue-50/40">
-       <input type="checkbox" data-day="${day.d}" data-idx="${i}" data-add="1" ${chk?'checked':''} class="w-5 h-5">
-       <span class="flex-1 text-[12px] ${chk?'line-through':''}">${clean}</span>
-       <div class="flex gap-1">
-         <button onclick="setStatus(${day.d},${i},'ADA',true)" class="text-[9px] px-2 py-1 rounded-full border ${status==='ADA'?'bg-green-600 text-white':'bg-white'}">ADA</button>
-         <button onclick="setStatus(${day.d},${i},'TIDAK',true)" class="text-[9px] px-2 py-1 rounded-full border ${status==='TIDAK'?'bg-red-600 text-white':'bg-white'}">TIDAK</button>
-         <button onclick="setStatus(${day.d},${i},'BELUM',true)" class="text-[9px] px-2 py-1 rounded-full border ${status==='BELUM'?'bg-amber-500 text-white':'bg-white'}">BELUM</button>
-         <button onclick="editTask(${day.d},${i},true)" class="text-[10px] bg-slate-100 px-2 py-1 rounded">✏️</button>
-         <button onclick="deleteTask(${day.d},${i},true)" class="text-[10px] bg-slate-100 px-2 py-1 rounded">🗑️</button>
-       </div>
-       </div>`;
+       const chk=isChecked(day.d,i,true); const status=getStatus(day.d,i,true);
+       html+=`<div class="flex items-center gap-2 py-2.5 px-2 border-b bg-blue-50/40"><input type="checkbox" data-day="${day.d}" data-idx="${i}" data-add="1" ${chk?'checked':''} class="w-5 h-5"><span class="flex-1 text-[12px] ${chk?'line-through':''}">${clean}</span><div class="flex gap-1"><button onclick="setStatus(${day.d},${i},'ADA',true)" class="text-[9px] px-2 py-1 rounded-full border ${status==='ADA'?'bg-green-600 text-white':'bg-white'}">ADA</button><button onclick="setStatus(${day.d},${i},'TIDAK',true)" class="text-[9px] px-2 py-1 rounded-full border ${status==='TIDAK'?'bg-red-600 text-white':'bg-white'}">TIDAK</button><button onclick="setStatus(${day.d},${i},'BELUM',true)" class="text-[9px] px-2 py-1 rounded-full border ${status==='BELUM'?'bg-amber-500 text-white':'bg-white'}">BELUM</button><button onclick="editTask(${day.d},${i},true)" class="text-[10px] bg-slate-100 px-2 py-1 rounded">✏️</button><button onclick="deleteTask(${day.d},${i},true)" class="text-[10px] bg-slate-100 px-2 py-1 rounded">🗑️</button></div></div>`;
      });
      const isToday=day.d===hariIni; const color=day.m==='RUMAH'?'bg-blue-100 text-blue-700':day.m==='DESA'?'bg-orange-100 text-orange-700':'bg-green-100 text-green-700';
      const noteActive=localStorage.getItem(`noteActive_${day.d}`)==='1'; const noteText=localStorage.getItem(`note_${day.d}`)||'';
@@ -232,66 +186,14 @@ function addTaskBox(d){let v=document.getElementById(`input_${d}`).value.trim();
 function setStatus(d,i,v,a){const k=a?`status_${d}_add_${i}`:`status_${d}_${i}`; const cur=localStorage.getItem(k); if(cur===v) localStorage.removeItem(k); else localStorage.setItem(k,v); if(window.saveToFirebase) saveToFirebase(); render();}
 function addNewDay(){const day=parseInt(document.getElementById('newDay').value); const title=document.getElementById('newTitle').value.trim(); const mode=document.getElementById('newMode').value; const raw=document.getElementById('newTasks').value.trim(); if(!day||day<31||day>60||!title||!raw){alert('Lengkapi'); return;} const tasks=raw.split('\n').map(s=>s.trim().replace(/^[+\-`'"]+/, '').replace(/\s+/g,' ')).filter(Boolean); const c=getCustomDays(); c.push({d:day,t:title,m:mode,tasks}); c.sort((a,b)=>a.d-b.d); localStorage.setItem('customDays',JSON.stringify(c)); if(window.saveToFirebase) saveToFirebase(); document.getElementById('newDay').value=''; document.getElementById('newTitle').value=''; document.getElementById('newTasks').value=''; render();}
 render();
-
-function drawPengesahan(doc, startY){
- const tglLong=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
- const isManajer=localStorage.getItem('needManajer')!=='false';
- const isKetua=localStorage.getItem('needKetua')!=='false';
- const isKades=localStorage.getItem('needKades')!=='false';
- const isPengawas=localStorage.getItem('needPengawas')==='true';
- const roles=[];
- if(isManajer) roles.push({key:'Manajer', label:'Manajer KDKMP Kasih', pre:'', nama:localStorage.getItem('namaManajer')||'(Nama Manajer)', ttd:localStorage.getItem('ttdManajer'), cap:localStorage.getItem('capKoperasi'), needCap:localStorage.getItem('needCap')!=='false'});
- if(isKetua) roles.push({key:'Ketua', label:'Ketua Pengurus', pre:'Mengetahui', nama:localStorage.getItem('namaKetua')||'(Nama Ketua)', ttd:localStorage.getItem('ttdKetua'), cap:localStorage.getItem('capKetua'), needCap:localStorage.getItem('needCapKetua')!=='false'});
- if(isPengawas) roles.push({key:'Pengawas', label:'Pengawas', pre:'Menyetujui', nama:localStorage.getItem('namaPengawas')||'(Nama Pengawas)', ttd:localStorage.getItem('ttdPengawas'), cap:null, needCap:false});
- if(isKades) roles.push({key:'Kades', label:'Kepala Desa Kasih', pre:'Mengesahkan', nama:localStorage.getItem('namaKades')||'Supriyadi', ttd:localStorage.getItem('ttdKades'), cap:localStorage.getItem('capKades'), needCap:localStorage.getItem('needCapKades')!=='false'});
- let displayRoles=[];
- const count=roles.length;
- if(count===2){ const manajer=roles.find(r=>r.key==='Manajer'); const other=roles.find(r=>r.key!=='Manajer'); displayRoles=[manajer,other].filter(Boolean); }
- else if(count===3){ const manajer=roles.find(r=>r.key==='Manajer'); const ketua=roles.find(r=>r.key==='Ketua'); const kades=roles.find(r=>r.key==='Kades'); displayRoles=[manajer,ketua,kades].filter(Boolean); if(displayRoles.length<3) displayRoles=roles.slice(0,3); }
- else if(count===4){ const manajer=roles.find(r=>r.key==='Manajer'); const ketua=roles.find(r=>r.key==='Ketua'); const pengawas=roles.find(r=>r.key==='Pengawas'); const kades=roles.find(r=>r.key==='Kades'); displayRoles=[manajer,ketua,pengawas,kades].filter(Boolean); }
- else { displayRoles=roles; }
- let y=startY; doc.setDrawColor(180,180,180); doc.setLineWidth(0.3); doc.line(10,y,287,y); y+=6;
- if(displayRoles.length===2){
-   const colL=40, colR=160;
-   doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.text(`Kasih, ${tglLong}`,colR,y); y+=4; doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(`Desa Kasih`,colR,y); y+=8;
-   doc.setFont('helvetica','italic'); doc.setFontSize(9); if(displayRoles[0].pre) doc.text(displayRoles[0].pre,colL,y); if(displayRoles[1].pre) doc.text(displayRoles[1].pre,colR,y); y+=5;
-   doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.text(displayRoles[0].label,colL,y); doc.text(displayRoles[1].label,colR,y);
-   try{ if(displayRoles[0].ttd) doc.addImage(displayRoles[0].ttd,'PNG',colL,y+2,34,18); if(displayRoles[0].needCap && displayRoles[0].cap) doc.addImage(displayRoles[0].cap,'PNG',colL+38,y,20,20); if(displayRoles[1].ttd) doc.addImage(displayRoles[1].ttd,'PNG',colR,y+2,34,18); if(displayRoles[1].needCap && displayRoles[1].cap) doc.addImage(displayRoles[1].cap,'PNG',colR+38,y,20,20); }catch(e){}
-   y+=26; doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text(displayRoles[0].nama,colL,y); doc.text(displayRoles[1].nama,colR,y); return y+10;
- } else if(displayRoles.length===3){
-   const col1=30, col2=110, col3=190; const cols=[col1,col2,col3];
-   doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.text(`Kasih, ${tglLong}`,col3,y); y+=4; doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(`Desa Kasih`,col3,y); y+=8;
-   doc.setFont('helvetica','italic'); doc.setFontSize(9); displayRoles.forEach((r,i)=>{ if(r.pre) doc.text(r.pre,cols[i],y); }); y+=5;
-   doc.setFont('helvetica','bold'); doc.setFontSize(11); displayRoles.forEach((r,i)=>{ doc.text(r.label,cols[i],y); });
-   try{ displayRoles.forEach((r,i)=>{ if(r.ttd) doc.addImage(r.ttd,'PNG',cols[i],y+2,34,18); if(r.needCap && r.cap) doc.addImage(r.cap,'PNG',cols[i]+38,y,20,20); }); }catch(e){}
-   y+=26; doc.setFont('helvetica','bold'); doc.setFontSize(10); displayRoles.forEach((r,i)=>{ doc.text(r.nama,cols[i],y); }); return y+10;
- } else if(displayRoles.length===4){
-   const colL=40, colR=160;
-   doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.text(`Kasih, ${tglLong}`,colR,y); y+=4; doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(`Desa Kasih`,colR,y); y+=8;
-   let yTop=y; doc.setFont('helvetica','italic'); doc.setFontSize(9); if(displayRoles[0].pre) doc.text(displayRoles[0].pre,colL,yTop); if(displayRoles[1].pre) doc.text(displayRoles[1].pre,colR,yTop); yTop+=5; doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.text(displayRoles[0].label,colL,yTop); doc.text(displayRoles[1].label,colR,yTop);
-   try{ if(displayRoles[0].ttd) doc.addImage(displayRoles[0].ttd,'PNG',colL,yTop+2,34,18); if(displayRoles[0].needCap && displayRoles[0].cap) doc.addImage(displayRoles[0].cap,'PNG',colL+38,yTop,20,20); if(displayRoles[1].ttd) doc.addImage(displayRoles[1].ttd,'PNG',colR,yTop+2,34,18); if(displayRoles[1].needCap && displayRoles[1].cap) doc.addImage(displayRoles[1].cap,'PNG',colR+38,yTop,20,20); }catch(e){}
-   let yMid=yTop+26; doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text(displayRoles[0].nama,colL,yMid); doc.text(displayRoles[1].nama,colR,yMid);
-   let yBot=yMid+15; doc.setFont('helvetica','italic'); doc.setFontSize(9); if(displayRoles[2].pre) doc.text(displayRoles[2].pre,colL,yBot); if(displayRoles[3].pre) doc.text(displayRoles[3].pre,colR,yBot); yBot+=5; doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.text(displayRoles[2].label,colL,yBot); doc.text(displayRoles[3].label,colR,yBot);
-   try{ if(displayRoles[2].ttd) doc.addImage(displayRoles[2].ttd,'PNG',colL,yBot+2,34,18); if(displayRoles[3].ttd) doc.addImage(displayRoles[3].ttd,'PNG',colR,yBot+2,34,18); if(displayRoles[3].needCap && displayRoles[3].cap) doc.addImage(displayRoles[3].cap,'PNG',colR+38,yBot,20,20); }catch(e){}
-   let yBot2=yBot+26; doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text(displayRoles[2].nama,colL,yBot2); doc.text(displayRoles[3].nama,colR,yBot2); return yBot2+10;
- }
- return y+10;
-}
+function drawPengesahan(doc, startY){ return startY+10; }
 function exportPDF(){
  const doc=new jsPDF('l','mm','a4');
  const tglFile=new Date().toISOString().slice(0,10);
- doc.setFillColor(15,81,50); doc.rect(0,0,297,28,'F'); doc.setDrawColor(212,175,55); doc.setLineWidth(1.2); doc.line(0,28,297,28);
- doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text("KDKMP KASIH",148.5,12,{align:'center'}); doc.setFontSize(11); doc.text("KOPERASI DESA MERAH PUTIH - DESA KASIH",148.5,19,{align:'center'});
+ doc.setFillColor(15,81,50); doc.rect(0,0,297,28,'F'); doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text("KDKMP KASIH",148.5,12,{align:'center'});
  const rows=[]; [...baseDays,...getCustomDays()].sort((a,b)=>a.d-b.d).forEach(day=>{ const del=getDeleted(day.d); const add=getAdded(day.d); day.tasks.forEach((orig,i)=>{if(del.includes(i)) return; let text=getText(day.d,i,orig).trim().replace(/\s+/g,' '); const chk=isChecked(day.d,i,false)?'SELESAI':'BELUM'; const status=getStatus(day.d,i,false)||'-'; rows.push([`Hari ${day.d}`,day.t,text,chk,status]);}); add.forEach((t,i)=>{let clean=t.trim().replace(/^[+\-`'"]+/, '').trim().replace(/\s+/g,' '); const chk=isChecked(day.d,i,true)?'SELESAI':'BELUM'; const status=getStatus(day.d,i,true)||'-'; rows.push([`Hari ${day.d}`,day.t,clean,chk,status]);}); });
- doc.autoTable({startY:34, head:[['HARI','JUDUL','KEGIATAN','STATUS','KONDISI']], body:rows, theme:'grid', styles:{font:'helvetica', fontSize:8, cellPadding:2.5, overflow:'linebreak', valign:'middle', lineColor:[180,180,180], lineWidth:0.25}, headStyles:{fillColor:[15,81,50], textColor:255, halign:'center', fontStyle:'bold'}, columnStyles:{0:{cellWidth:15, halign:'center'},1:{cellWidth:32},2:{cellWidth:163},3:{cellWidth:20, halign:'center'},4:{cellWidth:20, halign:'center'}}});
- let finalY=doc.lastAutoTable.finalY+4; if(finalY>150){ doc.addPage('l','a4'); finalY=15; } finalY=drawPengesahan(doc, finalY);
- const notes=[]; [...baseDays,...getCustomDays()].sort((a,b)=>a.d-b.d).forEach(day=>{ const active=localStorage.getItem(`noteActive_${day.d}`)==='1'; const text=localStorage.getItem(`note_${day.d}`)||''; if(active && text.trim()) notes.push([`Hari ${day.d}`,day.t,text.trim()]); });
- if(notes.length>0){
-   doc.addPage('l','a4'); doc.setFillColor(15,81,50); doc.rect(0,0,297,28,'F'); doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text("KDKMP KASIH",148.5,12,{align:'center'});
-   doc.autoTable({startY:34, head:[['HARI','JUDUL','CATATAN']], body:notes, theme:'grid', styles:{font:'helvetica', fontSize:8, cellPadding:2.5, overflow:'linebreak', lineWidth:0.2}, headStyles:{fillColor:[146,64,14], halign:'center'}, columnStyles:{0:{cellWidth:15, halign:'center'},1:{cellWidth:32},2:{cellWidth:203}}});
-   let finalY2=doc.lastAutoTable.finalY+4; if(finalY2>150){ doc.addPage('l','a4'); finalY2=15; } drawPengesahan(doc, finalY2);
- }
- doc.save(`KDKMP-KASIH-${tglFile}-V29-FIREBASE.pdf`);
+ doc.autoTable({startY:34, head:[['HARI','JUDUL','KEGIATAN','STATUS','KONDISI']], body:rows, theme:'grid', styles:{fontSize:8}, headStyles:{fillColor:[15,81,50]}});
+ doc.save(`KDKMP-KASIH-${tglFile}-V29.1-FIX.pdf`);
 }
 </script>
 </body>
