@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KATALOG KASIH - KDKMP Marketplace V1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBP1lvYR22XOf-IC_34gHEEkfolSthDTzo",
+  authDomain: "kasih-kopdes.firebaseapp.com",
+  databaseURL: "https://kasih-kopdes-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kasih-kopdes",
+  storageBucket: "kasih-kopdes.firebasestorage.app",
+  messagingSenderId: "746954171317",
+  appId: "1:746954171317:web:e51e1dbc5ea0d206ce2ffc"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+window.db= db; window.dbRef= ref; window.dbSet= set; window.dbPush= push; window.dbOnValue= onValue; window.dbRemove= remove; window.dbUpdate= update; window.dbGet= get;
+</script>
+</head>
+<body class="bg-[#f8fafc] font-sans">
+<!-- NAV -->
+<div class="bg-[#0f5132] text-white sticky top-0 z-50 shadow-lg">
+<div class="max-w-6xl mx-auto p-3 flex justify-between items-center">
+<div class="flex items-center gap-3"><div class="w-8 h-8 bg-yellow-300 rounded-full flex items-center justify-center text-[#0f5132] font-bold">K</div><div><h1 class="font-bold text-[13px]">KDKMP KASIH MART</h1><p class="text-[9px] text-yellow-200">Desa Kasih - Belanja Mudah</p></div></div>
+<div class="flex items-center gap-2">
+<button onclick="openCart()" class="relative bg-white/20 px-3 py-2 rounded-full text-[11px]"><i class="fa-solid fa-cart-shopping"></i> <span id="cartCount" class="absolute -top-1 -right-1 bg-yellow-300 text-black text-[9px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span></button>
+<button id="btnLogin" onclick="openLogin()" class="bg-white text-[#0f5132] px-4 py-2 rounded-full text-[11px] font-bold">Masuk / Daftar</button>
+<button id="btnUser" onclick="openProfile()" class="hidden bg-yellow-300 text-black px-3 py-2 rounded-full text-[11px] font-bold"></button>
+</div>
+</div>
+</div>
+
+<!-- HERO -->
+<div class="max-w-6xl mx-auto p-3">
+<div class="bg-gradient-to-r from-[#0f5132] to-[#1a7a4a] rounded-2xl p-5 text-white flex justify-between items-center">
+<div><h2 class="font-bold text-[18px]">Belanja Sembako & Tani Murah</h2><p class="text-[11px] text-white/80 mt-1">Pilih - Masuk Keranjang - Bayar COD / Online - Barang Diantar</p><div class="flex gap-2 mt-3"><span class="bg-white/20 px-2 py-1 rounded-full text-[9px]">✓ Upload Foto Barang</span><span class="bg-white/20 px-2 py-1 rounded-full text-[9px]">✓ COD / Transfer</span><span class="bg-yellow-300 text-black px-2 py-1 rounded-full text-[9px] font-bold">LIVE FIREBASE</span></div></div><div class="text-5xl opacity-20"><i class="fa-solid fa-store"></i></div>
+</div>
+</div>
+
+<!-- FILTER -->
+<div class="max-w-6xl mx-auto p-3">
+<div class="bg-white rounded-xl p-3 border flex flex-wrap gap-2 items-center">
+<input id="search" oninput="filterProducts()" placeholder="Cari beras, minyak, pupuk..." class="flex-1 min-w-[180px] border rounded-full px-4 py-2 text-[12px]">
+<select id="catFilter" onchange="filterProducts()" class="border rounded-full px-3 py-2 text-[11px]"><option value="">Semua Kategori</option><option>Sembako</option><option>Pertanian</option><option>Peternakan</option><option>PPOB/Jasa</option><option>Lainnya</option></select>
+<button onclick="filterProducts()" class="bg-[#0f5132] text-white px-4 py-2 rounded-full text-[11px]"><i class="fa-solid fa-search"></i> Cari</button>
+<span id="syncInfo" class="text-[9px] text-slate-400 ml-auto">● Live Connect</span>
+</div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="max-w-6xl mx-auto p-3">
+<div id="productGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+<div id="emptyProd" class="hidden bg-white p-10 rounded-xl text-center border"><p class="text-[12px] text-slate-400">Belum ada barang, Admin silahkan tambah</p></div>
+</div>
+
+<!-- CART MODAL -->
+<div id="cartModal" class="fixed inset-0 bg-black/50 z-[60] hidden"><div class="bg-white max-w-md ml-auto h-full overflow-y-auto"><div class="p-4 bg-[#0f5132] text-white flex justify-between"><p class="font-bold text-[13px]">Keranjang Belanja</p><button onclick="closeCart()" class="text-white">✕</button></div><div id="cartList" class="p-3 space-y-2"></div><div class="p-4 border-t bg-slate-50"><div class="space-y-1 text-[11px]"><div class="flex justify-between"><span>Subtotal</span><span id="cartSubtotal">Rp 0</span></div><div class="flex justify-between"><span>Ongkir Desa Kasih</span><span id="cartOngkir">Rp 5.000</span></div><div class="flex justify-between font-bold text-[13px] border-t pt-2"><span>Total Bayar</span><span id="cartTotal" class="text-[#0f5132]">Rp 0</span></div></div><div class="mt-3"><p class="font-bold text-[11px] mb-2">Metode Bayar:</p><div class="grid grid-cols-2 gap-2"><label class="border rounded-lg p-2 flex items-center gap-2 cursor-pointer"><input type="radio" name="bayar" value="COD" checked><span class="text-[11px]"><i class="fa-solid fa-truck"></i> COD Bayar di Tempat</span></label><label class="border rounded-lg p-2 flex items-center gap-2 cursor-pointer"><input type="radio" name="bayar" value="TRANSFER"><span class="text-[11px]"><i class="fa-solid fa-qrcode"></i> Transfer / QRIS Online</span></label></div></div><button onclick="checkout()" class="w-full mt-4 bg-[#0f5132] text-white py-3 rounded-xl font-bold text-[12px]">BAYAR SEKARANG → Simulasi Harga</button><p class="text-[9px] text-center text-slate-400 mt-2">Data pembeli & pesanan otomatis terbackup ke Admin & Manajer</p></div></div></div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="fixed inset-0 bg-black/50 z-[70] hidden flex items-center justify-center p-3"><div class="bg-white rounded-2xl max-w-sm w-full p-5"><h3 class="font-bold text-[14px]">Daftar / Masuk Akun Kasih</h3><p class="text-[10px] text-slate-500 mt-1">Pakai Email & No WA Aktif untuk backup data</p><div class="mt-4 space-y-3"><input id="regNama" placeholder="Nama Lengkap" class="w-full border rounded-lg p-3 text-[12px]"><input id="regEmail" type="email" placeholder="Email Aktif (contoh: budi@gmail.com)" class="w-full border rounded-lg p-3 text-[12px]"><input id="regWA" placeholder="No WA Aktif (08xxx)" class="w-full border rounded-lg p-3 text-[12px]"><input id="regPass" type="password" placeholder="Buat Password" class="w-full border rounded-lg p-3 text-[12px]"><select id="regRole" class="w-full border rounded-lg p-3 text-[11px]"><option value="pembeli">Pembeli / Warga</option><option value="manajer">Manajer</option><option value="admin">Admin</option></select></div><div class="flex gap-2 mt-4"><button onclick="registerUser()" class="flex-1 bg-[#0f5132] text-white py-3 rounded-xl font-bold text-[12px]">DAFTAR & SIMPAN</button><button onclick="closeLogin()" class="px-4 py-3 bg-slate-100 rounded-xl text-[12px]">Batal</button></div><div class="mt-3 p-3 bg-amber-50 rounded-lg"><p class="text-[9px] font-bold">Login cepat (sudah daftar):</p><div class="flex gap-2 mt-2"><input id="loginEmail" placeholder="Email" class="flex-1 border rounded p-2 text-[11px]"><input id="loginPass" type="password" placeholder="Pass" class="flex-1 border rounded p-2 text-[11px]"><button onclick="loginUser()" class="bg-black text-white px-3 rounded text-[11px]">Masuk</button></div></div></div></div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="fixed inset-0 bg-[#f8fafc] z-[80] hidden overflow-y-auto"><div class="bg-[#0f5132] text-white p-4 flex justify-between sticky top-0"><p class="font-bold">Panel Admin & Manajer</p><button onclick="closeAdmin()" class="bg-white/20 px-3 py-1 rounded-full text-[11px]">✕ Tutup</button></div><div class="max-w-5xl mx-auto p-3 space-y-4">
+<div class="bg-white border-2 border-[#0f5132] rounded-xl p-4"><p class="font-bold text-[13px]">+ Tambah / Edit Barang (Upload Gambar)</p><div class="grid md:grid-cols-2 gap-3 mt-3"><input id="pNama" placeholder="Nama Barang" class="border rounded p-2 text-[11px]"><select id="pKategori" class="border rounded p-2 text-[11px]"><option>Sembako</option><option>Pertanian</option><option>Peternakan</option><option>PPOB/Jasa</option><option>Lainnya</option></select><input id="pHargaBeli" type="number" placeholder="Harga Beli" class="border rounded p-2 text-[11px]"><input id="pHargaJual" type="number" placeholder="Harga Jual" class="border rounded p-2 text-[11px]"><input id="pStok" type="number" placeholder="Stok" class="border rounded p-2 text-[11px]"><input id="pSatuan" placeholder="Satuan (kg/pcs)" class="border rounded p-2 text-[11px]"><input id="pSupplier" placeholder="Supplier" class="border rounded p-2 text-[11px] col-span-2"><input id="pFoto" type="file" accept="image/*" class="border rounded p-2 text-[10px] col-span-2"><img id="pPreview" class="w-full h-32 object-contain border rounded hidden col-span-2"></div><button onclick="saveProduct()" class="mt-3 bg-[#0f5132] text-white w-full py-3 rounded-xl font-bold text-[12px]">SIMPAN BARANG KE FIREBASE</button><p class="text-[9px] text-slate-400 mt-2">Foto akan terkompres otomatis & terbackup</p></div>
+<div class="grid md:grid-cols-2 gap-4"><div class="bg-white border rounded-xl p-4"><p class="font-bold text-[12px]">📦 Data Barang (<span id="adminProdCount">0</span>)</p><div id="adminProdList" class="mt-3 space-y-2 max-h-[400px] overflow-y-auto"></div></div><div class="bg-white border rounded-xl p-4"><p class="font-bold text-[12px]">👥 Data Pengguna Terbackup (<span id="adminUserCount">0</span>)</p><p class="text-[9px] text-slate-400">Email & WA Aktif Warga - hanya admin/manajer bisa lihat</p><div id="adminUserList" class="mt-3 space-y-2 max-h-[300px] overflow-y-auto"></div><div class="mt-3"><p class="font-bold text-[11px]">🧾 Pesanan Masuk</p><div id="adminOrderList" class="mt-2 space-y-2 max-h-[300px] overflow-y-auto"></div></div></div></div>
+</div></div>
+
+<script>
+let currentUser = JSON.parse(localStorage.getItem('kasih_user')||'null');
+let products = []; let cart = JSON.parse(localStorage.getItem('kasih_cart')||'[]'); let editingId = null;
+document.getElementById('pFoto').addEventListener('change', function(e){
+  const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{
+    const img=new Image(); img.onload=()=>{
+      const canvas=document.createElement('canvas'); const maxW=500; let w=img.width, h=img.height; if(w>maxW){ h=h*maxW/w; w=maxW; } canvas.width=w; canvas.height=h; canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const compressed=canvas.toDataURL('image/jpeg',0.6); document.getElementById('pPreview').src=compressed; document.getElementById('pPreview').classList.remove('hidden'); document.getElementById('pPreview').dataset.compressed=compressed;
+    }; img.src=ev.target.result;
+  }; r.readAsDataURL(f);
+});
+function openLogin(){ document.getElementById('loginModal').classList.remove('hidden'); }
+function closeLogin(){ document.getElementById('loginModal').classList.add('hidden'); }
+function openCart(){ document.getElementById('cartModal').classList.remove('hidden'); renderCart(); }
+function closeCart(){ document.getElementById('cartModal').classList.add('hidden'); }
+function openProfile(){ if(!currentUser) return openLogin(); if(currentUser.role==='admin'||currentUser.role==='manajer'){ document.getElementById('adminPanel').classList.remove('hidden'); loadAdminData(); } else { alert('Akun: '+currentUser.nama+'\nEmail: '+currentUser.email+'\nWA: '+currentUser.wa); } }
+function closeAdmin(){ document.getElementById('adminPanel').classList.add('hidden'); }
+function updateUI(){
+  if(currentUser){ document.getElementById('btnLogin').classList.add('hidden'); const b=document.getElementById('btnUser'); b.classList.remove('hidden'); b.textContent=(currentUser.role==='admin'?'👑 ':'')+(currentUser.role==='manajer'?'🧑‍💼 ':'')+currentUser.nama.split(' ')[0]; } 
+  document.getElementById('cartCount').textContent=cart.reduce((a,b)=>a+b.qty,0);
+}
+function registerUser(){
+  const nama=document.getElementById('regNama').value.trim(); const email=document.getElementById('regEmail').value.trim().toLowerCase(); const wa=document.getElementById('regWA').value.trim(); const pass=document.getElementById('regPass').value.trim(); const role=document.getElementById('regRole').value;
+  if(!nama||!email||!wa||!pass){ alert('Lengkapi Nama, Email, WA, Password!'); return; }
+  if(!email.includes('@')){ alert('Email tidak valid'); return; }
+  const id=email.replace(/[^a-z0-9]/g,'_'); const userData={ id, nama, email, wa, pass, role, created: new Date().toISOString(), backup:true };
+  dbSet(dbRef(db,'kdkmp-kasih/katalog/users/'+id), userData).then(()=>{
+    localStorage.setItem('kasih_user', JSON.stringify(userData)); currentUser=userData; updateUI(); closeLogin(); alert('Akun berhasil & terbackup ke Admin! Silahkan belanja');
+  });
+}
+function loginUser(){
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase(); const pass=document.getElementById('loginPass').value.trim(); if(!email||!pass){ alert('Isi email & pass'); return; }
+  const id=email.replace(/[^a-z0-9]/g,'_');
+  dbGet(dbRef(db,'kdkmp-kasih/katalog/users/'+id)).then(s=>{
+    if(!s.exists()){ alert('Akun tidak ditemukan, daftar dulu'); return; }
+    const u=s.val(); if(u.pass!==pass){ alert('Password salah'); return; }
+    localStorage.setItem('kasih_user', JSON.stringify(u)); currentUser=u; updateUI(); closeLogin();
+  });
+}
+function loadProducts(){
+  dbOnValue(dbRef(db,'kdkmp-kasih/katalog/products'), snap=>{
+    products=[]; if(snap.exists()){ Object.entries(snap.val()).forEach(([k,v])=>{ products.push({id:k,...v}); }); }
+    filterProducts(); document.getElementById('syncInfo').textContent='● Live '+products.length+' barang';
+    if(currentUser && (currentUser.role==='admin'||currentUser.role==='manajer')) loadAdminData();
+  });
+}
+function filterProducts(){
+  const q=document.getElementById('search').value.toLowerCase(); const cat=document.getElementById('catFilter').value; let filtered=products;
+  if(q) filtered=filtered.filter(p=>p.nama.toLowerCase().includes(q)); if(cat) filtered=filtered.filter(p=>p.kategori===cat);
+  const grid=document.getElementById('productGrid'); grid.innerHTML=''; if(filtered.length===0){ document.getElementById('emptyProd').classList.remove('hidden'); } else { document.getElementById('emptyProd').classList.add('hidden'); }
+  filtered.forEach(p=>{
+    const div=document.createElement('div'); div.className='bg-white rounded-xl border p-3 flex flex-col'; 
+    div.innerHTML=`<img src="${p.foto||'https://via.placeholder.com/300?text=No+Foto'}" class="w-full h-32 object-cover rounded-lg"><div class="mt-2"><span class="text-[8px] bg-green-100 text-green-700 px-2 py-1 rounded-full">${p.kategori}</span><span class="text-[8px] bg-slate-100 px-2 py-1 rounded-full ml-1">Stok ${p.stok}</span><p class="font-bold text-[12px] mt-2">${p.nama}</p><p class="text-[10px] text-slate-400">${p.satuan} • ${p.supplier||''}</p><div class="flex justify-between items-center mt-2"><div><p class="text-[10px] line-through text-slate-400">Rp ${Number(p.hargaBeli).toLocaleString('id-ID')}</p><p class="font-bold text-[13px] text-[#0f5132]">Rp ${Number(p.hargaJual).toLocaleString('id-ID')}</p></div><button onclick="addToCart('${p.id}')" class="bg-[#0f5132] text-white w-9 h-9 rounded-full"><i class="fa-solid fa-plus"></i></button></div></div>`;
+    grid.appendChild(div);
+  });
+}
+function addToCart(id){ const prod=products.find(p=>p.id===id); if(!prod){ return; } if(Number(prod.stok)<=0){ alert('Stok habis'); return; } const exist=cart.find(c=>c.id===id); if(exist){ exist.qty++; } else { cart.push({id, nama:prod.nama, harga:Number(prod.hargaJual), foto:prod.foto, qty:1}); } localStorage.setItem('kasih_cart', JSON.stringify(cart)); updateUI(); openCart(); }
+function renderCart(){
+  const list=document.getElementById('cartList'); list.innerHTML=''; let subtotal=0;
+  cart.forEach((c,i)=>{
+    subtotal+=c.harga*c.qty; const div=document.createElement('div'); div.className='flex gap-3 border rounded-lg p-2'; div.innerHTML=`<img src="${c.foto}" class="w-12 h-12 rounded object-cover"><div class="flex-1"><p class="font-bold text-[11px]">${c.nama}</p><p class="text-[11px] text-[#0f5132]">Rp ${c.harga.toLocaleString('id-ID')} x ${c.qty}</p></div><div class="flex flex-col gap-1"><button onclick="changeQty(${i},1)" class="bg-slate-100 w-6 h-6 rounded text-[10px]">+</button><button onclick="changeQty(${i},-1)" class="bg-slate-100 w-6 h-6 rounded text-[10px]">-</button><button onclick="removeCart(${i})" class="text-[9px] text-red-500">hapus</button></div>`;
+    list.appendChild(div);
+  });
+  const ongkir=5000; document.getElementById('cartSubtotal').textContent='Rp '+subtotal.toLocaleString('id-ID'); document.getElementById('cartOngkir').textContent='Rp '+ongkir.toLocaleString('id-ID'); document.getElementById('cartTotal').textContent='Rp '+(subtotal+ongkir).toLocaleString('id-ID');
+}
+function changeQty(i,d){ cart[i].qty+=d; if(cart[i].qty<=0) cart.splice(i,1); localStorage.setItem('kasih_cart', JSON.stringify(cart)); updateUI(); renderCart(); }
+function removeCart(i){ cart.splice(i,1); localStorage.setItem('kasih_cart', JSON.stringify(cart)); updateUI(); renderCart(); }
+function checkout(){
+  if(!currentUser){ alert('Daftar / Masuk dulu pakai Email & WA'); openLogin(); return; } if(cart.length===0){ alert('Keranjang kosong'); return; }
+  const metode=document.querySelector('input[name="bayar"]:checked').value; const subtotal=cart.reduce((a,b)=>a+b.harga*b.qty,0); const total=subtotal+5000;
+  let simulasi=`SIMULASI HARGA KDKMP KASIH\n\nPembeli: ${currentUser.nama}\nWA: ${currentUser.wa}\nEmail: ${currentUser.email}\n\nBarang:\n`; cart.forEach(c=>{ simulasi+=`- ${c.nama} x${c.qty} = Rp ${(c.harga*c.qty).toLocaleString('id-ID')}\n`; }); simulasi+=`\nSubtotal: Rp ${subtotal.toLocaleString('id-ID')}\nOngkir: Rp 5.000\nTOTAL: Rp ${total.toLocaleString('id-ID')}\nMetode: ${metode}\n\n${metode==='COD'?'Bayar saat barang diantar ke Desa Kasih':'Transfer ke Rek KDKMP / QRIS, upload bukti ke WA Manajer'}\n\nData terbackup ke Admin & Manajer`;
+  if(!confirm(simulasi+'\n\nLanjut Bayar?')) return;
+  const orderId=Date.now().toString(); const order={ id:orderId, user: currentUser, items: cart, subtotal, ongkir:5000, total, metode, status:'Baru', created: new Date().toISOString() };
+  dbSet(dbRef(db,'kdkmp-kasih/katalog/orders/'+orderId), order).then(()=>{
+    cart.forEach(c=>{
+      const prod=products.find(p=>p.id===c.id); if(prod){ const newStok=Number(prod.stok)-c.qty; dbUpdate(dbRef(db,'kdkmp-kasih/katalog/products/'+c.id), {stok:newStok}); }
+    });
+    cart=[]; localStorage.setItem('kasih_cart', JSON.stringify(cart)); updateUI(); closeCart();
+    alert('✅ Pesanan berhasil! Total Rp '+total.toLocaleString('id-ID')+'\nMetode '+metode+'\nData sudah masuk backup Admin & Manajer.\nManajer akan hubungi WA kamu: '+currentUser.wa);
+  });
+}
+function saveProduct(){
+  if(!currentUser||(currentUser.role!=='admin'&&currentUser.role!=='manajer')){ alert('Hanya Admin/Manajer'); return; }
+  const nama=document.getElementById('pNama').value.trim(); const kategori=document.getElementById('pKategori').value; const hargaBeli=document.getElementById('pHargaBeli').value; const hargaJual=document.getElementById('pHargaJual').value; const stok=document.getElementById('pStok').value; const satuan=document.getElementById('pSatuan').value.trim(); const supplier=document.getElementById('pSupplier').value.trim(); const foto=document.getElementById('pPreview').dataset.compressed||document.getElementById('pPreview').src;
+  if(!nama||!hargaJual){ alert('Nama & Harga Jual wajib'); return; }
+  const data={ nama, kategori, hargaBeli:Number(hargaBeli)||0, hargaJual:Number(hargaJual), stok:Number(stok)||0, satuan, supplier, foto, updatedBy: currentUser.email, updatedAt: new Date().toISOString() };
+  if(editingId){ dbUpdate(dbRef(db,'kdkmp-kasih/katalog/products/'+editingId), data).then(()=>{ alert('Update berhasil'); editingId=null; clearForm(); }); } else { const newRef=dbPush(dbRef(db,'kdkmp-kasih/katalog/products')); dbSet(newRef, data).then(()=>{ alert('Barang berhasil ditambah & live!'); clearForm(); }); }
+}
+function clearForm(){ ['pNama','pHargaBeli','pHargaJual','pStok','pSatuan','pSupplier'].forEach(id=>{ document.getElementById(id).value=''; }); document.getElementById('pPreview').classList.add('hidden'); document.getElementById('pPreview').src=''; document.getElementById('pPreview').dataset.compressed=''; document.getElementById('pFoto').value=''; editingId=null; }
+function editProduct(id){ const p=products.find(x=>x.id===id); if(!p) return; editingId=id; document.getElementById('pNama').value=p.nama; document.getElementById('pKategori').value=p.kategori; document.getElementById('pHargaBeli').value=p.hargaBeli; document.getElementById('pHargaJual').value=p.hargaJual; document.getElementById('pStok').value=p.stok; document.getElementById('pSatuan').value=p.satuan; document.getElementById('pSupplier').value=p.supplier||''; document.getElementById('pPreview').src=p.foto; document.getElementById('pPreview').dataset.compressed=p.foto; document.getElementById('pPreview').classList.remove('hidden'); window.scrollTo(0,0); }
+function deleteProduct(id){ if(!confirm('Hapus barang ini?')) return; dbRemove(dbRef(db,'kdkmp-kasih/katalog/products/'+id)); }
+function loadAdminData(){
+  dbOnValue(dbRef(db,'kdkmp-kasih/katalog/products'), snap=>{
+    const list=document.getElementById('adminProdList'); list.innerHTML=''; let count=0; if(snap.exists()){ Object.entries(snap.val()).forEach(([k,v])=>{ count++; const d=document.createElement('div'); d.className='border rounded-lg p-2 flex gap-2'; d.innerHTML=`<img src="${v.foto}" class="w-10 h-10 rounded object-cover"><div class="flex-1"><p class="font-bold text-[11px]">${v.nama}</p><p class="text-[9px]">Rp ${Number(v.hargaJual).toLocaleString('id-ID')} | Stok ${v.stok}</p></div><div class="flex gap-1"><button onclick="editProduct('${k}')" class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-[9px]">Edit</button><button onclick="deleteProduct('${k}')" class="bg-red-100 text-red-600 px-2 py-1 rounded text-[9px]">Hapus</button></div>`; list.appendChild(d); }); } document.getElementById('adminProdCount').textContent=count;
+  });
+  dbOnValue(dbRef(db,'kdkmp-kasih/katalog/users'), snap=>{
+    const list=document.getElementById('adminUserList'); list.innerHTML=''; let count=0; if(snap.exists()){ Object.entries(snap.val()).forEach(([k,v])=>{ count++; const d=document.createElement('div'); d.className='border rounded-lg p-2'; d.innerHTML=`<p class="font-bold text-[11px]">${v.nama} <span class="bg-slate-100 px-1 rounded text-[8px]">${v.role}</span></p><p class="text-[9px] text-slate-500">📧 ${v.email} | 📱 ${v.wa}</p><p class="text-[8px] text-slate-400">${new Date(v.created).toLocaleString('id-ID')}</p>`; list.appendChild(d); }); } document.getElementById('adminUserCount').textContent=count;
+  });
+  dbOnValue(dbRef(db,'kdkmp-kasih/katalog/orders'), snap=>{
+    const list=document.getElementById('adminOrderList'); list.innerHTML=''; if(!snap.exists()){ list.innerHTML='<p class="text-[10px] text-slate-400">Belum ada pesanan</p>'; return; } Object.entries(snap.val()).reverse().forEach(([k,v])=>{
+      const d=document.createElement('div'); d.className='border rounded-lg p-2 bg-amber-50'; d.innerHTML=`<p class="font-bold text-[10px]">${v.user.nama} - ${v.metode} - Rp ${v.total.toLocaleString('id-ID')}</p><p class="text-[9px]">📱 ${v.user.wa} | ${v.items.map(i=>i.nama+' x'+i.qty).join(', ')}</p><p class="text-[8px] text-slate-400">${new Date(v.created).toLocaleString('id-ID')} - ${v.status}</p>`; list.appendChild(d);
+    });
+  });
+}
+loadProducts(); updateUI();
+</script>
+</body>
+</html>
