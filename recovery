@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RECOVERY DATA KDMP</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-red-50 p-4">
+<div class="max-w-3xl mx-auto space-y-4">
+<div class="bg-white rounded-[20px] border-2 border-red-500 p-6">
+<h1 class="font-black text-xl text-red-600">🚨 RECOVERY DATA KDMP - Jangan Panik!</h1>
+<p class="text-sm mt-2">Tool ini akan scan semua versi data di HP kamu (V4, V5, V6, V7) + Firebase, lalu gabungkan kembali.</p>
+<div id="scanResult" class="mt-4 bg-gray-50 rounded-xl p-4 text-xs"></div>
+<button id="btnScan" class="mt-4 bg-black text-white px-6 py-3 rounded-xl font-bold w-full">🔍 SCAN DATA YANG MASIH ADA</button>
+<button id="btnRecover" class="mt-3 bg-green-600 text-white px-6 py-3 rounded-xl font-bold w-full hidden">♻️ PULIHKAN SEMUA DATA KE V7.3</button>
+<button id="btnExport" class="mt-3 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold w-full hidden">📥 EXPORT BACKUP JSON (Simpan dulu!)</button>
+<div id="log" class="mt-4 text-xs whitespace-pre-wrap bg-black text-green-400 p-3 rounded-xl max-h-[400px] overflow-y-auto"></div>
+</div>
+<div class="bg-white rounded-[20px] border p-6 text-xs">
+<b>Cara pakai:</b><br>
+1. Klik SCAN - lihat data apa saja yang masih ada<br>
+2. Klik EXPORT BACKUP dulu buat jaga-jaga<br>
+3. Klik PULIHKAN - data akan digabung ke V7.3<br>
+4. Buka kembali file V7.3 utama<br><br>
+</div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig={apiKey:"AIzaSyBP1lvYR22XOf-IC_34gHEEkfolSthDTzo",authDomain:"kasih-kopdes.firebaseapp.com",databaseURL:"https://kasih-kopdes-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"kasih-kopdes",storageBucket:"kasih-kopdes.firebasestorage.app",messagingSenderId:"746954171317",appId:"1:746954171317:web:e51e1dbc5ea0d206ce2ffc"};
+const app=initializeApp(firebaseConfig); const db=getDatabase(app);
+let found={};
+let logEl=document.getElementById('log');
+function log(msg){ logEl.textContent+=msg+"\n"; }
+document.getElementById('btnScan').onclick=async()=>{
+found={}; logEl.textContent=""; log("=== SCAN LOCAL STORAGE ===");
+let keys=['kdmp_v4_dashboard','kdmp_v5_auth','kdmp_v6_final','kdmp_v7_survey','kdmp_v7_survey_backup','kdmp_current_user'];
+keys.forEach(k=>{
+let v=localStorage.getItem(k);
+if(v){ try{ let j=JSON.parse(v); let countDesil=j.desil?.length||0; let countPotensi=j.potensiData?.length||0; let countSurveyP=j.surveyPotensi?.length||0; let countSurveyK=j.surveyKonsumen?.length||0; let countKerja=j.pekerjaanData?.length||0; found[k]=j; log(k+": Ada! Desil="+countDesil+" Potensi="+countPotensi+" SurveyP="+countSurveyP+" SurveyK="+countSurveyK+" Kerja="+countKerja); }catch(e){ log(k+": Corrupt "+e); } } else { log(k+": Tidak ada"); }
+});
+log("\n=== SCAN FIREBASE ===");
+let paths=['kdmp_kasih/v7_survey','kdmp_kasih/v6_final','kdmp_kasih/v5_auth','kdmp_kasih/v4_dashboard'];
+let promises=paths.map(p=>new Promise(res=>{
+onValue(ref(db,p),snap=>{
+let val=snap.val(); if(val){ found['firebase_'+p]=val; let cDesil=val.desil?.length||0; let cPot=val.potensiData?.length||0; let cSP=val.surveyPotensi?.length||0; let cSK=val.surveyKonsumen?.length||0; log("FIREBASE "+p+": Ada! Desil="+cDesil+" Potensi="+cPot+" SurveyP="+cSP+" SurveyK="+cSK); } else { log("FIREBASE "+p+": Kosong"); } res();
+},{onlyOnce:true});
+}));
+await Promise.all(promises);
+let html="<b>Hasil Scan:</b><br>";
+Object.keys(found).forEach(k=>{
+let j=found[k]; html+=k+": "+(j.desil?.length||0)+" desil, "+(j.potensiData?.length||0)+" potensi, "+(j.surveyPotensi?.length||0)+" surveyPotensi, "+(j.surveyKonsumen?.length||0)+" surveyKonsumen<br>";
+});
+document.getElementById('scanResult').innerHTML=html;
+document.getElementById('btnRecover').classList.remove('hidden');
+document.getElementById('btnExport').classList.remove('hidden');
+log("\n=== SIAP RECOVERY ===");
+};
+document.getElementById('btnExport').onclick=()=>{
+let blob=new Blob([JSON.stringify(found,null,2)],{type:'application/json'});
+let url=URL.createObjectURL(blob); let a=document.createElement('a'); a.href=url; a.download='BACKUP-KDMP-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+log("Backup JSON didownload!");
+};
+document.getElementById('btnRecover').onclick=()=>{
+let merged={dusuns:['Kali Branjang','Lambegan','Kalireja','Kasih Lor'],rtrw:['RT 01/RW 01','RT 02/RW 01','RT 03/RW 01','RT 04/RW 02','RT 05/RW 02','RT 06/RW 03','RT 07/RW 03','RT 08/RW 04','RT 09/RW 04'],pekerjaans:['Petani','Buruh Tani','Pedagang','PNS','Wiraswasta'],jenisKonsumen:['Sembako','Sayur','Pangan Olahan','Jasa','Lainnya'],stakeholders:[],desil:[],pekerjaanData:[],potensiData:[],surveyPotensi:[],surveyKonsumen:[],kopdes:{nik:'',nib:'',sk:'',total:0,laki:0,perempuan:0,kopFoto:''},pengurus:[],pengawas:[],users:[{username:'admin',password:'kasih123',role:'admin',name:'Manajer Utama'}]};
+function mergeFrom(src){
+if(!src) return;
+if(src.dusuns && src.dusuns.length>merged.dusuns.length) merged.dusuns=src.dusuns;
+if(src.rtrw && src.rtrw.length>merged.rtrw.length) merged.rtrw=src.rtrw;
+if(src.desil && src.desil.length>merged.desil.length) merged.desil=src.desil;
+if(src.pekerjaanData && src.pekerjaanData.length>merged.pekerjaanData.length) merged.pekerjaanData=src.pekerjaanData;
+if(src.potensiData && src.potensiData.length>merged.potensiData.length) merged.potensiData=src.potensiData;
+if(src.surveyPotensi && src.surveyPotensi.length>merged.surveyPotensi.length) merged.surveyPotensi=src.surveyPotensi;
+if(src.surveyKonsumen && src.surveyKonsumen.length>merged.surveyKonsumen.length) merged.surveyKonsumen=src.surveyKonsumen;
+if(src.stakeholders && src.stakeholders.length>merged.stakeholders.length) merged.stakeholders=src.stakeholders;
+if(src.pengurus && src.pengurus.length>merged.pengurus.length) merged.pengurus=src.pengurus;
+if(src.pengawas && src.pengawas.length>merged.pengawas.length) merged.pengawas=src.pengawas;
+if(src.kopdes && (src.kopdes.total>0 || src.kopdes.nik)) merged.kopdes={...merged.kopdes,...src.kopdes};
+if(src.users && src.users.length>0) merged.users=src.users;
+}
+let order=['firebase_kdmp_kasih/v7_survey','kdmp_v7_survey','firebase_kdmp_kasih/v6_final','kdmp_v6_final','kdmp_v5_auth','firebase_kdmp_kasih/v5_auth','kdmp_v4_dashboard'];
+order.forEach(k=>{ if(found[k]){ log("Merging dari "+k); mergeFrom(found[k]); } });
+Object.keys(found).forEach(k=>{ if(!order.includes(k) && k.startsWith('firebase_')) mergeFrom(found[k]); });
+log("\nHASIL MERGE FINAL:");
+log("Desil: "+merged.desil.length);
+log("Potensi: "+merged.potensiData.length);
+log("SurveyPotensi: "+merged.surveyPotensi.length);
+log("SurveyKonsumen: "+merged.surveyKonsumen.length);
+localStorage.setItem('kdmp_v7_survey',JSON.stringify(merged));
+localStorage.setItem('kdmp_v7_survey_backup',JSON.stringify(merged));
+set(ref(db,'kdmp_kasih/v7_survey'),merged).then(()=>{
+log("\n✅ BERHASIL DIPULIHKAN!");
+alert("RECOVERY BERHASIL! Desil="+merged.desil.length+" Potensi="+merged.potensiData.length+" SurveyP="+merged.surveyPotensi.length+" SurveyK="+merged.surveyKonsumen.length+"\n\nSekarang buka file utama V7.3 lagi.");
+}).catch(e=>{ log("Gagal save firebase: "+e); });
+};
+</script>
+</body>
+</html>
