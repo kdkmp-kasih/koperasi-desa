@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html><body style="font-family:sans-serif;padding:40px;text-align:center">
+<h1>Reset Akun KDMP</h1>
+<button id="reset" style="padding:15px 30px;background:black;color:white;border-radius:12px">RESET ADMIN</button>
+<div id="log"></div>
+<script>
+document.getElementById('reset').onclick=async()=>{
+  document.getElementById('log').textContent='Mereset...';
+  await fetch('https://kasih-kopdes-default-rtdb.asia-southeast1.firebasedatabase.app/kdmp_kasih/v5_auth/users.json',{method:'PUT',body:JSON.stringify([{username:'admin',password:'kasih123',role:'admin',name:'Manajer Utama'},{username:'kasih',password:'kasih123',role:'manager',name:'Admin Kasih'}])});
+  localStorage.clear();
+  document.getElementById('log').innerHTML='<b style="color:green">BERHASIL!</b><br><a href="stakeholder.html">Kembali ke stakeholder.html dan login admin/kasih123</a>';
+}
+</script>
+</body></html>
