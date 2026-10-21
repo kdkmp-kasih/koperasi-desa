@@ -2,15 +2,15 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KDMP V7.2 - Konversi Luas Ubin m2</title>
+<title>KDMP V7.4 FINAL - Luas Ubin & Edit Dusun FIX</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>body{font-family:Inter,sans-serif;padding-bottom:90px}.sticky-tabs{position:sticky;top:0;z-index:30}.bottom-tabs{position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-top:1px solid #e5e7eb;padding:8px 12px}</style>
 </head>
 <body class="bg-[#f8fafc] min-h-screen">
 <div class="max-w-7xl mx-auto p-3 md:p-6">
-<div class="bg-white rounded-[20px] shadow-sm border p-4 flex justify-between items-center sticky-tabs bg-white/90">
-<div class="flex items-center gap-3"><div id="kopLogoBox" class="w-12 h-12 bg-black rounded-xl flex items-center justify-center text-white font-bold overflow-hidden"><span>KDMP</span><img id="kopLogoImg" class="hidden w-full h-full object-cover"/></div><div><h1 class="font-extrabold">KDMP V7.2 Luas Ubin</h1><p class="text-xs text-gray-500"><span id="syncStatus" class="text-green-600">● Live</span> • <span id="userInfo"></span></p></div></div>
+<div class="bg-white rounded-[20px] shadow-sm border p-4 flex justify-between items-center sticky-tabs">
+<div class="flex items-center gap-3"><div id="kopLogoBox" class="w-12 h-12 bg-black rounded-xl flex items-center justify-center text-white font-bold overflow-hidden"><span>KDMP</span><img id="kopLogoImg" class="hidden w-full h-full object-cover"/></div><div><h1 class="font-extrabold">KDMP V7.4 FINAL FIX</h1><p class="text-xs text-gray-500"><span id="syncStatus" class="text-green-600">● Live</span> • <span id="userInfo"></span> • <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Anti Hilang Data</span></p></div></div>
 <div class="flex gap-2"><button id="btnChangePass" class="hidden bg-gray-100 px-3 py-2 rounded-xl text-xs">Ganti Pass</button><button id="btnLogin" class="bg-black text-white px-4 py-2 rounded-xl text-sm font-bold">Login</button></div>
 </div>
 <div id="kopPreview" class="hidden mt-3 bg-white rounded-[20px] border overflow-hidden"><img id="kopPreviewImg" class="w-full max-h-[180px] object-contain"/></div>
@@ -18,40 +18,32 @@
 <button data-tab="1" class="tabBtn flex-1 py-3 rounded-xl bg-black text-white font-bold text-sm">📊 Dash</button>
 <button data-tab="2" class="tabBtn flex-1 py-3 rounded-xl bg-gray-50 text-sm">🔒 Desil & Kerja</button>
 <button data-tab="3" class="tabBtn flex-1 py-3 rounded-xl bg-gray-50 text-sm">🔒 Survey Warga</button>
-<button data-tab="4" class="tabBtn flex-1 py-3 rounded-xl bg-gray-50 text-sm">🔒 Laporan Cantik</button>
+<button data-tab="4" class="tabBtn flex-1 py-3 rounded-xl bg-gray-50 text-sm">🔒 Laporan & Kelola</button>
 </div>
+
+<div id="tab1" class="tabPanel mt-4 space-y-4"><div class="grid md:grid-cols-4 gap-3"><div class="bg-black text-white rounded-[20px] p-5"><div class="text-xs opacity-70">Total Penduduk</div><div id="statTotal" class="text-3xl font-extrabold">0</div><div class="text-xs mt-2">L:<span id="statLaki">0</span> P:<span id="statPerempuan">0</span></div></div><div class="bg-white border rounded-[20px] p-5"><div class="text-xs">Desil UMUM</div><div id="statDesil" class="text-3xl font-extrabold">0</div></div><div class="bg-white border rounded-[20px] p-5"><div class="text-xs">Omzet</div><div id="statOmzet" class="text-xl font-extrabold">Rp 0</div></div><div class="bg-white border rounded-[20px] p-5"><div class="text-xs">Survey Warga</div><div id="statSurvey" class="text-2xl font-extrabold">0</div></div></div><div class="bg-white rounded-[20px] border p-5"><h3 class="font-bold">Info Konversi Luas</h3><div class="mt-3 grid md:grid-cols-3 gap-2 text-xs"><div class="bg-emerald-50 border p-3 rounded-xl">1 ubin = 14.0625 m²</div><div class="bg-blue-50 border p-3 rounded-xl">1 Ha = 10.000 m²</div><div class="bg-yellow-50 border p-3 rounded-xl">1 Ha = 711.11 ubin</div></div></div></div>
 
 <div id="tab3" class="tabPanel mt-4 space-y-4">
 <div class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-[24px] p-6">
-<h2 class="font-extrabold text-xl">📋 Survey Perorangan + Konversi Luas Otomatis</h2>
-<div class="mt-3 bg-black/20 rounded-xl p-3 text-xs grid md:grid-cols-3 gap-2">
-<div>📐 1 ubin = 14.0625 m²</div>
-<div>📐 1 Ha = 10.000 m²</div>
-<div>📐 1 Ha = 711.11 ubin</div>
-</div>
-<p class="text-sm opacity-90 mt-3">Input luas bisa pilih satuan ubin / m² / Ha, otomatis terkonversi. Contoh: warga bilang "sawah 100 ubin" → otomatis jadi 1.406 m² = 0.14 Ha</p>
-<div class="mt-4 flex gap-2 flex-wrap"><button id="btnSurveyPotensi" class="bg-white text-emerald-700 px-5 py-2.5 rounded-xl font-bold text-sm">+ Survey Potensi Warga</button><button id="btnSurveyKonsumen" class="bg-black/30 backdrop-blur text-white px-5 py-2.5 rounded-xl font-bold text-sm border border-white/30">+ Survey Konsumen</button><button id="btnAutoConvert" class="bg-yellow-400 text-black px-5 py-2.5 rounded-xl font-bold text-sm">🔄 Convert Lama → Survey</button></div>
+<h2 class="font-extrabold text-xl">📋 Survey Perorangan + Konversi Luas Otomatis Ubin/m²/Ha</h2>
+<div class="mt-3 bg-black/20 rounded-xl p-3 text-xs grid md:grid-cols-3 gap-2"><div>📐 1 ubin = 14.0625 m²</div><div>📐 1 Ha = 10.000 m²</div><div>📐 1 Ha = 711.11 ubin</div></div>
+<p class="text-sm opacity-90 mt-3">Input luas bisa pilih ubin/m²/Ha, otomatis konversi. Contoh: warga bilang "sawah 100 ubin" → otomatis jadi 1.406 m² = 0.14 Ha. Edit dusun & RT/RW di Tab 4.</p>
+<div class="mt-4 flex gap-2 flex-wrap"><button id="btnSurveyPotensi" class="bg-white text-emerald-700 px-5 py-2.5 rounded-xl font-bold text-sm">+ Survey Potensi Warga (Ubin/m²/Ha)</button><button id="btnSurveyKonsumen" class="bg-black/30 backdrop-blur text-white px-5 py-2.5 rounded-xl font-bold text-sm border border-white/30">+ Survey Konsumen</button><button id="btnAutoConvert" class="bg-yellow-400 text-black px-5 py-2.5 rounded-xl font-bold text-sm">🔄 Convert Lama → Survey</button></div>
 <div id="convertInfo" class="mt-3 text-xs bg-black/20 p-3 rounded-xl hidden"></div>
-</div>
-<div class="grid md:grid-cols-2 gap-4">
-<div class="bg-white rounded-[20px] border p-5"><div class="flex justify-between"><h3 class="font-bold">🌾 Survey Potensi (Per Orang) - Luas Auto Convert</h3><span id="countSurveyPotensi" class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">0</span></div><div id="surveyPotensiList" class="mt-4 grid gap-3 max-h-[600px] overflow-y-auto"></div><div id="surveyPotensiRangkuman" class="mt-6"></div></div>
-<div class="bg-white rounded-[20px] border p-5"><div class="flex justify-between"><h3 class="font-bold">🛒 Survey Konsumen (Per Orang)</h3><span id="countSurveyKonsumen" class="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full">0</span></div><div id="surveyKonsumenList" class="mt-4 grid gap-3 max-h-[500px] overflow-y-auto"></div><div id="surveyKonsumenRangkuman" class="mt-6"></div></div>
-</div>
-<div class="bg-white rounded-[20px] border p-5"><h3 class="font-bold">🔄 Agregat Potensi (Luas dalam Ha, m², ubin)</h3><div id="potensiList" class="mt-4 grid md:grid-cols-3 gap-4"></div><div id="potensiRangkuman" class="mt-6"></div></div>
 </div>
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KDMP V7.3 - Edit Dusun RT RW</title>
+<title>KDMP V7.4 FINAL - Luas Ubin & Edit Dusun FIX</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>body{font-family:Inter,sans-serif;padding-bottom:90px}.sticky-tabs{position:sticky;top:0;z-index:30}.bottom-tabs{position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-top:1px solid #e5e7eb;padding:8px 12px}</style>
 </head>
 <body class="bg-[#f8fafc] min-h-screen">
 <div class="max-w-7xl mx-auto p-3 md:p-6">
-<div class="bg-white rounded-[20px] shadow-sm border p-4 flex justify-between items-center sticky-tabs bg-white/90">
-<div class="flex items-center gap-3"><div id="kopLogoBox" class="w-12 h-12 bg-black rounded-xl flex items-center justify-center text-white font-bold overflow-hidden"><span>KDMP</span><img id="kopLogoImg" class="hidden w-full h-full object-cover"/></div><div><h1 class="font-extrabold">KDMP V7.3 Edit Dusun</h1><p class="text-xs text-gray-500"><span id="syncStatus" class="text-green-600">● Live</span> • <span id="userInfo"></span></p></div></div>
+<div class="bg-white rounded-[20px] shadow-sm border p-4 flex justify-between items-center sticky-tabs">
+<div class="flex items-center gap-3"><div id="kopLogoBox" class="w-12 h-12 bg-black rounded-xl flex items-center justify-center text-white font-bold overflow-hidden"><span>KDMP</span><img id="kopLogoImg" class="hidden w-full h-full object-cover"/></div><div><h1 class="font-extrabold">KDMP V7.4 FINAL FIX</h1><p class="text-xs text-gray-500"><span id="syncStatus" class="text-green-600">● Live</span> • <span id="userInfo"></span> • <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Anti Hilang Data</span></p></div></div>
 <div class="flex gap-2"><button id="btnChangePass" class="hidden bg-gray-100 px-3 py-2 rounded-xl text-xs">Ganti Pass</button><button id="btnLogin" class="bg-black text-white px-4 py-2 rounded-xl text-sm font-bold">Login</button></div>
 </div>
 <div id="kopPreview" class="hidden mt-3 bg-white rounded-[20px] border overflow-hidden"><img id="kopPreviewImg" class="w-full max-h-[180px] object-contain"/></div>
@@ -59,48 +51,19 @@
 <button data-tab="1" class="tabBtn flex-1 py-3 rounded-xl bg-black text-white font-bold text-sm">📊 Dash</button>
 <button data-tab="2" class="tabBtn flex-1 py-3 rounded-xl bg-gray-50 text-sm">🔒 Desil & Kerja</button>
 <button data-tab="3" class="tabBtn flex-1 py-3 rounded-xl bg-gray-50 text-sm">🔒 Survey Warga</button>
-<button data-tab="4" class="tabBtn flex-1 py-3 rounded-xl bg-gray-50 text-sm">🔒 Laporan Cantik</button>
+<button data-tab="4" class="tabBtn flex-1 py-3 rounded-xl bg-gray-50 text-sm">🔒 Laporan & Kelola</button>
 </div>
+
+<div id="tab1" class="tabPanel mt-4 space-y-4"><div class="grid md:grid-cols-4 gap-3"><div class="bg-black text-white rounded-[20px] p-5"><div class="text-xs opacity-70">Total Penduduk</div><div id="statTotal" class="text-3xl font-extrabold">0</div><div class="text-xs mt-2">L:<span id="statLaki">0</span> P:<span id="statPerempuan">0</span></div></div><div class="bg-white border rounded-[20px] p-5"><div class="text-xs">Desil UMUM</div><div id="statDesil" class="text-3xl font-extrabold">0</div></div><div class="bg-white border rounded-[20px] p-5"><div class="text-xs">Omzet</div><div id="statOmzet" class="text-xl font-extrabold">Rp 0</div></div><div class="bg-white border rounded-[20px] p-5"><div class="text-xs">Survey Warga</div><div id="statSurvey" class="text-2xl font-extrabold">0</div></div></div><div class="bg-white rounded-[20px] border p-5"><h3 class="font-bold">Info Konversi Luas</h3><div class="mt-3 grid md:grid-cols-3 gap-2 text-xs"><div class="bg-emerald-50 border p-3 rounded-xl">1 ubin = 14.0625 m²</div><div class="bg-blue-50 border p-3 rounded-xl">1 Ha = 10.000 m²</div><div class="bg-yellow-50 border p-3 rounded-xl">1 Ha = 711.11 ubin</div></div></div></div>
 
 <div id="tab3" class="tabPanel mt-4 space-y-4">
 <div class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-[24px] p-6">
-<h2 class="font-extrabold text-xl">📋 Survey Perorangan + Edit Dusun/RT RW</h2>
-<div class="mt-3 bg-black/20 rounded-xl p-3 text-xs grid md:grid-cols-3 gap-2">
-<div>📐 1 ubin = 14.0625 m²</div>
-<div>📐 1 Ha = 10.000 m²</div>
-<div>📐 1 Ha = 711.11 ubin</div>
-</div>
-<p class="text-sm opacity-90 mt-3">Input luas bisa ubin/m²/Ha auto convert. Nama dusun & RT/RW bisa diganti di Tab 4.</p>
-<div class="mt-4 flex gap-2 flex-wrap"><button id="btnSurveyPotensi" class="bg-white text-emerald-700 px-5 py-2.5 rounded-xl font-bold text-sm">+ Survey Potensi Warga</button><button id="btnSurveyKonsumen" class="bg-black/30 backdrop-blur text-white px-5 py-2.5 rounded-xl font-bold text-sm border border-white/30">+ Survey Konsumen</button><button id="btnAutoConvert" class="bg-yellow-400 text-black px-5 py-2.5 rounded-xl font-bold text-sm">🔄 Convert Lama → Survey</button></div>
+<h2 class="font-extrabold text-xl">📋 Survey Perorangan + Konversi Luas Otomatis Ubin/m²/Ha</h2>
+<div class="mt-3 bg-black/20 rounded-xl p-3 text-xs grid md:grid-cols-3 gap-2"><div>📐 1 ubin = 14.0625 m²</div><div>📐 1 Ha = 10.000 m²</div><div>📐 1 Ha = 711.11 ubin</div></div>
+<p class="text-sm opacity-90 mt-3">Input luas bisa pilih ubin/m²/Ha, otomatis konversi. Contoh: warga bilang "sawah 100 ubin" → otomatis jadi 1.406 m² = 0.14 Ha. Edit dusun & RT/RW di Tab 4.</p>
+<div class="mt-4 flex gap-2 flex-wrap"><button id="btnSurveyPotensi" class="bg-white text-emerald-700 px-5 py-2.5 rounded-xl font-bold text-sm">+ Survey Potensi Warga (Ubin/m²/Ha)</button><button id="btnSurveyKonsumen" class="bg-black/30 backdrop-blur text-white px-5 py-2.5 rounded-xl font-bold text-sm border border-white/30">+ Survey Konsumen</button><button id="btnAutoConvert" class="bg-yellow-400 text-black px-5 py-2.5 rounded-xl font-bold text-sm">🔄 Convert Lama → Survey</button></div>
 <div id="convertInfo" class="mt-3 text-xs bg-black/20 p-3 rounded-xl hidden"></div>
 </div>
-<div id="tab1" class="tabPanel mt-4 hidden space-y-4"><div class="grid md:grid-cols-4 gap-3"><div class="bg-black text-white rounded-[20px] p-5"><div class="text-xs opacity-70">Total Penduduk</div><div id="statTotal" class="text-3xl font-extrabold">0</div></div><div class="bg-white border rounded-[20px] p-5"><div class="text-xs">Desil UMUM</div><div id="statDesil" class="text-3xl font-extrabold">0</div></div><div class="bg-white border rounded-[20px] p-5"><div class="text-xs">Omzet</div><div id="statOmzet" class="text-xl font-extrabold">Rp 0</div></div><div class="bg-white border rounded-[20px] p-5"><div class="text-xs">Survey Warga</div><div id="statSurvey" class="text-2xl font-extrabold">0</div></div></div></div>
-<div id="tab2" class="tabPanel mt-4 hidden space-y-4"><div id="tab2Locked" class="bg-white rounded-[20px] border p-10 text-center"><h2 class="font-bold">🔒 Terkunci</h2><button onclick="showLogin()" class="mt-4 bg-black text-white px-6 py-2.5 rounded-xl">Login</button></div><div id="tab2Content" class="hidden space-y-4"><div class="bg-white rounded-[20px] border p-5"><div class="flex justify-between"><h2 class="font-bold">📑 Desil</h2><button id="addDesilBtn" class="bg-black text-white px-4 py-2 rounded-xl text-sm">+ Tambah Desil</button></div><div id="desilList" class="mt-5 grid gap-3"></div><div id="desilSummaryBox" class="mt-4"></div></div><div class="bg-white rounded-[20px] border p-5"><div class="flex justify-between"><h2 class="font-bold">💼 Pekerjaan</h2><button id="addPekerjaanDataBtn" class="bg-black text-white px-4 py-2 rounded-xl text-sm">+ Tambah</button></div><div id="pekerjaanList" class="mt-4 grid gap-3"></div><div id="pekerjaanRangkuman" class="mt-6"></div></div></div></div>
-
-<div id="tab4" class="tabPanel mt-4 hidden space-y-4"><div id="tab4Locked" class="bg-white rounded-[20px] border p-10 text-center"><h2 class="font-bold">🔒 Terkunci</h2><button onclick="showLogin()" class="mt-4 bg-black text-white px-6 py-2.5 rounded-xl">Login</button></div><div id="tab4Content" class="hidden space-y-4">
-
-<div class="bg-white rounded-[24px] border overflow-hidden"><div class="bg-gradient-to-r from-black to-gray-800 p-6 text-white flex gap-4 items-center"><div id="kopLogoBox2" class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-black font-black overflow-hidden"><span id="kopLogoText2">KDMP</span><img id="kopLogoImg2" class="hidden w-full h-full object-cover"/></div><div><h2 class="font-black text-xl">Koperasi Desa Merah Putih - Kasih</h2></div></div><div class="p-6 grid md:grid-cols-2 gap-6"><div class="space-y-3"><h3 class="font-bold text-sm uppercase tracking-widest text-gray-400">Identitas</h3><div class="grid gap-3 text-sm"><div><label class="text-xs font-semibold">Upload Kop Surat / Logo</label><input id="kopFotoInput" type="file" accept="image/*" class="border rounded-xl p-2 w-full text-xs"/></div><div class="grid grid-cols-2 gap-2"><div><label class="text-xs font-bold">NIK</label><input id="kop_nik" class="w-full border-2 border-black/10 rounded-xl p-3 font-semibold"/></div><div><label class="text-xs font-bold">NIB</label><input id="kop_nib" class="w-full border-2 border-black/10 rounded-xl p-3 font-semibold"/></div></div><div><label class="text-xs font-bold">SK</label><input id="kop_sk" class="w-full border-2 border-black/10 rounded-xl p-3"/></div></div></div><div class="space-y-3"><h3 class="font-bold text-sm uppercase tracking-widest text-gray-400">Demografi</h3><div class="grid grid-cols-3 gap-3"><div class="bg-black text-white rounded-2xl p-4 text-center"><div class="text-[11px] opacity-70">TOTAL</div><input id="kop_total" type="number" class="w-full bg-transparent text-2xl font-black text-center outline-none"/></div><div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 text-center"><div class="text-[11px] text-blue-600">LAKI</div><input id="kop_laki" type="number" class="w-full bg-transparent text-2xl font-black text-center outline-none"/></div><div class="bg-pink-50 border border-pink-100 rounded-2xl p-4 text-center"><div class="text-[11px] text-pink-600">PEREMPUAN</div><input id="kop_perempuan" type="number" class="w-full bg-transparent text-2xl font-black text-center outline-none"/></div></div><button id="saveKopdes" class="w-full bg-black text-white py-3.5 rounded-xl font-bold">💾 Simpan Kopdes</button><div id="kopdesPreviewCard" class="mt-2 border-2 border-dashed border-gray-200 rounded-xl p-4 text-center text-xs"></div></div></div></div>
-
-<div class="bg-white rounded-[24px] border p-6">
-<h3 class="font-black text-lg">🏘️ Kelola Nama Dusun & RT/RW (BISA DIEDIT!)</h3>
-<p class="text-xs text-gray-500 mt-1">Ganti nama dusun & RT/RW sesuai desa kamu. Misal: Kali Branjang → Krajan. Data lama otomatis ikut ganti nama.</p>
-<div class="mt-4 grid md:grid-cols-2 gap-6">
-<div>
-<div class="flex justify-between items-center"><h4 class="font-bold text-sm">Daftar Dusun</h4><button id="addDusunBtn" class="bg-black text-white px-3 py-1.5 rounded-xl text-xs">+ Tambah Dusun</button></div>
-<div id="dusunList" class="mt-3 grid gap-2 max-h-[300px] overflow-y-auto"></div>
-</div>
-<div>
-<div class="flex justify-between items-center"><h4 class="font-bold text-sm">Daftar RT/RW</h4><button id="addRtrwBtn" class="bg-black text-white px-3 py-1.5 rounded-xl text-xs">+ Tambah RT/RW</button></div>
-<div id="rtrwList" class="mt-3 grid gap-2 max-h-[300px] overflow-y-auto"></div>
-</div>
-</div>
-<div class="mt-4 bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-xs">
-<b>Cara ganti:</b> Klik Edit di dusun → ketik nama baru → OK → semua data survey, desil, pekerjaan yang pakai nama lama otomatis diganti ke nama baru. Tidak perlu edit satu-satu!
-</div>
-</div>
-
-<div class="grid md:grid-cols-2 gap-4"><div class="bg-white rounded-[20px] border p-5"><h3 class="font-bold">👤 Akun Saya</h3><div id="myAccountBox" class="mt-3 bg-gray-50 p-4 rounded-xl text-sm"></div></div><div class="bg-white rounded-[20px] border p-5"><h3 class="font-bold">🔐 Manajemen Akun</h3><button id="addAccountBtn" class="mt-3 bg-black text-white px-4 py-2 rounded-xl text-sm w-full">+ Tambah Akun</button><div id="accountList" class="mt-3 grid gap-2"></div></div></div>
-<div class="bg-gradient-to-br from-zinc-900 to-black text-white rounded-[24px] p-6"><h2 class="font-black text-2xl">📄 Laporan Builder V7.3</h2><p class="text-xs opacity-60 mt-1">Tanpa nomor per tab. Rangkuman & Analisis dipisah. PDF & DOCX. Luas ubin/m²/Ha.</p><div class="mt-5 grid md:grid-cols-3 gap-4 text-sm"><div class="bg-white/10 rounded-xl p-4 space-y-3"><h4 class="font-bold text-xs uppercase opacity-60">Kopdes</h4><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="kopdes" checked> Kopdes Identitas</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="kopdesRangkuman" checked> Rangkuman Kopdes</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="kopFoto" checked> Logo/Kop Surat</label></div><div class="bg-white/10 rounded-xl p-4 space-y-3"><h4 class="font-bold text-xs uppercase opacity-60">Tab Desil & Kerja</h4><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="desilUmum"> Desil</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="desilRangkuman" checked> Rangkuman Desil</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="desilAnalisis" checked> Analisis Desil</label><label class="flex items-center gap-2 mt-2"><input type="checkbox" class="repCheck" data-key="pekerjaanAll" checked> Pekerjaan</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="pekerjaanRangkuman" checked> Rangkuman Pekerjaan</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="pekerjaanAnalisis" checked> Analisis Pekerjaan</label></div><div class="bg-white/10 rounded-xl p-4 space-y-3"><h4 class="font-bold text-xs uppercase opacity-60">Tab Survey Warga</h4><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="surveyPotensi" checked> Data Survey Potensi</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="potensiRangkuman" checked> Rangkuman Potensi (Ha/m²/ubin)</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="potensiAnalisis" checked> Analisis Potensi</label><label class="flex items-center gap-2 mt-2"><input type="checkbox" class="repCheck" data-key="surveyKonsumen" checked> Data Survey Konsumen</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="konsumenRangkuman" checked> Rangkuman Konsumen</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="konsumenAnalisis" checked> Analisis Konsumen</label></div><div class="bg-white/10 rounded-xl p-4 space-y-3"><h4 class="font-bold text-xs uppercase opacity-60">Stakeholder & Kontak</h4><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="stakeholder" checked> Stakeholder</label><label class="flex items-center gap-2"><input type="checkbox" class="repCheck" data-key="includeHP" checked> Sertakan No HP/WA</label></div></div><div class="mt-5 grid md:grid-cols-3 gap-2"><button id="btnPreviewLaporan" class="bg-white text-black py-3 rounded-xl font-bold">👁️ Preview</button><button id="btnDownloadLaporan" class="bg-yellow-400 text-black py-3 rounded-xl font-bold">📥 PDF</button><button id="btnDownloadDocx" class="bg-blue-500 text-white py-3 rounded-xl font-bold">📝 DOCX</button></div><div id="laporanPreview" class="mt-6 bg-white text-black rounded-[20px] p-6 hidden"></div></div>
 <div class="bg-white rounded-[20px] border p-5"><div class="flex justify-between"><h3 class="font-bold">👥 Stakeholder</h3><button id="addStakeholderBtn" class="bg-black text-white px-4 py-2 rounded-xl text-sm">+ Tambah</button></div><div id="stakeholderList" class="mt-4 grid md:grid-cols-2 gap-3"></div></div>
 </div></div>
 </div>
@@ -112,92 +75,66 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const firebaseConfig={apiKey:"AIzaSyBP1lvYR22XOf-IC_34gHEEkfolSthDTzo",authDomain:"kasih-kopdes.firebaseapp.com",databaseURL:"https://kasih-kopdes-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"kasih-kopdes",storageBucket:"kasih-kopdes.firebasestorage.app",messagingSenderId:"746954171317",appId:"1:746954171317:web:e51e1dbc5ea0d206ce2ffc"};
 const app=initializeApp(firebaseConfig); const db=getDatabase(app);
-const LS_KEY='kdmp_v7_survey'; const defaultData={dusuns:['Kali Branjang','Lambegan','Kalireja','Kasih Lor'],rtrw:['RT 01/RW 01','RT 02/RW 01','RT 03/RW 01','RT 04/RW 02','RT 05/RW 02','RT 06/RW 03','RT 07/RW 03','RT 08/RW 04','RT 09/RW 04'],pekerjaans:['Petani','Buruh Tani','Pedagang','PNS','Wiraswasta'],jenisKonsumen:['Sembako','Sayur','Pangan Olahan','Jasa','Lainnya'],stakeholders:[],desil:[],pekerjaanData:[],potensiData:[],surveyPotensi:[],surveyKonsumen:[],kopdes:{nik:'',nib:'',sk:'',total:0,laki:0,perempuan:0,kopFoto:''},pengurus:[],pengawas:[],users:[{username:'admin',password:'kasih123',role:'admin',name:'Manajer Utama'}]};
-let data=null; try{data=JSON.parse(localStorage.getItem(LS_KEY)||'null')}catch(e){} if(!data){ try{let old=localStorage.getItem('kdmp_v6_final')||localStorage.getItem('kdmp_v5_auth'); if(old) data=JSON.parse(old);}catch(e){} } if(!data) data=JSON.parse(JSON.stringify(defaultData)); else { data={...defaultData,...data,kopdes:{...defaultData.kopdes,...(data.kopdes||{})}, surveyPotensi:data.surveyPotensi||[], surveyKonsumen:data.surveyKonsumen||[], potensiData:data.potensiData||[], dusuns:data.dusuns||defaultData.dusuns, rtrw:data.rtrw||defaultData.rtrw, users: (data.users&&data.users.length>0)?data.users:defaultData.users}; }
+const LS_KEY='kdmp_v7_survey';
+const defaultData={dusuns:['Kali Branjang','Lambegan','Kalireja','Kasih Lor'],rtrw:['RT 01/RW 01','RT 02/RW 01','RT 03/RW 01','RT 04/RW 02','RT 05/RW 02','RT 06/RW 03','RT 07/RW 03','RT 08/RW 04','RT 09/RW 04'],pekerjaans:['Petani','Buruh Tani','Pedagang','PNS','Wiraswasta'],jenisKonsumen:['Sembako','Sayur','Pangan Olahan','Jasa','Lainnya'],stakeholders:[],desil:[],pekerjaanData:[],potensiData:[],surveyPotensi:[],surveyKonsumen:[],kopdes:{nik:'',nib:'',sk:'',total:0,laki:0,perempuan:0,kopFoto:''},pengurus:[],pengawas:[],users:[{username:'admin',password:'kasih123',role:'admin',name:'Manajer Utama'}]};
+
+let data=null;
+try{ let raw=localStorage.getItem(LS_KEY); if(raw){ let parsed=JSON.parse(raw); if(parsed && (Object.keys(parsed).length>0)) data=parsed; }}catch(e){}
+if(!data){ let candidates=['kdmp_v6_final','kdmp_v5_auth','kdmp_v4_dashboard']; for(let ck of candidates){ try{ let old=localStorage.getItem(ck); if(old){ let od=JSON.parse(old); if(od && ((od.desil&&od.desil.length>0)||(od.potensiData&&od.potensiData.length>0)||(od.surveyPotensi&&od.surveyPotensi.length>0))){ data=od; break; } } }catch(e){} } }
+if(!data) data=JSON.parse(JSON.stringify(defaultData));
+else{ data={ dusuns: (data.dusuns && data.dusuns.length>0) ? data.dusuns : defaultData.dusuns, rtrw: (data.rtrw && data.rtrw.length>0) ? data.rtrw : defaultData.rtrw, pekerjaans: data.pekerjaans||defaultData.pekerjaans, jenisKonsumen: data.jenisKonsumen||defaultData.jenisKonsumen, stakeholders: data.stakeholders||[], desil: data.desil||[], pekerjaanData: data.pekerjaanData||[], potensiData: data.potensiData||[], surveyPotensi: data.surveyPotensi||[], surveyKonsumen: data.surveyKonsumen||[], kopdes: {...defaultData.kopdes,...(data.kopdes||{})}, pengurus: data.pengurus||[], pengawas: data.pengawas||[], users: (data.users&&data.users.length>0)?data.users:defaultData.users, konsumenData: data.konsumenData||[] }; }
+
 let currentUser=null; try{currentUser=JSON.parse(localStorage.getItem('kdmp_current_user')||'null')}catch(e){} let fromCloud=false;
-function save(){ localStorage.setItem(LS_KEY,JSON.stringify(data)); renderAll(); if(!fromCloud){ set(ref(db,'kdmp_kasih/v7_survey'),data).then(()=>{document.getElementById('syncStatus').textContent='Live '+new Date().toLocaleTimeString();}); document.getElementById('syncStatus').textContent='Menyimpan...'; }}
-function listen(){ onValue(ref(db,'kdmp_kasih/v7_survey'),snap=>{ const remote=snap.val(); if(remote){ fromCloud=true; data={...defaultData,...remote,kopdes:{...defaultData.kopdes,...(remote.kopdes||{})}, surveyPotensi:remote.surveyPotensi||[], surveyKonsumen:remote.surveyKonsumen||[], potensiData:remote.potensiData||[], dusuns:remote.dusuns||defaultData.dusuns, rtrw:remote.rtrw||defaultData.rtrw, users: (remote.users&&remote.users.length>0)?remote.users:defaultData.users}; localStorage.setItem(LS_KEY,JSON.stringify(data)); renderAll(); document.getElementById('syncStatus').textContent='Live '+new Date().toLocaleTimeString(); setTimeout(()=>fromCloud=false,800);} });}
+function save(){ localStorage.setItem(LS_KEY,JSON.stringify(data)); localStorage.setItem(LS_KEY+'_backup_'+new Date().toISOString().slice(0,10),JSON.stringify(data)); renderAll(); if(!fromCloud){ set(ref(db,'kdmp_kasih/v7_survey'),data).then(()=>{document.getElementById('syncStatus').textContent='Live '+new Date().toLocaleTimeString();}); document.getElementById('syncStatus').textContent='Menyimpan...'; } }
+function listen(){ onValue(ref(db,'kdmp_kasih/v7_survey'),snap=>{ const remote=snap.val(); if(remote && (remote.desil?.length>0 || remote.surveyPotensi?.length>0 || remote.potensiData?.length>0)){ if(!data || (data.desil.length===0 && data.surveyPotensi.length===0 && remote.desil.length>0)){ fromCloud=true; data={ dusuns: (remote.dusuns && remote.dusuns.length>0) ? remote.dusuns : defaultData.dusuns, rtrw: (remote.rtrw && remote.rtrw.length>0) ? remote.rtrw : defaultData.rtrw, pekerjaans: remote.pekerjaans||defaultData.pekerjaans, jenisKonsumen: remote.jenisKonsumen||defaultData.jenisKonsumen, stakeholders: remote.stakeholders||[], desil: remote.desil||[], pekerjaanData: remote.pekerjaanData||[], potensiData: remote.potensiData||[], surveyPotensi: remote.surveyPotensi||[], surveyKonsumen: remote.surveyKonsumen||[], kopdes: {...defaultData.kopdes,...(remote.kopdes||{})}, pengurus: remote.pengurus||[], pengawas: remote.pengawas||[], users: (remote.users&&remote.users.length>0)?remote.users:defaultData.users }; localStorage.setItem(LS_KEY,JSON.stringify(data)); renderAll(); setTimeout(()=>fromCloud=false,1000); } } document.getElementById('syncStatus').textContent='Live '+new Date().toLocaleTimeString(); }); }
 function convertLuas(nilai, dari, ke){ const UBIN_TO_M2=14.0625; let m2=0; if(dari==='ubin') m2=nilai*UBIN_TO_M2; else if(dari==='m2') m2=nilai; else if(dari==='Ha'||dari==='ha') m2=nilai*10000; if(ke==='m2') return m2; if(ke==='ubin') return m2/UBIN_TO_M2; if(ke==='Ha') return m2/10000; return m2; }
 window.convertLuas=convertLuas;
 window.renderDusunRtrwLists=()=>{
-let dl=document.getElementById('dusunList');
-if(dl){ dl.innerHTML=data.dusuns.map((d,i)=>'<div class="border rounded-xl p-3 flex justify-between items-center bg-gray-50 text-sm"><div><b>'+d+'</b><div class="text-[11px] text-gray-500">'+((data.surveyPotensi||[]).filter(s=>s.dusun===d).length + (data.surveyKonsumen||[]).filter(s=>s.dusun===d).length)+' data pakai dusun ini</div></div><div class="flex gap-1"><button onclick="editDusun('+i+')" class="bg-white border px-2 py-1 rounded-lg text-xs">Edit</button><button onclick="delDusun('+i+')" class="bg-red-50 px-2 py-1 rounded-lg text-xs">Hapus</button></div></div>').join('')||'<div class="text-xs text-gray-400">Belum ada dusun</div>'; }
-let rl=document.getElementById('rtrwList');
-if(rl){ rl.innerHTML=data.rtrw.map((r,i)=>'<div class="border rounded-xl p-3 flex justify-between items-center bg-gray-50 text-sm"><div><b>'+r+'</b></div><div class="flex gap-1"><button onclick="editRtrw('+i+')" class="bg-white border px-2 py-1 rounded-lg text-xs">Edit</button><button onclick="delRtrw('+i+')" class="bg-red-50 px-2 py-1 rounded-lg text-xs">Hapus</button></div></div>').join('')||'<div class="text-xs text-gray-400">Belum ada RT/RW</div>'; }
+  let dl=document.getElementById('dusunList');
+  if(dl){ dl.innerHTML=data.dusuns.map((d,i)=>'<div class="border rounded-xl p-3 flex justify-between items-center bg-gray-50 text-sm"><div><b>'+d+'</b><div class="text-[11px] text-gray-500">'+((data.surveyPotensi||[]).filter(s=>s.dusun===d).length + (data.surveyKonsumen||[]).filter(s=>s.dusun===d).length + (data.potensiData||[]).filter(p=>p.dusun===d).length)+' data pakai dusun ini</div></div><div class="flex gap-1"><button onclick="editDusun('+i+')" class="bg-white border px-2 py-1 rounded-lg text-xs">Edit</button><button onclick="delDusun('+i+')" class="bg-red-50 px-2 py-1 rounded-lg text-xs">Hapus</button></div></div>').join('')||'<div class="text-xs text-gray-400">Belum ada dusun</div>'; }
+  let rl=document.getElementById('rtrwList');
+  if(rl){ rl.innerHTML=data.rtrw.map((r,i)=>'<div class="border rounded-xl p-3 flex justify-between items-center bg-gray-50 text-sm"><div><b>'+r+'</b><div class="text-[11px] text-gray-500">'+((data.surveyPotensi||[]).filter(s=>s.rtrw===r).length)+' survey pakai</div></div><div class="flex gap-1"><button onclick="editRtrw('+i+')" class="bg-white border px-2 py-1 rounded-lg text-xs">Edit</button><button onclick="delRtrw('+i+')" class="bg-red-50 px-2 py-1 rounded-lg text-xs">Hapus</button></div></div>').join('')||'<div class="text-xs text-gray-400">Belum ada RT/RW</div>'; }
 };
-window.editDusun=(i)=>{
-let oldName=data.dusuns[i];
-openModal('Edit Nama Dusun',[{id:'nama',label:'Nama Dusun Baru',value:oldName}],v=>{
-let newName=v.nama.trim(); if(!newName) return;
-if(confirm('Ganti "'+oldName+'" jadi "'+newName+'"? Semua data survey, desil, pekerjaan yang pakai "'+oldName+'" akan otomatis diganti ke "'+newName+'"?')){
-data.dusuns[i]=newName;
-(data.surveyPotensi||[]).forEach(s=>{ if(s.dusun===oldName) s.dusun=newName; });
-(data.surveyKonsumen||[]).forEach(s=>{ if(s.dusun===oldName) s.dusun=newName; });
-(data.potensiData||[]).forEach(p=>{ if(p.dusun===oldName) p.dusun=newName; });
-(data.desil||[]).forEach(d=>{ (d.details||[]).forEach(det=>{ if(det.dusun===oldName) det.dusun=newName; }); });
-(data.pekerjaanData||[]).forEach(p=>{ (p.details||[]).forEach(det=>{ if(det.dusun===oldName) det.dusun=newName; }); });
-(data.stakeholders||[]).forEach(s=>{ if(s.dusun===oldName) s.dusun=newName; });
-save(); alert('Nama dusun diganti & data otomatis migrasi!');
-} else { data.dusuns[i]=newName; save(); }
-});
-};
-window.delDusun=(i)=>{ let name=data.dusuns[i]; if(!confirm('Hapus dusun "'+name+'"?')) return; data.dusuns.splice(i,1); save(); };
-window.editRtrw=(i)=>{
-let oldName=data.rtrw[i];
-openModal('Edit RT/RW',[{id:'nama',label:'Nama RT/RW Baru',value:oldName}],v=>{
-let newName=v.nama.trim(); if(!newName) return;
-if(confirm('Ganti "'+oldName+'" jadi "'+newName+'"? Data akan otomatis migrasi?')){
-data.rtrw[i]=newName;
-(data.surveyPotensi||[]).forEach(s=>{ if(s.rtrw===oldName) s.rtrw=newName; });
-(data.surveyKonsumen||[]).forEach(s=>{ if(s.rtrw===oldName) s.rtrw=newName; });
-(data.desil||[]).forEach(d=>{ (d.details||[]).forEach(det=>{ if(det.rtrw===oldName) det.rtrw=newName; }); });
-(data.pekerjaanData||[]).forEach(p=>{ (p.details||[]).forEach(det=>{ if(det.rtrw===oldName) det.rtrw=newName; }); });
-save(); alert('RT/RW diganti & data migrasi!');
-} else { data.rtrw[i]=newName; save(); }
-});
-};
-window.delRtrw=(i)=>{ if(!confirm('Hapus RT/RW "'+data.rtrw[i]+'"?')) return; data.rtrw.splice(i,1); save(); };
+window.editDusun=(i)=>{ let oldName=data.dusuns[i]; openModal('Edit Nama Dusun',[{id:'nama',label:'Nama Dusun Baru (contoh: Dusun Krajan)',value:oldName}],v=>{ let newName=v.nama.trim(); if(!newName) return; if(confirm('Ganti "'+oldName+'" jadi "'+newName+'"? Semua data yang pakai "'+oldName+'" akan otomatis diganti ke "'+newName+'"?')){ data.dusuns[i]=newName; (data.surveyPotensi||[]).forEach(s=>{ if(s.dusun===oldName) s.dusun=newName; }); (data.surveyKonsumen||[]).forEach(s=>{ if(s.dusun===oldName) s.dusun=newName; }); (data.potensiData||[]).forEach(p=>{ if(p.dusun===oldName) p.dusun=newName; }); (data.desil||[]).forEach(d=>{ (d.details||[]).forEach(det=>{ if(det.dusun===oldName) det.dusun=newName; }); }); (data.pekerjaanData||[]).forEach(p=>{ (p.details||[]).forEach(det=>{ if(det.dusun===oldName) det.dusun=newName; }); }); (data.stakeholders||[]).forEach(s=>{ if(s.dusun===oldName) s.dusun=newName; }); save(); alert('Nama dusun diganti & data otomatis migrasi ke "'+newName+'"!'); } else { data.dusuns[i]=newName; save(); } }); };
+window.delDusun=(i)=>{ let name=data.dusuns[i]; let used=(data.surveyPotensi||[]).filter(s=>s.dusun===name).length + (data.surveyKonsumen||[]).filter(s=>s.dusun===name).length; if(!confirm('Hapus dusun "'+name+'"? Ada '+used+' data pakai dusun ini. Data tidak akan terhapus, hanya dusunnya saja hilang dari daftar. Lanjut?')) return; data.dusuns.splice(i,1); save(); };
+window.editRtrw=(i)=>{ let oldName=data.rtrw[i]; openModal('Edit RT/RW',[{id:'nama',label:'Nama RT/RW Baru (contoh: RT 10/RW 05)',value:oldName}],v=>{ let newName=v.nama.trim(); if(!newName) return; if(confirm('Ganti "'+oldName+'" jadi "'+newName+'"? Data akan otomatis migrasi?')){ data.rtrw[i]=newName; (data.surveyPotensi||[]).forEach(s=>{ if(s.rtrw===oldName) s.rtrw=newName; }); (data.surveyKonsumen||[]).forEach(s=>{ if(s.rtrw===oldName) s.rtrw=newName; }); (data.desil||[]).forEach(d=>{ (d.details||[]).forEach(det=>{ if(det.rtrw===oldName) det.rtrw=newName; }); }); (data.pekerjaanData||[]).forEach(p=>{ (p.details||[]).forEach(det=>{ if(det.rtrw===oldName) det.rtrw=newName; }); }); save(); alert('RT/RW diganti & data migrasi!'); } else { data.rtrw[i]=newName; save(); } }); };
+window.delRtrw=(i)=>{ if(!confirm('Hapus RT/RW "'+data.rtrw[i]+'"? Data tidak terhapus, hanya hilang dari daftar.')) return; data.rtrw.splice(i,1); save(); };
 window.renderTabs=()=>{ const allBtns=document.querySelectorAll('.tabBtn,.bottomTabBtn'); allBtns.forEach(b=>{ b.onclick=()=>{ let tab=parseInt(b.dataset.tab); if(tab!==1 && !currentUser){ showLogin(); return; } document.querySelectorAll('.tabBtn').forEach(x=>x.className='tabBtn flex-1 py-3 rounded-xl bg-gray-50 text-sm'); document.querySelectorAll('.bottomTabBtn').forEach(x=>x.className='bottomTabBtn py-2.5 rounded-xl bg-gray-100 text-[11px]'); document.querySelectorAll('[data-tab="'+tab+'"]').forEach(x=>{ if(x.classList.contains('tabBtn')) x.className='tabBtn flex-1 py-3 rounded-xl bg-black text-white font-bold text-sm'; else x.className='bottomTabBtn py-2.5 rounded-xl bg-black text-white font-bold text-[11px]';}); document.querySelectorAll('.tabPanel').forEach(p=>p.classList.add('hidden')); document.getElementById('tab'+tab).classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'});}});}
 function calcTotals(entry){ let total=0; (entry.details||[]).forEach(d=>total+=d.jml); return total||entry.jml||entry.total||0; }
-function buildSummary(){
-let perDusunDesil={}, perDusunPotensiHa={}, perDusunPotensiM2={}, perDusunPotensiUbin={}, perJenisKonsumen={}, surveyPotensiAgg={};
-data.desil.forEach(d=>{ (d.details||[]).forEach(det=>{ perDusunDesil[det.dusun]=(perDusunDesil[det.dusun]||0)+det.jml; });});
-(data.surveyPotensi||[]).forEach(s=>{ let ha = s.luas || 0; let m2 = s.luasM2 || convertLuas(ha,'Ha','m2'); let ubin = s.luasUbin || convertLuas(ha,'Ha','ubin'); perDusunPotensiHa[s.dusun]=(perDusunPotensiHa[s.dusun]||0)+ha; perDusunPotensiM2[s.dusun]=(perDusunPotensiM2[s.dusun]||0)+m2; perDusunPotensiUbin[s.dusun]=(perDusunPotensiUbin[s.dusun]||0)+ubin; let key=s.dusun+'|'+s.komoditi; surveyPotensiAgg[key]=(surveyPotensiAgg[key]||0)+(parseFloat(s.volume)||0); });
-(data.surveyKonsumen||[]).forEach(k=>{ let jns=k.jenis||'Umum'; perJenisKonsumen[jns]=(perJenisKonsumen[jns]||0)+(k.jumlah||0); });
-return {perDusunDesil, perDusunPotensiHa, perDusunPotensiM2, perDusunPotensiUbin, perJenisKonsumen, surveyPotensiAgg};
-}
+function buildSummary(){ let perDusunDesil={}, perDusunPotensiHa={}, perDusunPotensiM2={}, perDusunPotensiUbin={}, perJenisKonsumen={}, surveyPotensiAgg={}; data.desil.forEach(d=>{ (d.details||[]).forEach(det=>{ perDusunDesil[det.dusun]=(perDusunDesil[det.dusun]||0)+det.jml; });}); (data.surveyPotensi||[]).forEach(s=>{ let ha = s.luas || 0; let m2 = s.luasM2 || convertLuas(ha,'Ha','m2'); let ubin = s.luasUbin || convertLuas(ha,'Ha','ubin'); perDusunPotensiHa[s.dusun]=(perDusunPotensiHa[s.dusun]||0)+ha; perDusunPotensiM2[s.dusun]=(perDusunPotensiM2[s.dusun]||0)+m2; perDusunPotensiUbin[s.dusun]=(perDusunPotensiUbin[s.dusun]||0)+ubin; let key=s.dusun+'|'+s.komoditi; surveyPotensiAgg[key]=(surveyPotensiAgg[key]||0)+(parseFloat(s.volume)||0); }); (data.surveyKonsumen||[]).forEach(k=>{ let jns=k.jenis||'Umum'; perJenisKonsumen[jns]=(perJenisKonsumen[jns]||0)+(k.jumlah||0); }); return {perDusunDesil, perDusunPotensiHa, perDusunPotensiM2, perDusunPotensiUbin, perJenisKonsumen, surveyPotensiAgg}; }
 window.renderAll=()=>{
-let isLogin=!!currentUser;
-document.getElementById('userInfo').textContent=isLogin? currentUser.name+' ('+currentUser.username+')' : 'Tamu';
-document.getElementById('btnLogin').textContent=isLogin?'Logout':'Login';
-document.getElementById('btnChangePass').classList.toggle('hidden',!isLogin);
-document.getElementById('statTotal').textContent=data.kopdes.total||0;
-document.getElementById('statSurvey').textContent=(data.surveyPotensi||[]).length + (data.surveyKonsumen||[]).length;
-document.getElementById('statDesil').textContent=data.desil.filter(d=>(d.privacy||d.status||'UMUM')==='UMUM').reduce((a,b)=>a+calcTotals(b),0);
-document.getElementById('statOmzet').textContent='Rp '+((data.surveyKonsumen||[]).reduce((a,b)=>a+((b.jumlah||0)*15000),0)).toLocaleString('id-ID');
-if(data.kopdes.kopFoto){ document.getElementById('kopLogoImg').src=data.kopdes.kopFoto; document.getElementById('kopLogoImg').classList.remove('hidden'); document.getElementById('kopLogoImg2').src=data.kopdes.kopFoto; document.getElementById('kopLogoImg2').classList.remove('hidden'); document.getElementById('kopLogoText2').classList.add('hidden'); document.getElementById('kopPreview').classList.remove('hidden'); document.getElementById('kopPreviewImg').src=data.kopdes.kopFoto; }
-document.getElementById('tab2Locked').classList.toggle('hidden',isLogin); document.getElementById('tab2Content').classList.toggle('hidden',!isLogin);
-document.getElementById('tab4Locked').classList.toggle('hidden',isLogin); document.getElementById('tab4Content').classList.toggle('hidden',!isLogin);
-if(isLogin){
-let summary=buildSummary();
-document.getElementById('desilList').innerHTML=data.desil.map((d,i)=>{ let tot=calcTotals(d); return '<div class="border rounded-2xl p-4 bg-white"><div class="flex justify-between"><div><div class="font-bold">'+d.desil+' - '+tot+' KK</div></div><div class="flex flex-col gap-1"><button onclick="editDesil('+i+')" class="text-xs bg-gray-100 px-3 py-1.5 rounded-xl">Edit</button><button onclick="delDesil('+i+')" class="text-xs bg-red-50 px-3 py-1.5 rounded-xl">Hapus</button></div></div></div>';}).join('');
-document.getElementById('desilSummaryBox').innerHTML='<div class="bg-[#0f172a] text-white rounded-[20px] p-5"><h3 class="font-bold">📊 Rangkuman Desil</h3><div class="mt-3 text-xs">Per Dusun: '+Object.entries(summary.perDusunDesil).map(([k,v])=>k+':'+v).join(', ')+'</div></div>';
-document.getElementById('pekerjaanList').innerHTML=data.pekerjaanData.map((p,i)=>{ let tot=calcTotals(p); return '<div class="border rounded-2xl p-4 flex justify-between"><div><b>'+p.pekerjaan+' - '+tot+'</b></div><div class="flex gap-1"><button onclick="editPekerjaanData('+i+')" class="text-xs bg-gray-100 px-2 py-1 rounded">Edit</button><button onclick="delPekerjaanData('+i+')" class="text-xs bg-red-50 px-2 py-1 rounded">Hapus</button></div></div>';}).join('');
-document.getElementById('pekerjaanRangkuman').innerHTML='<div class="bg-white border rounded-[20px] p-5"><h3 class="font-bold text-sm">Rangkuman Pekerjaan</h3></div>';
-document.getElementById('countSurveyPotensi').textContent=(data.surveyPotensi||[]).length+' responden';
-document.getElementById('surveyPotensiList').innerHTML=(data.surveyPotensi||[]).map((s,i)=>{ let ha = s.luas || 0; let m2 = s.luasM2 || convertLuas(ha,'Ha','m2'); let ubin = s.luasUbin || convertLuas(ha,'Ha','ubin'); return '<div class="border rounded-xl p-3 bg-gray-50 text-xs"><div class="flex justify-between"><div><b>'+s.namaResponden+'</b> • '+s.dusun+' '+s.rtrw+'<br>'+s.komoditi+': '+s.volume+' '+s.satuan+'<br><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Luas: '+ha.toFixed(3)+' Ha = '+m2.toFixed(1)+' m² = '+ubin.toFixed(1)+' ubin</span></div><div class="flex flex-col gap-1"><button onclick="editSurveyPotensi('+i+')" class="bg-white border px-2 py-1 rounded">Edit</button><button onclick="delSurveyPotensi('+i+')" class="bg-red-50 px-2 py-1 rounded">Hapus</button></div></div></div>'; }).join('')||'<div class="text-xs text-gray-400">Belum ada survey potensi</div>';
-document.getElementById('surveyPotensiRangkuman').innerHTML='<div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-xs"><b>📊 Rangkuman Luas Per Dusun</b><div class="mt-2 grid gap-2">'+Object.keys(summary.perDusunPotensiHa).map(k=>'<div class="bg-white p-3 rounded-xl"><b>'+k+'</b><br>Ha: '+(summary.perDusunPotensiHa[k]||0).toFixed(3)+' Ha<br>m²: '+(summary.perDusunPotensiM2[k]||0).toFixed(1)+' m²<br>Ubin: '+(summary.perDusunPotensiUbin[k]||0).toFixed(1)+' ubin</div>').join('')+'</div></div>';
-document.getElementById('countSurveyKonsumen').textContent=(data.surveyKonsumen||[]).length+' responden';
-document.getElementById('surveyKonsumenList').innerHTML=(data.surveyKonsumen||[]).map((k,i)=>'<div class="border rounded-xl p-3 bg-orange-50 text-xs"><div class="flex justify-between"><div><b>'+k.nama+'</b> • '+k.dusun+' '+k.rtrw+'<br>Jenis: '+k.jenis+' • Jumlah: '+k.jumlah+'</div><div class="flex flex-col gap-1"><button onclick="editSurveyKonsumen('+i+')" class="bg-white border px-2 py-1 rounded">Edit</button><button onclick="delSurveyKonsumen('+i+')" class="bg-red-50 px-2 py-1 rounded">Hapus</button></div></div></div>').join('')||'<div class="text-xs text-gray-400">Belum ada survey konsumen</div>';
-document.getElementById('surveyKonsumenRangkuman').innerHTML='<div class="bg-orange-50 border border-orange-100 rounded-xl p-4 text-xs"><b>📊 Rangkuman Konsumen</b><div class="mt-2">Per Jenis: '+Object.entries(summary.perJenisKonsumen).map(([k,v])=>k+':'+v).join(', ')+'</div></div>';
-document.getElementById('potensiList').innerHTML=data.potensiData.map((p,i)=>'<div class="border rounded-[20px] p-4 bg-white text-xs"><b>'+p.komoditi+'</b> - '+p.volume+' '+p.satuan+' - '+p.dusun+'<br>Luas: '+p.luas+' Ha = '+convertLuas(p.luas,'Ha','m2').toFixed(1)+' m² = '+convertLuas(p.luas,'Ha','ubin').toFixed(1)+' ubin</div>').join('')||'<div class="text-xs">Agregat otomatis dari survey</div>';
-document.getElementById('potensiRangkuman').innerHTML='<div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-[24px] p-5"><h3 class="font-bold">Rangkuman Potensi Agregat</h3><div class="mt-3 grid gap-2 text-xs">'+Object.keys(summary.perDusunPotensiHa).map(k=>'<div class="bg-white/20 p-3 rounded-xl">'+k+': '+(summary.perDusunPotensiHa[k]||0).toFixed(3)+' Ha = '+(summary.perDusunPotensiM2[k]||0).toFixed(1)+' m² = '+(summary.perDusunPotensiUbin[k]||0).toFixed(1)+' ubin</div>').join('')+'</div></div>';
-if(typeof renderDusunRtrwLists==='function') renderDusunRtrwLists();
-document.getElementById('kopdesPreviewCard').innerHTML='<div class="font-bold">Preview Kopdes</div><div class="mt-2 text-left bg-gray-50 p-3 rounded-xl">NIK: '+(data.kopdes.nik||'-')+'<br>NIB: '+(data.kopdes.nib||'-')+'<br>SK: '+(data.kopdes.sk||'-')+'<br>Total: '+(data.kopdes.total||0)+'</div>';
-document.getElementById('myAccountBox').innerHTML='<div>Username: <b>'+currentUser.username+'</b></div>';
-document.getElementById('accountList').innerHTML=data.users.map((u,i)=>'<div class="border rounded-xl p-3 flex justify-between text-xs"><div><b>'+u.name+' ('+u.username+')</b><div>'+u.role+'</div></div></div>').join('');
-document.getElementById('kop_nik').value=data.kopdes.nik||''; document.getElementById('kop_nib').value=data.kopdes.nib||''; document.getElementById('kop_sk').value=data.kopdes.sk||''; document.getElementById('kop_total').value=data.kopdes.total||0; document.getElementById('kop_laki').value=data.kopdes.laki||0; document.getElementById('kop_perempuan').value=data.kopdes.perempuan||0;
-}
+  let isLogin=!!currentUser;
+  document.getElementById('userInfo').textContent=isLogin? currentUser.name+' ('+currentUser.username+')' : 'Tamu';
+  document.getElementById('btnLogin').textContent=isLogin?'Logout':'Login';
+  document.getElementById('btnChangePass').classList.toggle('hidden',!isLogin);
+  document.getElementById('statTotal').textContent=data.kopdes.total||0; document.getElementById('statLaki').textContent=data.kopdes.laki||0; document.getElementById('statPerempuan').textContent=data.kopdes.perempuan||0;
+  document.getElementById('statSurvey').textContent=(data.surveyPotensi||[]).length + (data.surveyKonsumen||[]).length;
+  document.getElementById('statDesil').textContent=data.desil.filter(d=>(d.privacy||d.status||'UMUM')==='UMUM').reduce((a,b)=>a+calcTotals(b),0);
+  document.getElementById('statOmzet').textContent='Rp '+((data.surveyKonsumen||[]).reduce((a,b)=>a+((b.jumlah||0)*15000),0)).toLocaleString('id-ID');
+  if(data.kopdes.kopFoto){ document.getElementById('kopLogoImg').src=data.kopdes.kopFoto; document.getElementById('kopLogoImg').classList.remove('hidden'); document.getElementById('kopLogoImg2').src=data.kopdes.kopFoto; document.getElementById('kopLogoImg2').classList.remove('hidden'); document.getElementById('kopLogoText2').classList.add('hidden'); document.getElementById('kopPreview').classList.remove('hidden'); document.getElementById('kopPreviewImg').src=data.kopdes.kopFoto; }
+  document.getElementById('tab2Locked').classList.toggle('hidden',isLogin); document.getElementById('tab2Content').classList.toggle('hidden',!isLogin);
+  document.getElementById('tab4Locked').classList.toggle('hidden',isLogin); document.getElementById('tab4Content').classList.toggle('hidden',!isLogin);
+  if(isLogin){
+    let summary=buildSummary();
+    document.getElementById('desilList').innerHTML=data.desil.map((d,i)=>{ let tot=calcTotals(d); return '<div class="border rounded-2xl p-4 bg-white"><div class="flex justify-between"><div><div class="font-bold">'+d.desil+' - '+tot+' KK</div><div class="text-[11px] text-gray-500">'+(d.keterangan||'')+'</div></div><div class="flex flex-col gap-1"><button onclick="editDesil('+i+')" class="text-xs bg-gray-100 px-3 py-1.5 rounded-xl">Edit</button><button onclick="delDesil('+i+')" class="text-xs bg-red-50 px-3 py-1.5 rounded-xl">Hapus</button></div></div></div>';}).join('')||'<div class="text-xs text-gray-400">Belum ada desil</div>';
+    document.getElementById('desilSummaryBox').innerHTML='<div class="bg-[#0f172a] text-white rounded-[20px] p-5"><h3 class="font-bold">📊 Rangkuman Desil</h3><div class="mt-3 text-xs">Per Dusun: '+Object.entries(summary.perDusunDesil).map(([k,v])=>k+':'+v).join(', ')+'</div></div>';
+    document.getElementById('pekerjaanList').innerHTML=data.pekerjaanData.map((p,i)=>{ let tot=calcTotals(p); return '<div class="border rounded-2xl p-4 flex justify-between"><div><b>'+p.pekerjaan+' - '+tot+'</b></div><div class="flex gap-1"><button onclick="editPekerjaanData('+i+')" class="text-xs bg-gray-100 px-2 py-1 rounded">Edit</button><button onclick="delPekerjaanData('+i+')" class="text-xs bg-red-50 px-2 py-1 rounded">Hapus</button></div></div>';}).join('')||'<div class="text-xs">Belum ada pekerjaan</div>';
+    document.getElementById('pekerjaanRangkuman').innerHTML='<div class="bg-white border rounded-[20px] p-5"><h3 class="font-bold text-sm">Rangkuman Pekerjaan</h3></div>';
+    document.getElementById('countSurveyPotensi').textContent=(data.surveyPotensi||[]).length+' responden';
+    document.getElementById('surveyPotensiList').innerHTML=(data.surveyPotensi||[]).map((s,i)=>{ let ha = s.luas || 0; let m2 = s.luasM2 || convertLuas(ha,'Ha','m2'); let ubin = s.luasUbin || convertLuas(ha,'Ha','ubin'); return '<div class="border rounded-xl p-3 bg-gray-50 text-xs"><div class="flex justify-between"><div><b>'+s.namaResponden+'</b> • '+s.dusun+' '+s.rtrw+'<br>'+s.komoditi+': '+s.volume+' '+s.satuan+'<br><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Luas: '+ha.toFixed(4)+' Ha = '+m2.toFixed(1)+' m² = '+ubin.toFixed(1)+' ubin</span><br><span class="text-gray-500">Input asli: '+(s.luasInputAsli||ha)+' '+(s.luasSatuanAsli||'Ha')+' • '+(s.keterangan||'')+'</span></div><div class="flex flex-col gap-1"><button onclick="editSurveyPotensi('+i+')" class="bg-white border px-2 py-1 rounded">Edit</button><button onclick="delSurveyPotensi('+i+')" class="bg-red-50 px-2 py-1 rounded">Hapus</button></div></div></div>'; }).join('')||'<div class="text-xs text-gray-400 p-4 bg-white border rounded-xl">Belum ada survey potensi. Klik + Survey Potensi Warga (bisa pilih ubin/m²/Ha) atau klik Convert Lama</div>';
+    document.getElementById('surveyPotensiRangkuman').innerHTML='<div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-xs"><b>📊 Rangkuman Luas Per Dusun (Auto Convert)</b><div class="mt-2 grid md:grid-cols-2 gap-2">'+Object.keys(summary.perDusunPotensiHa).map(k=>'<div class="bg-white p-3 rounded-xl border"><b>'+k+'</b><br>Ha: '+(summary.perDusunPotensiHa[k]||0).toFixed(4)+' Ha<br>m²: '+(summary.perDusunPotensiM2[k]||0).toFixed(1)+' m²<br>Ubin: '+(summary.perDusunPotensiUbin[k]||0).toFixed(1)+' ubin</div>').join('')+'</div></div>';
+    document.getElementById('countSurveyKonsumen').textContent=(data.surveyKonsumen||[]).length+' responden';
+    document.getElementById('surveyKonsumenList').innerHTML=(data.surveyKonsumen||[]).map((k,i)=>'<div class="border rounded-xl p-3 bg-orange-50 text-xs"><div class="flex justify-between"><div><b>'+k.nama+'</b> • '+k.dusun+' '+k.rtrw+'<br>Jenis: '+k.jenis+' • Jumlah: '+k.jumlah+'</div><div class="flex flex-col gap-1"><button onclick="editSurveyKonsumen('+i+')" class="bg-white border px-2 py-1 rounded">Edit</button><button onclick="delSurveyKonsumen('+i+')" class="bg-red-50 px-2 py-1 rounded">Hapus</button></div></div></div>').join('')||'<div class="text-xs text-gray-400">Belum ada survey konsumen</div>';
+    document.getElementById('surveyKonsumenRangkuman').innerHTML='<div class="bg-orange-50 border border-orange-100 rounded-xl p-4 text-xs"><b>📊 Rangkuman Konsumen</b><div class="mt-2">Per Jenis: '+Object.entries(summary.perJenisKonsumen).map(([k,v])=>k+':'+v).join(', ')+'</div></div>';
+    document.getElementById('potensiList').innerHTML=data.potensiData.map((p,i)=>'<div class="border rounded-[20px] p-4 bg-white text-xs"><b>'+p.komoditi+'</b> - '+p.volume+' '+p.satuan+' - '+p.dusun+'<br>Luas: '+p.luas+' Ha = '+convertLuas(p.luas,'Ha','m2').toFixed(1)+' m² = '+convertLuas(p.luas,'Ha','ubin').toFixed(1)+' ubin</div>').join('')||'<div class="text-xs">Agregat otomatis dari survey</div>';
+    document.getElementById('potensiRangkuman').innerHTML='<div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-[24px] p-5"><h3 class="font-bold">Rangkuman Potensi Agregat (Ha/m²/ubin)</h3><div class="mt-3 grid gap-2 text-xs">'+Object.keys(summary.perDusunPotensiHa).map(k=>'<div class="bg-white/20 p-3 rounded-xl">'+k+': '+(summary.perDusunPotensiHa[k]||0).toFixed(4)+' Ha = '+(summary.perDusunPotensiM2[k]||0).toFixed(1)+' m² = '+(summary.perDusunPotensiUbin[k]||0).toFixed(1)+' ubin</div>').join('')+'</div></div>';
+    renderDusunRtrwLists();
+    document.getElementById('kopdesPreviewCard').innerHTML='<div class="font-bold">Preview Kopdes</div><div class="mt-2 text-left bg-gray-50 p-3 rounded-xl">NIK: '+(data.kopdes.nik||'-')+'<br>NIB: '+(data.kopdes.nib||'-')+'<br>SK: '+(data.kopdes.sk||'-')+'<br>Total: '+(data.kopdes.total||0)+'</div>';
+    document.getElementById('myAccountBox').innerHTML='<div>Username: <b>'+currentUser.username+'</b><br>Nama: <b>'+currentUser.name+'</b></div>';
+    document.getElementById('accountList').innerHTML=data.users.map((u,i)=>'<div class="border rounded-xl p-3 flex justify-between text-xs"><div><b>'+u.name+' ('+u.username+')</b><div>'+u.role+'</div></div></div>').join('');
+    document.getElementById('kop_nik').value=data.kopdes.nik||''; document.getElementById('kop_nib').value=data.kopdes.nib||''; document.getElementById('kop_sk').value=data.kopdes.sk||''; document.getElementById('kop_total').value=data.kopdes.total||0; document.getElementById('kop_laki').value=data.kopdes.laki||0; document.getElementById('kop_perempuan').value=data.kopdes.perempuan||0;
+    document.getElementById('stakeholderList').innerHTML=data.stakeholders.map((s,i)=>'<div class="border rounded-2xl p-4 text-sm"><b>'+s.nama+'</b><div class="text-xs">'+s.jabatan+' - '+s.dusun+'</div></div>').join('')||'<div class="text-xs">Belum ada stakeholder</div>';
+  }
 }
 function openModal(t,f,onSave){ document.getElementById('modalTitle').textContent=t; let b=document.getElementById('modalBody'); b.innerHTML=f.map(ff=>{ if(ff.type==='custom') return ff.html; if(ff.type==='select') return '<div><label class="text-xs font-semibold">'+ff.label+'</label><select id="'+ff.id+'" class="w-full border rounded-xl p-2.5 text-sm mt-1">'+ff.options+'</select></div>'; if(ff.type==='textarea') return '<div><label class="text-xs font-semibold">'+ff.label+'</label><textarea id="'+ff.id+'" class="w-full border rounded-xl p-2.5 text-sm mt-1" rows="3">'+(ff.value||'')+'</textarea></div>'; if(ff.type==='custom_input') return ff.html; return '<div><label class="text-xs font-semibold">'+ff.label+'</label><input id="'+ff.id+'" type="'+(ff.type||'text')+'" value="'+(ff.value||'')+'" class="w-full border rounded-xl p-2.5 text-sm mt-1"/></div>';}).join(''); document.getElementById('modal').classList.remove('hidden'); document.getElementById('modal').classList.add('flex'); document.getElementById('modalExtra').innerHTML=''; let luasInput=document.getElementById('luas'); let satuanSelect=document.getElementById('luasSatuan'); let preview=document.getElementById('luasPreview'); function updatePreview(){ if(!luasInput||!satuanSelect||!preview) return; let val=parseFloat(luasInput.value)||0; let satuan=satuanSelect.value; let ha=convertLuas(val,satuan,'Ha'); let m2=convertLuas(val,satuan,'m2'); let ubin=convertLuas(val,satuan,'ubin'); preview.innerHTML='Konversi: <b>'+val+' '+satuan+'</b> = '+ha.toFixed(4)+' Ha = '+m2.toFixed(2)+' m² = '+ubin.toFixed(2)+' ubin'; } if(luasInput){ luasInput.addEventListener('input',updatePreview); } if(satuanSelect){ satuanSelect.addEventListener('change',updatePreview); } setTimeout(updatePreview,100); document.getElementById('modalSave').onclick=()=>{ let vals={}; f.forEach(ff=>{ if(ff.type!=='custom' && ff.type!=='custom_input') vals[ff.id]=document.getElementById(ff.id)?.value; else if(ff.type==='custom_input'){ vals['luas']=document.getElementById('luas')?.value; vals['luasSatuan']=document.getElementById('luasSatuan')?.value; } }); onSave(vals); closeModal();};}
 function closeModal(){ document.getElementById('modal').classList.add('hidden');}
@@ -207,48 +144,48 @@ function rtrwOptions(v=''){ return data.rtrw.map(r=>'<option '+(r===v?'selected'
 window.emergencyReset=async()=>{ if(!confirm('Reset admin?')) return; await fetch('https://kasih-kopdes-default-rtdb.asia-southeast1.firebasedatabase.app/kdmp_kasih/v7_survey/users.json',{method:'PUT',body:JSON.stringify([{username:'admin',password:'kasih123',role:'admin',name:'Manajer Utama'}])}); localStorage.clear(); location.reload(); }
 window.showLogin=()=>{ openModal('Login',[{id:'username',label:'Username',value:'admin'},{id:'password',label:'Password',type:'password',value:''}],v=>{ let iu=(v.username||'').trim().toLowerCase(); let ip=(v.password||'').trim(); let found=data.users.find(x=> (x.username||'').trim().toLowerCase()===iu && (x.password||'').trim()===ip); if(found){ currentUser=found; localStorage.setItem('kdmp_current_user',JSON.stringify(found)); renderAll(); } else { alert('Salah!'); showLogin(); } }); document.getElementById('modalExtra').innerHTML='<button onclick="emergencyReset()" style="color:red;font-size:12px;text-decoration:underline">Reset Darurat</button>';};
 document.getElementById('btnSurveyPotensi').onclick=()=>{
-openModal('Survey Potensi Warga - Luas Auto Convert',[
-{id:'namaResponden',label:'Nama Responden (Warga)'},
-{id:'dusun',label:'Dusun',type:'select',options:dusunOptions()},
-{id:'rtrw',label:'RT/RW',type:'select',options:rtrwOptions()},
-{id:'komoditi',label:'Komoditi yang dimiliki'},
-{type:'custom_input',html:'<div><label class="text-xs font-semibold">Luas (otomatis konversi ubin/m²/Ha)</label><div class="flex gap-2 mt-1"><input id="luas" type="number" value="0" class="w-2/3 border rounded-xl p-2.5 text-sm"/><select id="luasSatuan" class="w-1/3 border rounded-xl p-2.5 text-sm"><option value="ubin">ubin</option><option value="m2">m²</option><option value="Ha">Ha</option></select></div><div id="luasPreview" class="mt-2 text-xs bg-emerald-50 border border-emerald-200 p-2 rounded-xl">Konversi: 0</div><div class="text-[10px] text-gray-500 mt-1">1 ubin = 14.0625 m² | 1 Ha = 10.000 m² = 711.11 ubin</div></div>'},
-{id:'volume',label:'Volume per Panen',type:'number',value:'0'},
-{id:'satuan',label:'Satuan Volume',value:'Kg'},
-{id:'keterangan',label:'Keterangan',type:'textarea'},
-{id:'privacy',label:'Privacy',type:'select',options:'<option>UMUM</option><option>PRIVACY</option>'}
-],v=>{
-let luasInput=parseFloat(v.luas)||0; let satuan=v.luasSatuan||'ubin';
-let ha=convertLuas(luasInput,satuan,'Ha'); let m2=convertLuas(luasInput,satuan,'m2'); let ubin=convertLuas(luasInput,satuan,'ubin');
-data.surveyPotensi.push({namaResponden:v.namaResponden, dusun:v.dusun, rtrw:v.rtrw, komoditi:v.komoditi, luas:ha, luasM2:m2, luasUbin:ubin, luasSatuanAsli:satuan, luasInputAsli:luasInput, volume:parseFloat(v.volume)||0, satuan:v.satuan, keterangan:v.keterangan, privacy:v.privacy, status:v.privacy});
-let exist=data.potensiData.find(p=>p.dusun===v.dusun && p.komoditi.toLowerCase()===v.komoditi.toLowerCase());
-if(exist){ exist.volume+=parseFloat(v.volume)||0; exist.luas+=ha; exist.sdm+=1; } else { data.potensiData.push({komoditi:v.komoditi, dusun:v.dusun, luas:ha, volume:parseFloat(v.volume)||0, satuan:v.satuan, sdm:1, privacy:v.privacy, status:v.privacy}); }
-save();
-});
+  openModal('Survey Potensi Warga - Luas Auto Convert Ubin/m²/Ha',[
+    {id:'namaResponden',label:'Nama Responden (Warga)'},
+    {id:'dusun',label:'Dusun',type:'select',options:dusunOptions()},
+    {id:'rtrw',label:'RT/RW',type:'select',options:rtrwOptions()},
+    {id:'komoditi',label:'Komoditi yang dimiliki'},
+    {type:'custom_input',html:'<div><label class="text-xs font-semibold">Luas (otomatis konversi ubin/m²/Ha)</label><div class="flex gap-2 mt-1"><input id="luas" type="number" value="0" class="w-2/3 border rounded-xl p-2.5 text-sm"/><select id="luasSatuan" class="w-1/3 border rounded-xl p-2.5 text-sm"><option value="ubin" selected>ubin</option><option value="m2">m²</option><option value="Ha">Ha</option></select></div><div id="luasPreview" class="mt-2 text-xs bg-emerald-50 border border-emerald-200 p-2 rounded-xl font-bold">Konversi: 0</div><div class="text-[10px] text-gray-500 mt-1">Contoh: 100 ubin = 0.1406 Ha = 1.406 m² | 1 ubin = 14.0625 m²</div></div>'},
+    {id:'volume',label:'Volume per Panen',type:'number',value:'0'},
+    {id:'satuan',label:'Satuan Volume',value:'Kg'},
+    {id:'keterangan',label:'Keterangan',type:'textarea'},
+    {id:'privacy',label:'Privacy',type:'select',options:'<option>UMUM</option><option>PRIVACY</option>'}
+  ],v=>{
+    let luasInput=parseFloat(v.luas)||0; let satuan=v.luasSatuan||'ubin';
+    let ha=convertLuas(luasInput,satuan,'Ha'); let m2=convertLuas(luasInput,satuan,'m2'); let ubin=convertLuas(luasInput,satuan,'ubin');
+    data.surveyPotensi.push({namaResponden:v.namaResponden, dusun:v.dusun, rtrw:v.rtrw, komoditi:v.komoditi, luas:ha, luasM2:m2, luasUbin:ubin, luasSatuanAsli:satuan, luasInputAsli:luasInput, volume:parseFloat(v.volume)||0, satuan:v.satuan, keterangan:v.keterangan, privacy:v.privacy, status:v.privacy});
+    let exist=data.potensiData.find(p=>p.dusun===v.dusun && p.komoditi.toLowerCase()===v.komoditi.toLowerCase());
+    if(exist){ exist.volume+=parseFloat(v.volume)||0; exist.luas+=ha; exist.sdm+=1; } else { data.potensiData.push({komoditi:v.komoditi, dusun:v.dusun, luas:ha, volume:parseFloat(v.volume)||0, satuan:v.satuan, sdm:1, privacy:v.privacy, status:v.privacy}); }
+    save();
+  });
 };
 window.editSurveyPotensi=(i)=>{
-let s=data.surveyPotensi[i]; let currentSatuan=s.luasSatuanAsli||'Ha'; let currentVal=s.luasInputAsli||s.luas||0; if(currentSatuan==='m2') currentVal=s.luasM2||convertLuas(s.luas,'Ha','m2'); if(currentSatuan==='ubin') currentVal=s.luasUbin||convertLuas(s.luas,'Ha','ubin');
-openModal('Edit Survey Potensi',[
-{id:'namaResponden',label:'Nama',value:s.namaResponden},
-{id:'dusun',label:'Dusun',type:'select',options:dusunOptions(s.dusun)},
-{id:'rtrw',label:'RT/RW',type:'select',options:rtrwOptions(s.rtrw)},
-{id:'komoditi',label:'Komoditi',value:s.komoditi},
-{type:'custom_input',html:'<div><label class="text-xs font-semibold">Luas</label><div class="flex gap-2 mt-1"><input id="luas" type="number" value="'+currentVal+'" class="w-2/3 border rounded-xl p-2.5 text-sm"/><select id="luasSatuan" class="w-1/3 border rounded-xl p-2.5 text-sm"><option value="ubin" '+(currentSatuan==='ubin'?'selected':'')+'>ubin</option><option value="m2" '+(currentSatuan==='m2'?'selected':'')+'>m²</option><option value="Ha" '+(currentSatuan==='Ha'?'selected':'')+'>Ha</option></select></div><div id="luasPreview" class="mt-2 text-xs bg-emerald-50 border p-2 rounded-xl"></div></div>'},
-{id:'volume',label:'Volume',type:'number',value:s.volume},
-{id:'satuan',label:'Satuan',value:s.satuan},
-{id:'keterangan',label:'Keterangan',type:'textarea',value:s.keterangan}
-],v=>{
-let luasInput=parseFloat(v.luas)||0; let satuan=v.luasSatuan||'Ha'; let ha=convertLuas(luasInput,satuan,'Ha'); let m2=convertLuas(luasInput,satuan,'m2'); let ubin=convertLuas(luasInput,satuan,'ubin');
-data.surveyPotensi[i]={...s, namaResponden:v.namaResponden, dusun:v.dusun, rtrw:v.rtrw, komoditi:v.komoditi, luas:ha, luasM2:m2, luasUbin:ubin, luasSatuanAsli:satuan, luasInputAsli:luasInput, volume:parseFloat(v.volume)||0, satuan:v.satuan, keterangan:v.keterangan};
-save();
-});
+  let s=data.surveyPotensi[i]; let currentSatuan=s.luasSatuanAsli||'Ha'; let currentVal=s.luasInputAsli||s.luas||0; if(currentSatuan==='m2') currentVal=s.luasM2||convertLuas(s.luas,'Ha','m2'); if(currentSatuan==='ubin') currentVal=s.luasUbin||convertLuas(s.luas,'Ha','ubin');
+  openModal('Edit Survey Potensi - Konversi Luas',[
+    {id:'namaResponden',label:'Nama',value:s.namaResponden},
+    {id:'dusun',label:'Dusun',type:'select',options:dusunOptions(s.dusun)},
+    {id:'rtrw',label:'RT/RW',type:'select',options:rtrwOptions(s.rtrw)},
+    {id:'komoditi',label:'Komoditi',value:s.komoditi},
+    {type:'custom_input',html:'<div><label class="text-xs font-semibold">Luas (ubah satuan otomatis konversi)</label><div class="flex gap-2 mt-1"><input id="luas" type="number" value="'+currentVal+'" class="w-2/3 border rounded-xl p-2.5 text-sm"/><select id="luasSatuan" class="w-1/3 border rounded-xl p-2.5 text-sm"><option value="ubin" '+(currentSatuan==='ubin'?'selected':'')+'>ubin</option><option value="m2" '+(currentSatuan==='m2'?'selected':'')+'>m²</option><option value="Ha" '+(currentSatuan==='Ha'?'selected':'')+'>Ha</option></select></div><div id="luasPreview" class="mt-2 text-xs bg-emerald-50 border p-2 rounded-xl font-bold"></div></div>'},
+    {id:'volume',label:'Volume',type:'number',value:s.volume},
+    {id:'satuan',label:'Satuan',value:s.satuan},
+    {id:'keterangan',label:'Keterangan',type:'textarea',value:s.keterangan}
+  ],v=>{
+    let luasInput=parseFloat(v.luas)||0; let satuan=v.luasSatuan||'Ha'; let ha=convertLuas(luasInput,satuan,'Ha'); let m2=convertLuas(luasInput,satuan,'m2'); let ubin=convertLuas(luasInput,satuan,'ubin');
+    data.surveyPotensi[i]={...s, namaResponden:v.namaResponden, dusun:v.dusun, rtrw:v.rtrw, komoditi:v.komoditi, luas:ha, luasM2:m2, luasUbin:ubin, luasSatuanAsli:satuan, luasInputAsli:luasInput, volume:parseFloat(v.volume)||0, satuan:v.satuan, keterangan:v.keterangan};
+    save();
+  });
 };
-window.delSurveyPotensi=(i)=>{ if(confirm('Hapus survey?')){ data.surveyPotensi.splice(i,1); save(); }};
+window.delSurveyPotensi=(i)=>{ if(confirm('Hapus survey potensi ini?')){ data.surveyPotensi.splice(i,1); save(); }};
 document.getElementById('btnSurveyKonsumen').onclick=()=>{ openModal('Survey Konsumen Perorangan',[{id:'nama',label:'Nama Konsumen / Warga'},{id:'dusun',label:'Dusun',type:'select',options:dusunOptions()},{id:'rtrw',label:'RT/RW',type:'select',options:rtrwOptions()},{id:'jenis',label:'Jenis Kebutuhan',type:'select',options:data.jenisKonsumen.map(j=>'<option>'+j+'</option>').join('')},{id:'jumlah',label:'Jumlah Kebutuhan',type:'number',value:'1'},{id:'keterangan',label:'Keterangan',type:'textarea'},{id:'privacy',label:'Privacy',type:'select',options:'<option>UMUM</option><option>PRIVACY</option>'}],v=>{ v.jumlah=parseInt(v.jumlah)||0; data.surveyKonsumen.push({...v, jumlah:v.jumlah, jml:v.jumlah, omzet:v.jumlah*15000, privacy:v.privacy, status:v.privacy}); save(); });};
 window.editSurveyKonsumen=(i)=>{ let k=data.surveyKonsumen[i]; openModal('Edit Survey Konsumen',[{id:'nama',label:'Nama',value:k.nama},{id:'dusun',label:'Dusun',type:'select',options:dusunOptions(k.dusun)},{id:'rtrw',label:'RT/RW',type:'select',options:rtrwOptions(k.rtrw)},{id:'jenis',label:'Jenis',type:'select',options:data.jenisKonsumen.map(j=>'<option '+(k.jenis===j?'selected':'')+'>'+j+'</option>').join('')},{id:'jumlah',label:'Jumlah',type:'number',value:k.jumlah},{id:'keterangan',label:'Keterangan',type:'textarea',value:k.keterangan}],v=>{ data.surveyKonsumen[i]={...k, nama:v.nama, dusun:v.dusun, rtrw:v.rtrw, jenis:v.jenis, jumlah:parseInt(v.jumlah)||0, jml:parseInt(v.jumlah)||0, keterangan:v.keterangan}; save();});};
 window.delSurveyKonsumen=(i)=>{ if(confirm('Hapus?')){ data.surveyKonsumen.splice(i,1); save(); }};
 window.editDesil=(i)=>{ let d=data.desil[i]; let htmlInputs=data.dusuns.map(dusun=>{ let rows=data.rtrw.map(rt=>{ let ex=(d.details||[]).find(x=>x.dusun===dusun && x.rtrw===rt); return '<div class="flex items-center gap-2 text-xs"><span class="w-24">'+rt+'</span><input data-dusun="'+dusun+'" data-rtrw="'+rt+'" class="desilInput border rounded-lg p-1.5 w-20" type="number" value="'+(ex?.jml||0)+'"/></div>';}).join(''); return '<div class="border rounded-xl p-2"><b class="text-xs">'+dusun+'</b><div class="mt-1 grid gap-1">'+rows+'</div></div>';}).join(''); openModal('Edit Desil',[{id:'desil',label:'Desil',type:'select',options:['Desil 1','Desil 2','Desil 3','Desil 4','Desil 5','Desil 6','Desil 7','Desil 8','Desil 9','Desil 10'].map(x=>'<option '+(d.desil===x?'selected':'')+'>'+x+'</option>').join('')},{id:'keterangan',label:'Keterangan',type:'textarea',value:d.keterangan||''},{type:'custom',html:'<div class="mt-2 grid md:grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">'+htmlInputs+'</div></div>'}],v=>{ let details=[]; document.querySelectorAll('.desilInput').forEach(inp=>{ let jml=parseInt(inp.value)||0; if(jml>0) details.push({dusun:inp.dataset.dusun, rtrw:inp.dataset.rtrw, jml});}); let total=details.reduce((a,b)=>a+b.jml,0); data.desil[i]={...d,desil:v.desil,keterangan:v.keterangan,details,total,jml:total}; save();});};
-window.delDesil=(i)=>{ if(confirm('Hapus?')){data.desil.splice(i,1); save();}};
+window.delDesil=(i)=>{ if(confirm('Hapus desil ini?')){data.desil.splice(i,1); save();}};
 document.getElementById('addDesilBtn').onclick=()=>{ let htmlInputs=data.dusuns.map(dusun=>{ let rows=data.rtrw.map(rt=>'<div class="flex items-center gap-2 text-xs"><span class="w-24">'+rt+'</span><input data-dusun="'+dusun+'" data-rtrw="'+rt+'" class="desilInput border rounded-lg p-1.5 w-20" type="number" value="0"/></div>').join(''); return '<div class="border rounded-xl p-2"><b class="text-xs">'+dusun+'</b><div class="mt-1 grid gap-1">'+rows+'</div></div>';}).join(''); openModal('Tambah Desil',[{id:'desil',label:'Desil',type:'select',options:['Desil 1','Desil 2','Desil 3','Desil 4','Desil 5','Desil 6','Desil 7','Desil 8','Desil 9','Desil 10'].map(x=>'<option>'+x+'</option>').join('')},{id:'keterangan',label:'Keterangan',type:'textarea'},{type:'custom',html:'<div class="mt-2 grid md:grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">'+htmlInputs+'</div></div>'}],v=>{ let details=[]; document.querySelectorAll('.desilInput').forEach(inp=>{ let jml=parseInt(inp.value)||0; if(jml>0) details.push({dusun:inp.dataset.dusun, rtrw:inp.dataset.rtrw, jml});}); let total=details.reduce((a,b)=>a+b.jml,0); data.desil.push({desil:v.desil,keterangan:v.keterangan,details,total,jml:total}); save();});};
 window.editPekerjaanData=(i)=>{ let p=data.pekerjaanData[i]; let htmlInputs=data.dusuns.map(dusun=>{ let rows=data.rtrw.map(rt=>{ let ex=(p.details||[]).find(x=>x.dusun===dusun && x.rtrw===rt); return '<div class="flex items-center gap-2 text-xs"><span class="w-24">'+rt+'</span><input data-dusun="'+dusun+'" data-rtrw="'+rt+'" class="kerjaInput border rounded-lg p-1.5 w-20" type="number" value="'+(ex?.jml||0)+'"/></div>';}).join(''); return '<div class="border rounded-xl p-2"><b class="text-xs">'+dusun+'</b><div class="mt-1 grid gap-1">'+rows+'</div></div>';}).join(''); openModal('Edit Pekerjaan',[{id:'pekerjaan',label:'Pekerjaan',value:p.pekerjaan},{type:'custom',html:'<div class="mt-2 grid md:grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">'+htmlInputs+'</div></div>'}],v=>{ let details=[]; document.querySelectorAll('.kerjaInput').forEach(inp=>{ let jml=parseInt(inp.value)||0; if(jml>0) details.push({dusun:inp.dataset.dusun, rtrw:inp.dataset.rtrw, jml});}); let total=details.reduce((a,b)=>a+b.jml,0); data.pekerjaanData[i]={...p,pekerjaan:v.pekerjaan,details,jml:total,total}; save();});};
 window.delPekerjaanData=(i)=>{ if(confirm('Hapus?')){data.pekerjaanData.splice(i,1); save();}};
@@ -258,47 +195,49 @@ document.getElementById('btnChangePass').onclick=()=>{ openModal('Ganti Password
 document.getElementById('kopFotoInput').onchange=(e)=>{ let file=e.target.files[0]; if(!file) return; let r=new FileReader(); r.onload=()=>{ data.kopdes.kopFoto=r.result; save();}; r.readAsDataURL(file);};
 document.getElementById('saveKopdes').onclick=()=>{ data.kopdes={...data.kopdes,nik:document.getElementById('kop_nik').value,nib:document.getElementById('kop_nib').value,sk:document.getElementById('kop_sk').value,total:parseInt(document.getElementById('kop_total').value)||0,laki:parseInt(document.getElementById('kop_laki').value)||0,perempuan:parseInt(document.getElementById('kop_perempuan').value)||0}; save(); alert('Tersimpan');};
 document.getElementById('btnLogin').onclick=()=>{ if(currentUser){ if(confirm('Logout?')){ currentUser=null; localStorage.removeItem('kdmp_current_user'); renderAll(); location.reload();}} else { showLogin(); }};
-document.getElementById('btnAutoConvert').onclick=()=>{ autoConvertOldData(); };
-document.getElementById('addDusunBtn').onclick=()=>{ openModal('Tambah Dusun Baru',[{id:'nama',label:'Nama Dusun (contoh: Dusun Krajan)'}],v=>{ let n=v.nama.trim(); if(n){ data.dusuns.push(n); save(); } }); };
-document.getElementById('addRtrwBtn').onclick=()=>{ openModal('Tambah RT/RW Baru',[{id:'nama',label:'Nama RT/RW (contoh: RT 10/RW 05)'}],v=>{ let n=v.nama.trim(); if(n){ data.rtrw.push(n); save(); } }); };
+document.getElementById('btnAutoConvert').onclick=()=>{
+  if(!confirm('Convert data lama V5/V6 jadi survey perorangan? Data lama tetap ada, yang baru ditambahkan.')) return;
+  let cP=0;
+  if(data.potensiData && data.potensiData.length>0){
+    data.potensiData.forEach((p)=>{
+      let sdm=p.sdm||2; let volPerOrang=(p.volume||0)/sdm; let luasPerOrang=(p.luas||0)/sdm;
+      for(let i=0;i<sdm;i++){
+        let luasHa=luasPerOrang; let luasM2=convertLuas(luasHa,'Ha','m2'); let luasUbin=convertLuas(luasHa,'Ha','ubin');
+        if(!(data.surveyPotensi||[]).find(sp=>sp.komoditi===p.komoditi && sp.dusun===p.dusun && sp.luas===luasHa)){
+          data.surveyPotensi.push({namaResponden:(p.komoditi||'Petani')+' '+(p.dusun||'')+' '+(i+1), dusun:p.dusun||data.dusuns[0], rtrw:data.rtrw[0], komoditi:p.komoditi||'Padi', luas:luasHa, luasM2:luasM2, luasUbin:luasUbin, luasSatuanAsli:'Ha', luasInputAsli:luasHa, volume:volPerOrang, satuan:p.satuan||'Kg', keterangan:'Auto-convert', privacy:p.privacy||'UMUM', status:p.privacy||'UMUM'}); cP++;
+        }
+      }
+    });
+  }
+  save(); alert('Convert selesai! '+cP+' responden potensi baru ditambahkan. Cek Tab 3.');
+};
+document.getElementById('addDusunBtn').onclick=()=>{ openModal('Tambah Dusun Baru',[{id:'nama',label:'Nama Dusun Baru (contoh: Dusun Krajan)'}],v=>{ let n=v.nama.trim(); if(n && !data.dusuns.includes(n)){ data.dusuns.push(n); save(); } else if(data.dusuns.includes(n)){ alert('Dusun sudah ada!'); } }); };
+document.getElementById('addRtrwBtn').onclick=()=>{ openModal('Tambah RT/RW Baru',[{id:'nama',label:'Nama RT/RW Baru (contoh: RT 10/RW 05)'}],v=>{ let n=v.nama.trim(); if(n && !data.rtrw.includes(n)){ data.rtrw.push(n); save(); } else if(data.rtrw.includes(n)){ alert('RT/RW sudah ada!'); } }); };
 function getSelectedReportKeys(){ return Array.from(document.querySelectorAll('.repCheck:checked')).map(c=>c.dataset.key); }
 window.buildLaporanHTML=()=>{
-let keys=getSelectedReportKeys(); let sum=buildSummary();
-let html='<div style="font-family:serif;border:2px solid black;padding:20px">';
-if(keys.includes('kopFoto') && data.kopdes.kopFoto){ html+='<img src="'+data.kopdes.kopFoto+'" style="width:100%;max-height:100px;object-fit:contain;margin-bottom:15px"/>';}
-html+='<h1 style="text-align:center;font-weight:900;font-size:20px">KOPERASI DESA MERAH PUTIH - DESA KASIH</h1>';
-html+='<p style="text-align:center;font-size:11px;color:#555">Laporan V7.3 - '+new Date().toLocaleString('id-ID')+'</p><hr style="margin:12px 0;border:1.5px solid black"/>';
-if(keys.includes('kopdes')){ html+='<div style="display:flex;gap:15px;background:#f8fafc;border:1px solid #e5e7eb;padding:12px;border-radius:12px;margin:10px 0"><div style="flex:1"><div style="font-weight:800;font-size:12px;color:#6b7280">Identitas</div><div style="font-size:12px;margin-top:6px"><b>NIK:</b> '+(data.kopdes.nik||'-')+'<br><b>NIB:</b> '+(data.kopdes.nib||'-')+'<br><b>SK:</b> '+(data.kopdes.sk||'-')+'</div></div><div style="flex:1"><div style="font-weight:800;font-size:12px;color:#6b7280">Demografi</div><div style="font-size:24px;font-weight:900;margin-top:4px">'+(data.kopdes.total||0)+'</div></div></div>'; }
-if(keys.includes('surveyPotensi')){ html+='<h3 style="font-weight:800;margin-top:18px;font-size:14px">Survey Potensi Perorangan (dengan konversi luas)</h3>'; (data.surveyPotensi||[]).forEach(s=>{ let ha=s.luas||0; let m2=s.luasM2||convertLuas(ha,'Ha','m2'); let ubin=s.luasUbin||convertLuas(ha,'Ha','ubin'); html+='<div style="font-size:11px">- '+s.namaResponden+' ('+s.dusun+'): '+s.komoditi+' '+s.volume+' '+s.satuan+' Luas '+ha.toFixed(4)+' Ha = '+m2.toFixed(1)+' m² = '+ubin.toFixed(1)+' ubin (Input: '+s.luasInputAsli+' '+(s.luasSatuanAsli||'Ha')+')</div>'; }); }
-if(keys.includes('potensiRangkuman')){ html+='<div style="font-size:11px;background:#ecfdf5;padding:8px;border-radius:8px;margin-top:6px"><b>Rangkuman Potensi Luas:</b><br>'+Object.keys(summary.perDusunPotensiHa).map(k=>k+': '+(summary.perDusunPotensiHa[k]||0).toFixed(4)+' Ha = '+(summary.perDusunPotensiM2[k]||0).toFixed(1)+' m² = '+(summary.perDusunPotensiUbin[k]||0).toFixed(1)+' ubin').join('<br>')+'</div>'; }
-if(keys.includes('surveyKonsumen')){ html+='<h3 style="font-weight:800;margin-top:18px;font-size:14px">Survey Konsumen</h3>'; (data.surveyKonsumen||[]).forEach(k=>{ html+='<div style="font-size:11px">- '+k.nama+' ('+k.dusun+'): Jenis '+k.jenis+' Jumlah '+k.jumlah+'</div>'; }); }
-html+='<hr style="margin:15px 0"/><p style="font-size:10px;text-align:center;color:#777">Laporan V7.3 - Luas Ubin/m2/Ha + Edit Dusun - '+new Date().toLocaleString('id-ID')+'</p></div>';
-return html;
+  let keys=getSelectedReportKeys(); let sum=buildSummary();
+  let html='<div style="font-family:serif;border:2px solid black;padding:20px">';
+  if(keys.includes('kopFoto') && data.kopdes.kopFoto){ html+='<img src="'+data.kopdes.kopFoto+'" style="width:100%;max-height:120px;object-fit:contain;margin-bottom:15px"/>';}
+  html+='<h1 style="text-align:center;font-weight:900;font-size:20px">KOPERASI DESA MERAH PUTIH - DESA KASIH</h1><p style="text-align:center;font-size:11px;color:#555">Laporan V7.4 FINAL - Luas Ubin/m²/Ha + Edit Dusun • '+new Date().toLocaleString('id-ID')+'</p><hr style="margin:12px 0;border:1.5px solid black"/>';
+  if(keys.includes('kopdes')){ html+='<div style="background:#f8fafc;border:1px solid #e5e7eb;padding:12px;border-radius:12px;margin:10px 0;font-size:12px"><b>Identitas:</b> NIK '+(data.kopdes.nik||'-')+' NIB '+(data.kopdes.nib||'-')+' SK '+(data.kopdes.sk||'-')+'<br><b>Demografi:</b> Total '+(data.kopdes.total||0)+' (L:'+(data.kopdes.laki||0)+' P:'+(data.kopdes.perempuan||0)+')</div>'; }
+  if(keys.includes('surveyPotensi')){ html+='<h3 style="font-weight:800;margin-top:18px;font-size:14px">Survey Potensi Perorangan (Konversi Luas Ubin/m²/Ha)</h3>'; (data.surveyPotensi||[]).forEach(s=>{ let ha=s.luas||0; let m2=s.luasM2||convertLuas(ha,'Ha','m2'); let ubin=s.luasUbin||convertLuas(ha,'Ha','ubin'); html+='<div style="font-size:11px;border-bottom:1px dotted #ccc;padding:3px 0">- '+s.namaResponden+' ('+s.dusun+' '+s.rtrw+'): '+s.komoditi+' '+s.volume+' '+s.satuan+' | Luas '+ha.toFixed(4)+' Ha = '+m2.toFixed(1)+' m² = '+ubin.toFixed(1)+' ubin (Input: '+s.luasInputAsli+' '+(s.luasSatuanAsli||'Ha')+')</div>'; }); }
+  if(keys.includes('potensiRangkuman')){ html+='<div style="font-size:11px;background:#ecfdf5;border:1px solid #6ee7b7;padding:8px;border-radius:8px;margin-top:6px"><b>Rangkuman Potensi Luas (Ha/m²/ubin):</b><br>'+Object.keys(summary.perDusunPotensiHa).map(k=>k+': '+(summary.perDusunPotensiHa[k]||0).toFixed(4)+' Ha = '+(summary.perDusunPotensiM2[k]||0).toFixed(1)+' m² = '+(summary.perDusunPotensiUbin[k]||0).toFixed(1)+' ubin').join('<br>')+'</div>'; }
+  if(keys.includes('potensiAnalisis')){ html+='<div style="font-size:11px;background:#d1fae5;padding:8px;border-radius:8px;margin-top:6px"><b>Analisis Potensi:</b> Total lahan '+(Object.values(summary.perDusunPotensiHa).reduce((a,b)=>a+b,0)).toFixed(4)+' Ha = '+(Object.values(summary.perDusunPotensiM2).reduce((a,b)=>a+b,0)).toFixed(1)+' m² = '+(Object.values(summary.perDusunPotensiUbin).reduce((a,b)=>a+b,0)).toFixed(1)+' ubin</div>'; }
+  if(keys.includes('surveyKonsumen')){ html+='<h3 style="font-weight:800;margin-top:18px;font-size:14px">Survey Konsumen Perorangan</h3>'; (data.surveyKonsumen||[]).forEach(k=>{ html+='<div style="font-size:11px">- '+k.nama+' ('+k.dusun+'): '+k.jenis+' '+k.jumlah+'</div>'; }); }
+  if(keys.includes('konsumenRangkuman')){ html+='<div style="font-size:11px;background:#fff7ed;padding:8px;border-radius:8px;margin-top:6px"><b>Rangkuman Konsumen:</b> '+Object.entries(summary.perJenisKonsumen).map(([k,v])=>k+':'+v).join(', ')+'</div>'; }
+  html+='<hr style="margin:15px 0"/><p style="font-size:10px;text-align:center;color:#777">Laporan V7.4 FINAL FIX - Aman Anti Hilang Data - '+new Date().toLocaleString('id-ID')+'</p></div>';
+  return html;
 }
 document.getElementById('btnPreviewLaporan').onclick=()=>{ let html=buildLaporanHTML(); let box=document.getElementById('laporanPreview'); box.innerHTML=html; box.classList.remove('hidden'); box.scrollIntoView({behavior:'smooth'}); };
-document.getElementById('btnDownloadLaporan').onclick=()=>{ let html=buildLaporanHTML(); let {jsPDF}=window.jspdf; let doc=new jsPDF('p','pt','a4'); let temp=document.createElement('div'); temp.innerHTML=html; let text=temp.innerText; let lines=doc.splitTextToSize(text, 500); doc.setFontSize(11); doc.text(lines, 40, 40); doc.save('Laporan-V7.3-'+new Date().toISOString().slice(0,10)+'.pdf'); };
+document.getElementById('btnDownloadLaporan').onclick=()=>{ let html=buildLaporanHTML(); let {jsPDF}=window.jspdf; let doc=new jsPDF('p','pt','a4'); let temp=document.createElement('div'); temp.innerHTML=html; let text=temp.innerText; let lines=doc.splitTextToSize(text, 500); doc.setFontSize(10); doc.text(lines, 40, 40); doc.save('Laporan-V7.4-FINAL-'+new Date().toISOString().slice(0,10)+'.pdf'); };
 document.getElementById('btnDownloadDocx').onclick=()=>{
-let html=buildLaporanHTML();
-let header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Laporan</title></head><body>";
-let footer = "</body></html>";
-let sourceHTML = header + html + footer;
-let blob = new Blob(['\ufeff', sourceHTML], {type: 'application/msword'});
-let url = URL.createObjectURL(blob);
-let a = document.createElement('a'); a.href=url; a.download='Laporan-KDMP-V7.3-'+new Date().toISOString().slice(0,10)+'.doc'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
-};
-window.autoConvertOldData=()=>{
-if(!confirm('Convert data lama jadi survey?')) return;
-let cP=0,cK=0;
-if(data.potensiData && data.potensiData.length>0){
-data.potensiData.forEach((p)=>{
-let sdm=p.sdm||2; let volPerOrang=(p.volume||0)/sdm; let luasPerOrang=(p.luas||0)/sdm;
-for(let i=0;i<sdm;i++){
-let luasHa=luasPerOrang; let luasM2=convertLuas(luasHa,'Ha','m2'); let luasUbin=convertLuas(luasHa,'Ha','ubin');
-data.surveyPotensi.push({namaResponden:(p.komoditi||'Petani')+' '+(p.dusun||'')+' '+(i+1), dusun:p.dusun||data.dusuns[0], rtrw:data.rtrw[0], komoditi:p.komoditi||'Padi', luas:luasHa, luasM2:luasM2, luasUbin:luasUbin, luasSatuanAsli:'Ha', luasInputAsli:luasHa, volume:volPerOrang, satuan:p.satuan||'Kg', keterangan:'Auto-convert V5/V6', privacy:p.privacy||'UMUM', status:p.privacy||'UMUM'}); cP++;
-}
-});
-}
-save(); alert('Convert selesai! Potensi: '+cP);
+  let html=buildLaporanHTML();
+  let header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Laporan</title></head><body>";
+  let footer = "</body></html>";
+  let sourceHTML = header + html + footer;
+  let blob = new Blob(['\ufeff', sourceHTML], {type: 'application/msword'});
+  let url = URL.createObjectURL(blob);
+  let a = document.createElement('a'); a.href=url; a.download='Laporan-KDMP-V7.4-FINAL-'+new Date().toISOString().slice(0,10)+'.doc'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
 };
 renderTabs(); renderAll(); listen();
 </script>
