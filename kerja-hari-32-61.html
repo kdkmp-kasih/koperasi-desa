@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V54 32-61 SAMBUNG FIREBASE BARU kasih-kopdes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<style>
+#navHari{display:flex;flex-wrap:wrap;gap:4px}
+#navHari button{width:32px;height:32px;font-size:12px;border-radius:8px}
+.task-row{display:flex;align-items:center;gap:6px;padding:8px 6px;border-bottom:1px solid #e5e7eb}
+.task-right{display:flex;gap:3px}
+.foto-thumb-catatan{width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #111}
+.tab-btn.active{background:white!important;color:#BE1E2D!important}
+</style>
+</head>
+<body class="bg-[#fef2f2]">
+<div class="bg-[#BE1E2D] text-white sticky top-0 z-40 shadow">
+<div class="max-w-6xl mx-auto p-2">
+<div class="flex justify-between items-center">
+<h1 class="font-bold text-[11px]">🇮🇩 V54 - 32-61 - FIREBASE BARU kasih-kopdes <span id="liveStatus" class="bg-green-500 px-2 py-0.5 rounded text-[7px]">AUTO LIVE</span></h1>
+<span id="status" class="text-[8px] bg-white/20 px-2 py-0.5 rounded">Live kasih-kopdes</span>
+</div>
+<div class="flex gap-1 mt-2">
+<button id="tabBtn1" onclick="switchTab(1)" class="tab-btn active px-3 py-1.5 rounded text-[8px] font-bold bg-white text-[#BE1E2D]">1 - 32-61 HARI</button>
+<button id="tabBtn2" onclick="switchTab(2)" class="tab-btn px-3 py-1.5 rounded text-[8px] font-bold bg-black/20 text-white">2 - TUNGGAKAN LIST</button>
+<button id="tabBtn3" onclick="switchTab(3)" class="tab-btn px-3 py-1.5 rounded text-[8px] font-bold bg-black/20 text-white">3 - TTD + DOWNLOAD KOMPLIT</button>
+</div>
+<div id="navHari" class="flex flex-wrap gap-1 mt-2"></div>
+</div>
+</div>
+
+<div id="previewModal" class="fixed inset-0 bg-black/80 z-[999] hidden"><div class="flex items-center justify-center min-h-screen p-2"><div class="bg-white rounded-xl max-w-5xl w-full max-h-[92vh] flex flex-col"><div class="bg-[#BE1E2D] text-white p-3 flex justify-between rounded-t-xl"><p class="font-bold text-[12px]">👁️ PREVIEW LAPORAN 32-61</p><button onclick="closePreview()" class="bg-white/20 w-8 h-8 rounded-full">X</button></div><div id="previewContent" class="flex-1 overflow-auto bg-slate-200 p-3"></div><div class="p-3 border-t bg-white flex gap-2"><button onclick="closePreview()" class="flex-1 bg-slate-200 py-2.5 rounded-lg text-[10px] font-bold">Tutup</button><button onclick="exportPDFFromPreview()" class="flex-1 bg-[#BE1E2D] text-white py-2.5 rounded-lg text-[10px] font-bold">📄 PDF</button><button onclick="exportWordFromPreview()" class="flex-1 bg-blue-700 text-white py-2.5 rounded-lg text-[10px] font-bold">📝 Word</button></div></div></div></div>
+<div id="fotoCatatanModal" class="fixed inset-0 bg-black/80 z-[1000] hidden flex items-center justify-center p-3"><div class="bg-white rounded-xl max-w-md w-full"><div class="bg-[#BE1E2D] text-white p-3 flex justify-between rounded-t-xl"><p id="fotoCatatanTitle" class="font-bold text-[11px]">📷 Foto Catatan Per Hari</p><button onclick="closeFotoCatatanModal()" class="bg-white/20 w-6 h-6 rounded-full">X</button></div><div class="p-3 space-y-3"><input type="file" id="fotoCatatanInput" accept="image/*" class="w-full border-2 border-dashed rounded-lg p-3 text-[10px]"><input type="text" id="fotoCatatanCaption" placeholder="Keterangan foto catatan" class="w-full border rounded p-2 text-[10px]"><div id="fotoCatatanPreviewBox" class="hidden"><img id="fotoCatatanPreviewImg" class="w-full h-32 object-contain border rounded bg-slate-50"></div><div class="flex gap-2"><button onclick="closeFotoCatatanModal()" class="flex-1 bg-slate-200 py-2 rounded text-[10px] font-bold">Batal</button><button onclick="saveFotoCatatan()" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded text-[10px] font-bold">💾 Simpan ke Catatan</button></div></div></div></div>
+
+<div class="max-w-6xl mx-auto p-2 space-y-3">
+<div id="content1"><div id="container1" class="grid gap-3"></div></div>
+<div id="content2" class="hidden">
+<div class="bg-amber-50 border-2 border-amber-400 rounded-xl p-3 mb-3">
+<p class="font-bold text-[12px] text-amber-800">⚠️ TAB 2 - TUNGGAKAN LIST ONLY 32-61</p>
+<p class="text-[9px] text-amber-700">Hanya list tugas belum diceklis. Tanpa foto, tanpa catatan.</p>
+<p id="tunggakanCount" class="text-[10px] font-bold mt-1"></p>
+</div>
+<div id="container2" class="grid gap-3"></div>
+</div>
+<div id="content3" class="hidden space-y-3">
+<div class="bg-white border-2 border-[#BE1E2D] rounded-xl p-4">
+<p class="font-bold text-[12px] text-[#BE1E2D]">✍️ TTD - DESA KASIH 53354 - HARI 32-61</p>
+<div class="grid grid-cols-2 gap-3 mt-3">
+<div class="border-2 border-orange-300 bg-orange-50 p-3 rounded-xl"><p class="font-bold text-[10px]">1️⃣ KADES</p><input id="namaKades" placeholder="Nama Kades" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdKades')"><img id="prevKades" class="hidden w-full h-12 object-contain border bg-white mt-1"><label class="text-[7px]"><input type="checkbox" id="needKades" checked onchange="saveNeed()"> Tampil di laporan</label></div>
+<div class="border-2 border-blue-300 bg-blue-50 p-3 rounded-xl"><p class="font-bold text-[10px]">2️⃣ KETUA</p><input id="namaKetua" placeholder="Nama Ketua" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdKetua')"><img id="prevKetua" class="hidden w-full h-12 object-contain border bg-white mt-1"><label class="text-[7px]"><input type="checkbox" id="needKetua" checked onchange="saveNeed()"> Tampil di laporan</label></div>
+<div class="border-2 border-green-300 bg-green-50 p-3 rounded-xl"><p class="font-bold text-[10px]">3️⃣ PENGAWAS</p><input id="namaPengawas" placeholder="Nama Pengawas" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdPengawas')"><img id="prevPengawas" class="hidden w-full h-12 object-contain border bg-white mt-1"><label class="text-[7px]"><input type="checkbox" id="needPengawas" checked onchange="saveNeed()"> Tampil di laporan</label></div>
+<div class="border-2 border-red-200 bg-red-50 p-3 rounded-xl"><p class="font-bold text-[10px]">4️⃣ MANAJER</p><input id="namaManajer" placeholder="Nama Manajer" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdManajer')"><img id="prevManajer" class="hidden w-full h-12 object-contain border bg-white mt-1"><label class="text-[7px]"><input type="checkbox" id="needManajer" checked onchange="saveNeed()"> Tampil di laporan</label></div>
+</div>
+</div>
+<div class="bg-white border-2 border-slate-300 rounded-xl p-4"><p class="font-bold text-[11px] text-[#BE1E2D]">⚙️ PENGATURAN LAPORAN 32-61</p><div class="mt-2 flex gap-4 text-[10px] flex-wrap"><label><input type="checkbox" id="includeCatatan" checked onchange="saveFooter()"> Tampilkan Catatan + Foto di Catatan</label><label><input type="checkbox" id="includeFoto" checked onchange="saveFooter()"> Tampilkan Foto di Catatan (di laporan)</label><label><input type="checkbox" id="needFooter" onchange="saveFooter()"> Pakai Footer</label></div><textarea id="footerText" oninput="saveFooter()" class="w-full border rounded p-2 text-[9px] mt-2 h-12">Koperasi Desa Merah Putih - Desa Kasih - Kertanegara - Purbalingga 53354 - Triwulan 1 Bulan 2</textarea></div>
+<div class="bg-white border-4 border-[#BE1E2D] rounded-xl p-4 shadow-xl">
+<p class="font-bold text-[14px] text-[#BE1E2D] text-center">📥 DOWNLOAD LAPORAN 32-61 - TAB 3 KOMPLIT</p>
+<p class="text-[9px] text-center">FULL ada catatan+foto di catatan | TUNGGAKAN tanpa catatan/foto</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+<div class="border-2 border-red-300 bg-red-50 rounded-xl p-4"><p class="font-bold text-[12px] text-[#BE1E2D]">📄 PDF CLEAN 32-61</p><div class="grid grid-cols-2 gap-2 mt-3"><button onclick="previewPDF(false)" class="bg-white border-2 border-[#BE1E2D] text-[#BE1E2D] py-3 rounded-lg text-[10px] font-bold">👁️ Preview PDF FULL</button><button onclick="exportPDF(false)" class="bg-[#BE1E2D] text-white py-3 rounded-lg text-[10px] font-bold">📄 Download PDF FULL</button><button onclick="previewPDF(true)" class="bg-white border-2 border-amber-600 text-amber-700 py-3 rounded-lg text-[10px] font-bold">👁️ Preview Tung</button><button onclick="exportPDF(true)" class="bg-amber-600 text-white py-3 rounded-lg text-[10px] font-bold">⚠️ PDF Tung</button></div></div>
+<div class="border-2 border-blue-300 bg-blue-50 rounded-xl p-4"><p class="font-bold text-[12px] text-blue-700">📝 WORD CLEAN 32-61</p><div class="grid grid-cols-2 gap-2 mt-3"><button onclick="previewWord(false)" class="bg-white border-2 border-blue-700 text-blue-700 py-3 rounded-lg text-[10px] font-bold">👁️ Preview Word FULL</button><button onclick="exportWord(false)" class="bg-blue-700 text-white py-3 rounded-lg text-[10px] font-bold">📝 Download Word FULL</button><button onclick="previewWord(true)" class="bg-white border-2 border-slate-700 text-slate-700 py-3 rounded-lg text-[10px] font-bold">👁️ Preview Tung</button><button onclick="exportWord(true)" class="bg-slate-700 text-white py-3 rounded-lg text-[10px] font-bold">📝 Word Tung</button></div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- FIREBASE BARU KAMU - SAMBUNG DISINI - TYPE MODULE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBP1lvYR22XOf-IC_34gHEEkfolSthDTzo",
+    authDomain: "kasih-kopdes.firebaseapp.com",
+    databaseURL: "https://kasih-kopdes-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "kasih-kopdes",
+    storageBucket: "kasih-kopdes.firebasestorage.app",
+    messagingSenderId: "746954171317",
+    appId: "1:746954171317:web:e114d78524d3e724ce2ffc",
+    measurementId: "G-QK2DHQ8KHN"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getDatabase(app);
+  const REF = ref(db, 'v54-hari-32-61-kasih');
+
+  // Expose ke window biar fungsi biasa bisa pakai
+  window._fb = { db, REF, set, onValue };
+  window._fbReady = true;
+  window.dispatchEvent(new Event('fbReady'));
+  console.log("✅ Firebase baru kasih-kopdes tersambung - REF: v54-hari-32-61-kasih");
+</script>
+
+<script>
+const START_HARI = 32; const END_HARI = 61;
+let isLocalChange=false; let autoPushTimer=null; let lastPreviewOnlyTung=false; let curCatatanFotoDay=null;
+
+// FIREBASE BARU - AUTO PUSH / LISTEN VIA MODULAR
+function getFB(){ return window._fb || null; }
+function autoPush(){
+  clearTimeout(autoPushTimer);
+  autoPushTimer=setTimeout(()=>{
+    const fb=getFB(); if(!fb) return;
+    isLocalChange=true;
+    const payload={updatedAt:new Date().toISOString()};
+    for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i); if(k.startsWith('chk_')||k.startsWith('ada_')||k.startsWith('catatan_')||k.startsWith('foto_catatan_')||k.startsWith('custom_')||k.startsWith('edited_')||k.startsWith('deleted_')||k.startsWith('nama')||k.startsWith('need')||k.startsWith('include')||k.startsWith('ttd')) payload[k]=localStorage.getItem(k);}
+    fb.set(fb.REF, payload).then(()=>{document.getElementById('status').textContent="✅ Auto Live kasih-kopdes "+new Date().toLocaleTimeString('id-ID'); setTimeout(()=>isLocalChange=false,1500);}).catch(e=>{console.log("FB set error",e); isLocalChange=false;});
+  },600);
+}
+function startFBListener(){
+  const fb=getFB(); if(!fb) return;
+  fb.onValue(fb.REF, (snap)=>{
+    if(isLocalChange) return;
+    const data=snap.val(); if(!data||!data.updatedAt) return;
+    Object.keys(data).forEach(k=>{ if(localStorage.getItem(k)!==data[k]) localStorage.setItem(k,data[k]); });
+    render(); loadNeed(); loadNames(); loadImgs(); loadFooter();
+  });
+}
+window.addEventListener('fbReady', startFBListener);
+setTimeout(startFBListener, 1500);
+
+const baseDays=[
+{d:32,t:"SIMKOPDES - Audit Data Anggota",m:"RUMAH",tasks:["Audit total anggota di SIMKOPDES vs buku manual","Cek NIK ganda / tidak valid di SIMKOPDES","Perbaiki data anggota yang belum lengkap","Verifikasi foto KTP anggota di SIMKOPDES","Rekap % anggota sudah 100% terintegrasi"]},
+{d:33,t:"SIMKOPDES - Audit Keuangan",m:"RUMAH",tasks:["Cocokkan saldo kas SIMKOPDES vs kas fisik","Cocokkan saldo bank SIMKOPDES vs rekening","Cek simpanan pokok/wajib/sukarela per anggota","Perbaiki transaksi yang belum terinput","Buat laporan keuangan SIMKOPDES Bulan 1"]},
+{d:34,t:"SIMKOPDES - Input Tunggakan & Piutang",m:"RUMAH",tasks:["Input data piutang anggota ke SIMKOPDES","Input data tunggakan simpanan","Buat aging piutang di SIMKOPDES","Cek laporan piutang sudah akurat"]},
+{d:35,t:"SIMKOPDES - Stok & Persediaan",m:"GERAI",tasks:["Input stok awal gerai ke SIMKOPDES","Input harga beli & harga jual per item","Cek stok minus / stok tidak sesuai","Buat SOP input stok harian di SIMKOPDES"]},
+{d:36,t:"SIMKOPDES - User & Akses",m:"RUMAH",tasks:["Buat akun Pengurus di SIMKOPDES","Buat akun Pengawas di SIMKOPDES","Atur hak akses per role","Uji login Pengurus & Pengawas","Training singkat SIMKOPDES ke Pengurus"]},
+{d:37,t:"SIMKOPDES - Laporan Otomatis",m:"RUMAH",tasks:["Uji cetak neraca dari SIMKOPDES","Uji cetak laba/rugi dari SIMKOPDES","Uji cetak buku anggota dari SIMKOPDES","Pastikan laporan SIMKOPDES = laporan manual","Tandai SIMKOPDES 100% terintegrasi"]},
+{d:38,t:"SIMKOPDES - Sosialisasi ke Anggota",m:"DESA",tasks:["Sosialisasi anggota bisa cek simpanan di SIMKOPDES","Bagikan cara cek saldo via Pengurus","Catat feedback anggota tentang SIMKOPDES","Perbaiki kendala akses anggota"]},
+{d:39,t:"Privy - Persiapan Dokumen Legal",m:"RUMAH",tasks:["Kumpulkan semua dokumen legal koperasi","Cek AD/ART sudah terbaru","Cek SK Pengurus & Pengawas","Daftar dokumen yang wajib Privy","Scan dokumen legal jadi PDF rapi"]},
+{d:40,t:"Privy - Registrasi & Verifikasi",m:"RUMAH",tasks:["Daftar akun Privy koperasi","Verifikasi identitas Manajer di Privy","Verifikasi identitas Ketua di Privy","Verifikasi identitas Kades / Pengawas","Pastikan akun Privy aktif"]},
+{d:41,t:"Privy - TTD Elektronik Pengurus",m:"RUMAH",tasks:["Buat template surat dengan e-meterai Privy","Uji ttd elektronik Ketua di Privy","Uji ttd elektronik Manajer di Privy","Uji ttd elektronik Pengawas di Privy","Simpan sertifikat elektronik hasil uji"]},
+{d:42,t:"Privy - Kontrak Bisnis",m:"RUMAH",tasks:["Buat draf kontrak supplier dengan Privy","Buat draf kontrak mitra Agrinas dengan Privy","Minta ttd elektronik mitra via Privy","Arsipkan kontrak Privy di folder legal"]},
+{d:43,t:"Privy - Kesepakatan Anggota",m:"DESA",tasks:["Buat form kesepakatan anggota baru via Privy","Uji anggota baru ttd via Privy","Sosialisasi Privy ke anggota - legal & sah","Catat anggota yang sudah ttd Privy"]},
+{d:44,t:"Privy - SOP Dokumen Elektronik",m:"RUMAH",tasks:["Susun SOP dokumen wajib Privy","Susun SOP arsip elektronik","Sosialisasi SOP Privy ke Pengurus","Tandai Privy 100% untuk dokumen legal"]},
+{d:45,t:"Privy - Audit & Evaluasi",m:"RUMAH",tasks:["Audit semua dokumen sudah Privy / belum","Daftar dokumen belum Privy & alasan","Perbaiki dokumen belum Privy","Laporan Privy ke Pengurus & Kades"]},
+{d:46,t:"Quick Win - Evaluasi Operasional",m:"GERAI",tasks:["Hitung omzet Quick Win 2 minggu terakhir","Hitung margin per produk Quick Win","Cek produk paling laku & paling sepi","Cek stok mati Quick Win","Putuskan produk lanjut / stop"]},
+{d:47,t:"Quick Win - Penambahan Produk",m:"GERAI",tasks:["Survey kebutuhan baru warga - sembako","Survey kebutuhan pupuk / pakan / bibit","Tambah 3-5 produk baru Quick Win","Update harga bersaing di gerai"]},
+{d:48,t:"Quick Win - Supplier & Harga",m:"RUMAH",tasks:["Negosiasi harga baru ke Agrinas / supplier","Bandingkan harga 2-3 supplier","Perbarui kontrak harga supplier","Update harga jual di SIMKOPDES"]},
+{d:49,t:"Quick Win - Layanan PPOB Harian",m:"GERAI",tasks:["Cek layanan listrik / air / BPJS jalan harian","Rekap transaksi PPOB 1 minggu","Promosikan PPOB ke warga RT/RW","Catat kendala PPOB & solusi"]},
+{d:50,t:"Quick Win - Arus Kas Harian",m:"GERAI",tasks:["Buat format arus kas harian Quick Win","Catat kas masuk & keluar harian di SIMKOPDES","Cocokkan kas fisik vs SIMKOPDES harian","Laporan arus kas harian ke Pengurus"]},
+{d:51,t:"Quick Win - Promosi & Anggota Baru",m:"DESA",tasks:["Promosi Quick Win di rembug / pengajian","Buka promo anggota baru - gratis pendaftaran","Catat anggota baru dari Quick Win","Update data anggota baru di SIMKOPDES"]},
+{d:52,t:"Quick Win - Stok Opname",m:"GERAI",tasks:["Stok opname fisik gerai","Cocokkan stok fisik vs SIMKOPDES","Catat selisih & penyebab","Perbaiki stok di SIMKOPDES"]},
+{d:53,t:"Quick Win - Laba Rugi Quick Win",m:"RUMAH",tasks:["Hitung laba/rugi Quick Win Bulan 2","Hitung arus kas bersih Quick Win","Bandingkan target vs realisasi","Buat rekomendasi Quick Win Bulan 3"]},
+{d:54,t:"Tata Kelola - SOP Lanjutan",m:"RUMAH",tasks:["Revisi SOP Kas setelah Quick Win jalan","Revisi SOP Stok setelah Quick Win jalan","Revisi SOP Pelayanan anggota","Sosialisasi SOP revisi ke Pengurus"]},
+{d:55,t:"Tata Kelola - Rapat Pengurus Bulan 2",m:"DESA",tasks:["Siapkan materi rapat - SIMKOPDES + Privy + Quick Win","Presentasi capaian 32-54 ke Pengurus","Minta masukan Pengurus & Pengawas","Catat keputusan rapat"]},
+{d:56,t:"Keuangan - Rekonsiliasi Bulan 2",m:"RUMAH",tasks:["Cocokkan kas fisik Bulan 2","Cocokkan bank Bulan 2","Cocokkan SIMKOPDES Bulan 2","Catat selisih & koreksi"]},
+{d:57,t:"Keuangan - Laporan Bulan 2",m:"RUMAH",tasks:["Susun Neraca Bulan 2 dari SIMKOPDES","Susun Laba/Rugi Bulan 2 dari SIMKOPDES","Susun Perkembangan Anggota Bulan 2","Susun Arus Kas Quick Win Bulan 2"]},
+{d:58,t:"Pelaporan Eksternal Bulan 2",m:"RUMAH",tasks:["Kirim laporan Bulan 2 ke Dinkop","Kirim laporan Bulan 2 ke Kementerian","Kirim laporan ke Pendamping / Pembina","Arsip bukti pengiriman"]},
+{d:59,t:"Evaluasi Triwulan 1",m:"RUMAH",tasks:["Cek target Triwulan 1 - SIMKOPDES 100% tercapai?","Cek target Triwulan 1 - Privy 100% tercapai?","Cek target Triwulan 1 - Quick Win arus kas harian tercapai?","Buat matriks evaluasi Triwulan 1","Buat rekomendasi Triwulan 2"]},
+{d:60,t:"Rencana Triwulan 2",m:"RUMAH",tasks:["Susun rencana Triwulan 2 - unit usaha baru","Susun rencana kemitraan Triwulan 2","Susun rencana permodalan Triwulan 2","Finalisasi Laporan Triwulan 1","Finalisasi Master Plan update"]},
+{d:61,t:"Rapat Evaluasi Triwulan 1 & Tutup Bulan 2",m:"DESA",tasks:["Rapat evaluasi Triwulan 1 dengan Pengurus & Pengawas","Presentasi Laporan Bulan 2 & Triwulan 1","Minta pengesahan laporan","Tutup buku Bulan 2 - lanjut Hari 62"]}
+];
+function getDeleted(){return JSON.parse(localStorage.getItem('deleted_tasks_32_61')||'[]');}
+function getEdited(){return JSON.parse(localStorage.getItem('edited_tasks_32_61')||'{}');}
+function getAda(d,i){return localStorage.getItem('ada_32_61_'+d+'_'+i)||'';}
+function getCatatan(d){return localStorage.getItem('catatan_32_61_'+d)||'';}
+function isCatatanActive(d){return localStorage.getItem('catatan_active_32_61_'+d)!=='false';}
+function getCustom(d){return JSON.parse(localStorage.getItem('custom_32_61_'+d)||'[]');}
+function isChecked(d,i){return localStorage.getItem('chk_32_61_'+d+'_'+i)==='1';}
+function getFotoCatatan(d){return JSON.parse(localStorage.getItem('foto_catatan_32_61_'+d)||'[]');}
+function getStart(){const s=localStorage.getItem('kdkmp_startDate_32_61'); if(s){const d=new Date(s); d.setHours(0,0,0,0); return d;} const def=new Date('2026-11-01T00:00:00'); def.setHours(0,0,0,0); localStorage.setItem('kdkmp_startDate_32_61',def.toISOString()); return def;}
+function getHariIni(){const s=getStart(); const now=new Date(); now.setHours(0,0,0,0); return Math.max(START_HARI,Math.min(END_HARI, START_HARI + Math.floor((now-s)/86400000)));}
+function getTanggalForHari(h){const s=getStart(); const d=new Date(s); d.setDate(s.getDate()+(h-START_HARI)); return d;}
+function formatTanggalIndo(date){return date.toLocaleDateString('id-ID',{weekday:'long', day:'numeric', month:'long', year:'numeric'});}
+function switchTab(n){
+  document.getElementById('content1').classList.toggle('hidden',n!==1);
+  document.getElementById('content2').classList.toggle('hidden',n!==2);
+  document.getElementById('content3').classList.toggle('hidden',n!==3);
+  [1,2,3].forEach(i=>{ const b=document.getElementById('tabBtn'+i); if(b){ b.classList.toggle('active', i===n); b.classList.toggle('bg-white', i===n); b.classList.toggle('text-[#BE1E2D]', i===n); b.classList.toggle('bg-black/20', i!==n); b.classList.toggle('text-white', i!==n); } });
+  if(n===2) renderTunggakan();
+}
+function scrollToHari(d){switchTab(1); setTimeout(()=>{const el=document.getElementById('hari-'+d); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-160,behavior:'smooth'});},100);}
+function saveNeed(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const el=document.getElementById('need'+k); if(el) localStorage.setItem('need_32_61_'+k,el.checked);}); autoPush();}
+function loadNeed(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const v=localStorage.getItem('need_32_61_'+k); const el=document.getElementById('need'+k); if(el&&v!==null) el.checked=v==='true';});}
+function saveNames(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const el=document.getElementById('nama'+k); if(el) localStorage.setItem('nama_32_61_'+k,el.value);}); autoPush();}
+function loadNames(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const v=localStorage.getItem('nama_32_61_'+k); const el=document.getElementById('nama'+k); if(v&&el) el.value=v;});}
+function saveImg(input,key){const f=input.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>{localStorage.setItem('ttd_32_61_'+key,e.target.result); loadImgs(); autoPush();}; r.readAsDataURL(f);}
+function loadImgs(){const map={'ttdKades':'prevKades','ttdKetua':'prevKetua','ttdPengawas':'prevPengawas','ttdManajer':'prevManajer'}; Object.entries(map).forEach(([k,el])=>{const d=localStorage.getItem('ttd_32_61_'+k); const e=document.getElementById(el); if(d&&e){e.src=d; e.classList.remove('hidden');}});}
+function saveFooter(){localStorage.setItem('includeCatatan_32_61',document.getElementById('includeCatatan').checked); localStorage.setItem('includeFoto_32_61',document.getElementById('includeFoto').checked); localStorage.setItem('needFooter_32_61',document.getElementById('needFooter').checked); localStorage.setItem('footerText_32_61',document.getElementById('footerText').value); autoPush();}
+function loadFooter(){const incC=localStorage.getItem('includeCatatan_32_61'); if(incC!==null) document.getElementById('includeCatatan').checked=incC==='true'; const incF=localStorage.getItem('includeFoto_32_61'); if(incF!==null) document.getElementById('includeFoto').checked=incF==='true'; const nf=localStorage.getItem('needFooter_32_61'); if(nf!==null) document.getElementById('needFooter').checked=nf==='true'; const ft=localStorage.getItem('footerText_32_61'); if(ft) document.getElementById('footerText').value=ft;}
+function openFotoCatatanModal(day){ curCatatanFotoDay=day; document.getElementById('fotoCatatanTitle').textContent="📷 Foto Catatan Hari "+day+" - "+baseDays.find(x=>x.d===day).t; document.getElementById('fotoCatatanModal').classList.remove('hidden'); }
+function closeFotoCatatanModal(){ document.getElementById('fotoCatatanModal').classList.add('hidden'); }
+document.getElementById('fotoCatatanInput').addEventListener('change',function(e){ const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=ev=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement('canvas'); let w=img.width,h=img.height; if(w>800){h=h*(800/w); w=800;} c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); const comp=c.toDataURL('image/jpeg',0.6); document.getElementById('fotoCatatanPreviewImg').src=comp; document.getElementById('fotoCatatanPreviewBox').classList.remove('hidden'); document.getElementById('fotoCatatanPreviewImg').dataset.comp=comp; }; img.src=ev.target.result; }; r.readAsDataURL(file); });
+function saveFotoCatatan(){ const cap=document.getElementById('fotoCatatanCaption').value; const data=document.getElementById('fotoCatatanPreviewImg').dataset.comp; if(!data) return alert('Pilih foto'); const cur=getFotoCatatan(curCatatanFotoDay); cur.push({data, caption:cap, date:new Date().toISOString()}); localStorage.setItem('foto_catatan_32_61_'+curCatatanFotoDay, JSON.stringify(cur)); closeFotoCatatanModal(); document.getElementById('fotoCatatanInput').value=""; document.getElementById('fotoCatatanCaption').value=""; document.getElementById('fotoCatatanPreviewBox').classList.add('hidden'); autoPush(); render(); }
+function deleteFotoCatatan(day, idx){ if(!confirm('Hapus foto catatan hari '+day+'?')) return; const cur=getFotoCatatan(day); cur.splice(idx,1); localStorage.setItem('foto_catatan_32_61_'+day, JSON.stringify(cur)); autoPush(); render(); }
+function editTask(d,i){const cur=getEdited()[d+'_'+i]||baseDays.find(x=>x.d===d).tasks[i]; const baru=prompt('Edit:',cur); if(!baru) return; const ed=getEdited(); ed[d+'_'+i]=baru; localStorage.setItem('edited_tasks_32_61',JSON.stringify(ed)); autoPush(); render();}
+function deleteTask(d,i){if(!confirm('Hapus?')) return; const del=getDeleted(); del.push(d+'_'+i); localStorage.setItem('deleted_tasks_32_61',JSON.stringify(del)); autoPush(); render();}
+function setAda(d,i,val){if(getAda(d,i)===val) localStorage.removeItem('ada_32_61_'+d+'_'+i); else localStorage.setItem('ada_32_61_'+d+'_'+i,val); autoPush(); render();}
+function addCustomTask(d){const inp=document.getElementById('addInput-'+d); const v=inp.value.trim(); if(!v) return; const cur=getCustom(d); cur.push(v); localStorage.setItem('custom_32_61_'+d,JSON.stringify(cur)); inp.value=''; autoPush(); render();}
+function toggleCatatan(d){localStorage.setItem('catatan_active_32_61_'+d, isCatatanActive(d)?'false':'true'); autoPush(); render();}
+function saveCatatan(d){localStorage.setItem('catatan_32_61_'+d,document.getElementById('catatan-'+d).value); autoPush();}
+function getTTDData(){return [{label:'KEPALA DESA', nama:localStorage.getItem('nama_32_61_Kades')||'Kepala Desa', ttd:localStorage.getItem('ttd_32_61_ttdKades'), need:localStorage.getItem('need_32_61_Kades')!=='false'}, {label:'KETUA KDKMP', nama:localStorage.getItem('nama_32_61_Ketua')||'Ketua', ttd:localStorage.getItem('ttd_32_61_ttdKetua'), need:localStorage.getItem('need_32_61_Ketua')!=='false'}, {label:'PENGAWAS', nama:localStorage.getItem('nama_32_61_Pengawas')||'Pengawas', ttd:localStorage.getItem('ttd_32_61_ttdPengawas'), need:localStorage.getItem('need_32_61_Pengawas')!=='false'}, {label:'MANAJER', nama:localStorage.getItem('nama_32_61_Manajer')||'Manajer', ttd:localStorage.getItem('ttd_32_61_ttdManajer'), need:localStorage.getItem('need_32_61_Manajer')!=='false'}].filter(x=>x.need);}
+function buildReportHTML(onlyTunggakan){
+  const edited=getEdited(); const del=getDeleted();
+  let html=`<div style="font-family:Arial;padding:20px;background:white;color:#111"><div style="border-bottom:2px solid #111;padding-bottom:10px;text-align:center;margin-bottom:12px"><h1 style="margin:0;font-size:15px;font-weight:800">KOPERASI DESA MERAH PUTIH - DESA KASIH</h1><p style="margin:2px 0;font-size:10px">Kec. Kertanegara - Kab. Purbalingga 53354 - Triwulan 1 Bulan 2</p></div><div style="text-align:center;margin:10px 0"><h2 style="margin:0;font-size:13px;font-weight:800">LAPORAN KERJA ${onlyTunggakan?'TUNGGAKAN 32-61':'HARI 32-61'}</h2><p style="font-size:9px;color:#555">Periode ${formatTanggalIndo(getStart())} - ${formatTanggalIndo(getTanggalForHari(61))} | Cetak ${formatTanggalIndo(new Date())}</p></div>`;
+  baseDays.forEach(day=>{
+    if(onlyTunggakan && day.d>=getHariIni()) return;
+    let tasks=[]; day.tasks.forEach((o,i)=>{ if(del.includes(day.d+'_'+i)) return; const name=edited[day.d+'_'+i]||o; const chk=isChecked(day.d,i); if(onlyTunggakan && chk) return; tasks.push({name, ada:getAda(day.d,i)}); });
+    getCustom(day.d).forEach(ct=>{ tasks.push({name:ct+' (Tambahan)', ada:""}); });
+    if(tasks.length==0 && onlyTunggakan) return;
+    html+=`<div style="margin-top:14px"><div style="background:#f3f3f3;font-weight:800;font-size:10px;padding:6px;border:1px solid #111">HARI ${day.d}: ${day.t} - ${formatTanggalIndo(getTanggalForHari(day.d))}</div><table style="width:100%;border-collapse:collapse;font-size:10px"><tr style="background:#111;color:white"><th style="width:30px;padding:6px;border:1px solid #111">No</th><th style="padding:6px;border:1px solid #111">TUGAS / KEGIATAN</th><th style="width:90px;padding:6px;border:1px solid #111">STATUS</th></tr>`;
+    tasks.forEach((t,idx)=>{ html+=`<tr><td style="text-align:center;padding:6px;border:1px solid #111">${idx+1}</td><td style="padding:6px;border:1px solid #111">${t.name}</td><td style="text-align:center;padding:6px;border:1px solid #111">${t.ada||'-'}</td></tr>`; });
+    html+=`</table>`;
+    if(!onlyTunggakan){
+      const cat=getCatatan(day.d); const fotos=getFotoCatatan(day.d);
+      const showCat = document.getElementById('includeCatatan') ? document.getElementById('includeCatatan').checked : true;
+      const showFoto = document.getElementById('includeFoto') ? document.getElementById('includeFoto').checked : true;
+      if((cat && showCat) || (fotos.length>0 && showFoto)){
+        html+=`<div style="border:1px solid #111;padding:8px;margin-top:6px;font-size:9px;background:#fafafa">`;
+        if(cat && showCat) html+=`<div><b>Catatan Hari ${day.d}:</b><br>${cat.replace(/\n/g,'<br>')}</div>`;
+        if(fotos.length>0 && showFoto){ html+=`<div style="margin-top:8px"><b>Foto Bukti Catatan Hari ${day.d} (${fotos.length} foto):</b><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">`; fotos.forEach(f=>{ html+=`<div style="border:1px solid #111;padding:4px;width:110px;text-align:center;font-size:7px;background:white"><img src="${f.data}" style="width:100%;height:70px;object-fit:cover"><div style="margin-top:2px">${(f.caption||"Bukti").substring(0,30)}</div></div>`; }); html+=`</div></div>`; }
+        html+=`</div>`;
+      }
+    }
+    html+=`</div>`;
+  });
+  const needFooter = document.getElementById('needFooter') ? document.getElementById('needFooter').checked : false;
+  if(needFooter && !onlyTunggakan){ const ft=document.getElementById('footerText') ? document.getElementById('footerText').value : ''; html+=`<div style="margin-top:20px;border-top:1px solid #111;padding-top:8px;text-align:center;font-size:8px;color:#555">${ft}</div>`; }
+  const ttd=getTTDData(); html+=`<div style="display:flex;justify-content:center;gap:40px;margin-top:32px">`; ttd.forEach(b=>{ html+=`<div style="width:150px;text-align:center;font-size:9px"><div style="font-size:8px;font-weight:700">${b.label}</div><div style="height:70px;border-bottom:1px solid #111;display:flex;align-items:center;justify-content:center">${b.ttd?`<img src="${b.ttd}" style="max-height:60px">`:``}</div><div style="font-weight:700;margin-top:4px">${b.nama}</div></div>`; }); html+=`</div></div>`;
+  return html;
+}
+function previewPDF(onlyT){ lastPreviewOnlyTung=onlyT; const html=buildReportHTML(onlyT); document.getElementById('previewContent').innerHTML=`<div style="background:white;border-radius:8px;overflow:hidden">${html}</div>`; document.getElementById('previewModal').classList.remove('hidden'); }
+function previewWord(onlyT){ previewPDF(onlyT); }
+function closePreview(){ document.getElementById('previewModal').classList.add('hidden'); }
+function exportPDFFromPreview(){ exportPDF(lastPreviewOnlyTung); }
+function exportWordFromPreview(){ exportWord(lastPreviewOnlyTung); }
+function exportPDF(onlyT){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF('p','mm','a4');
+  doc.setFontSize(11); doc.text("KOPERASI DESA MERAH PUTIH - DESA KASIH - 53354 - HARI 32-61",10,12);
+  doc.setFontSize(9); doc.text(`Laporan ${onlyT?"Tunggakan 32-61 - Tanpa Catatan/Foto":"32-61 FULL - Foto di Catatan"}`,10,18);
+  let y=24; const edited=getEdited(); const del=getDeleted();
+  baseDays.forEach(day=>{
+    if(onlyT && day.d>=getHariIni()) return;
+    if(y>260){doc.addPage(); y=12;}
+    doc.setFontSize(9); doc.setFont(undefined,'bold'); doc.text(`HARI ${day.d}: ${day.t}`,10,y); y+=4;
+    const rows=[]; day.tasks.forEach((o,i)=>{ if(del.includes(day.d+'_'+i)) return; const name=edited[day.d+'_'+i]||o; const chk=isChecked(day.d,i); if(onlyT && chk) return; rows.push([rows.length+1, name, getAda(day.d,i)||"-"]); });
+    if(rows.length>0){ doc.autoTable({startY:y, head:[['No','TUGAS','STATUS']], body:rows, styles:{fontSize:7, lineWidth:0.2, lineColor:0}, headStyles:{fillColor:[0,0,0]}}); y=doc.lastAutoTable.finalY+4; if(!onlyT){ const cat=getCatatan(day.d); if(cat){ doc.setFontSize(7); doc.text(`Catatan Hari ${day.d}: ${cat.substring(0,120)}`,10,y); y+=5; } const fotos=getFotoCatatan(day.d); if(fotos.length>0){ doc.text(`Foto Catatan Hari ${day.d}: ${fotos.length} foto`,10,y); y+=6; } } }
+  });
+  doc.save(`LAPORAN-32-61-${onlyT?"TUNGGAKAN":"FULL"}-KASIH.pdf`);
+}
+function exportWord(onlyT){
+  const html=buildReportHTML(onlyT);
+  const blob=new Blob([`<html><head><meta charset="utf-8"></head><body>${html}</body></html>`],{type:'application/msword'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`LAPORAN-32-61-${onlyT?"TUNGGAKAN":"FULL"}-KASIH.doc`; a.click();
+}
+function renderTunggakan(){
+  const c2=document.getElementById('container2'); const del=getDeleted(); const edited=getEdited();
+  let total=0; let htmlAll="";
+  baseDays.forEach(day=>{
+    if(day.d>=getHariIni()) return;
+    let items="";
+    day.tasks.forEach((orig,i)=>{
+      if(del.includes(day.d+'_'+i)) return;
+      if(isChecked(day.d,i)) return;
+      total++;
+      const name=edited[day.d+'_'+i]||orig; const ada=getAda(day.d,i);
+      items+=`<div class="flex gap-2 py-2 px-2 border-b bg-red-50/50 items-center"><span class="flex-1 text-[11px]">${name} <span class="text-[7px] bg-white border px-1 rounded">${ada||"BELUM"}</span></span><button onclick="scrollToHari(${day.d})" class="bg-[#BE1E2D] text-white px-2 py-1 rounded text-[8px] font-bold whitespace-nowrap">Ke Hari ${day.d} →</button></div>`;
+    });
+    if(items){ htmlAll+=`<div class="bg-white p-3 rounded-xl border-l-4 border-[#BE1E2D] shadow-sm"><p class="font-bold text-[11px] text-[#BE1E2D]">HARI ${day.d}: ${day.t} - ${formatTanggalIndo(getTanggalForHari(day.d))}</p><div class="border rounded-lg mt-2 overflow-hidden">${items}</div></div>`; }
+  });
+  document.getElementById('tunggakanCount').textContent = total===0 ? "✅ Tidak ada tunggakan!" : `Total tunggakan: ${total} tugas belum diceklis`;
+  c2.innerHTML = total===0 ? `<div class="bg-white border-2 border-green-300 rounded-xl p-6 text-center"><p class="text-[30px]">✅</p><p class="font-bold text-[12px] text-green-700 mt-2">Tidak ada tunggakan!</p></div>` : htmlAll;
+}
+function render(){
+  document.getElementById('navHari').innerHTML="";
+  for(let i=START_HARI;i<=END_HARI;i++){ const isToday=i===getHariIni(); const btn=document.createElement('button'); btn.textContent=i; btn.className="font-bold border "+(isToday?"bg-[#BE1E2D] text-white ring-2 ring-yellow-300":"bg-white text-slate-700"); btn.onclick=()=>scrollToHari(i); document.getElementById('navHari').appendChild(btn); }
+  const c1=document.getElementById('container1'); c1.innerHTML=""; const editedMap=getEdited(); const deletedList=getDeleted();
+  baseDays.forEach(day=>{
+    const tgl=getTanggalForHari(day.d);
+    const div=document.createElement('div'); div.id="hari-"+day.d; div.className="bg-white p-3 rounded-xl border shadow-sm "+(day.d===getHariIni()?"ring-2 ring-[#BE1E2D]":"");
+    let html="<div class='flex justify-between mb-2'><div><p class='font-bold text-[12px]'>HARI "+day.d+": "+day.t+"</p><p class='text-[8px] text-slate-500'>"+formatTanggalIndo(tgl)+"</p></div><span class='text-[8px] px-2 py-0.5 rounded bg-slate-100 h-fit'>"+day.m+"</span></div><div class='border rounded-lg overflow-hidden'>";
+    day.tasks.forEach((orig,i)=>{
+      if(deletedList.includes(day.d+'_'+i)) return;
+      const taskName=editedMap[day.d+'_'+i]||orig; const ada=getAda(day.d,i); const chk=isChecked(day.d,i);
+      html+="<div class='task-row "+(chk?"bg-green-50":"")+"'><input type='checkbox' "+(chk?"checked":"")+" onchange='localStorage.setItem(\"chk_32_61_"+day.d+"_"+i+"\",this.checked?\"1\":\"0\"); autoPush(); render();' class='w-5 h-5 accent-[#BE1E2D]'><span class='flex-1 text-[11px]'>"+taskName+"</span><div class='task-right'><button onclick=\"setAda("+day.d+","+i+",'ADA')\" class='px-2 py-1 rounded text-[8px] font-bold border "+(ada==='ADA'?"bg-green-600 text-white":"bg-white text-green-700")+"'>ADA</button><button onclick=\"setAda("+day.d+","+i+",'TIDAK')\" class='px-2 py-1 rounded text-[8px] font-bold border "+(ada==='TIDAK'?"bg-red-600 text-white":"bg-white text-red-700")+"'>TIDAK</button><button onclick=\"setAda("+day.d+","+i+",'BELUM')\" class='px-2 py-1 rounded text-[8px] font-bold border "+(ada==='BELUM'?"bg-amber-500 text-white":"bg-white text-amber-700")+"'>BELUM</button><button onclick='editTask("+day.d+","+i+")' class='px-1 py-1 rounded text-[7px] bg-yellow-50 border'>✏️</button><button onclick='deleteTask("+day.d+","+i+")' class='px-1 py-1 rounded text-[7px] bg-red-50 border'>🗑️</button></div></div>";
+    });
+    html+="</div><div class='mt-2 flex gap-1'><input id='addInput-"+day.d+"' placeholder='Tambah tugas...' class='flex-1 border rounded-lg px-2 py-1.5 text-[10px]'><button onclick='addCustomTask("+day.d+")' class='bg-[#BE1E2D] text-white px-3 py-1.5 rounded-lg text-[10px] font-bold'>+ Tugas</button></div>";
+    const catActive=isCatatanActive(day.d); const fotos=getFotoCatatan(day.d);
+    html+="<div class='mt-3 border-2 "+(catActive?"border-blue-400":"border-slate-300")+" rounded-xl overflow-hidden bg-white'><div class='flex justify-between items-center px-3 py-2 bg-blue-50'><p class='text-[10px] font-bold'>📝 Catatan Hari "+day.d+" (Foto di sini) - "+fotos.length+" foto</p><div class='flex items-center gap-2'><button onclick='openFotoCatatanModal("+day.d+")' class='bg-[#BE1E2D] text-white px-3 py-1 rounded-lg text-[8px] font-bold'>📷 + Foto Catatan</button><label class='flex items-center gap-1 text-[9px]'><input type='checkbox' "+(catActive?"checked":"")+" onchange='toggleCatatan("+day.d+")'> ON</label></div></div>";
+    if(catActive){
+      html+="<div class='p-2'><textarea id='catatan-"+day.d+"' oninput='saveCatatan("+day.d+")' placeholder='Tulis catatan harian Hari "+day.d+"...' class='w-full p-2 text-[10px] h-20 border rounded'>"+getCatatan(day.d)+"</textarea>";
+      if(fotos.length>0){
+        html+="<div class='flex gap-2 flex-wrap mt-3 bg-slate-50 p-2 rounded-lg border'>";
+        fotos.forEach((f,idx)=>{ html+=`<div class="border border-black p-1 rounded-lg bg-white text-center"><img src="${f.data}" class="foto-thumb-catatan"><p class="text-[7px] mt-1 w-[80px] truncate">${f.caption||'Bukti'}</p><button onclick="deleteFotoCatatan(${day.d},${idx})" class="text-[7px] bg-red-600 text-white px-2 py-0.5 rounded mt-1 w-full">Hapus</button></div>`; });
+        html+="</div>";
+      } else { html+="<p class='text-[8px] text-slate-500 italic mt-2'>Belum ada foto catatan Hari "+day.d+". Klik 📷 + Foto Catatan.</p>"; }
+      html+="</div>";
+    } else { html+="<p class='text-[8px] text-slate-400 p-3 italic'>Catatan nonaktif</p>"; }
+    html+="</div>";
+    div.innerHTML=html; c1.appendChild(div);
+  });
+  renderTunggakan();
+}
+loadNeed(); loadNames(); loadImgs(); loadFooter();
+if(!localStorage.getItem('kdkmp_startDate_32_61')){localStorage.setItem('kdkmp_startDate_32_61',new Date('2026-11-01T00:00:00').toISOString());}
+render();
+</script>
+</body>
+</html>
