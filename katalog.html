@@ -2,51 +2,62 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KATALOG GERAI KDKMP KASIH - MERAH PUTIH V2 - 7000764</title>
+<title>GERAI KDKMP - 7000764 FINAL</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<style>
-.merah-grad{background:linear-gradient(135deg,#BE1E2D 0%,#8B0000 100%)}
-.card-prod{transition:all .2s} .card-prod:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(190,30,45,.15)}
-</style>
 </head>
-<body class="bg-[#fff5f5] min-h-screen">
-<div class="merah-grad text-white sticky top-0 z-50 shadow-lg">
-<div class="max-w-6xl mx-auto px-3 py-3 flex justify-between items-center">
-<div class="flex items-center gap-2"><div class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-[#BE1E2D] font-black">K</div><div><p class="font-black text-[13px] leading-3">GERAI KDKMP</p><p class="text-[9px] opacity-90">Desa Kasih 53354 - V2 7000764</p></div></div>
-<div class="flex items-center gap-2"><span id="roleBadge" class="hidden bg-white text-[#BE1E2D] px-2 py-1 rounded-full text-[8px] font-black"></span><button id="btnLogin" onclick="openAuth('login')" class="bg-white text-[#BE1E2D] px-3 py-1.5 rounded-full text-[10px] font-bold"><i class="fa-solid fa-user"></i> Masuk</button><button id="btnLogout" onclick="logout()" class="hidden bg-black/20 px-3 py-1.5 rounded-full text-[10px] font-bold">Keluar</button></div>
+<body class="bg-[#fff5f5]">
+<div class="bg-[#BE1E2D] text-white p-3 sticky top-0 z-10">
+<div class="max-w-5xl mx-auto flex justify-between items-center">
+<b>GERAI KDKMP KASIH 53354</b>
+<div class="flex gap-2">
+<span id="badge" class="hidden bg-white text-[#BE1E2D] px-2 py-1 rounded-full text-[9px] font-black"></span>
+<button onclick="document.getElementById('auth').style.display='flex'" class="bg-white text-[#BE1E2D] px-4 py-2 rounded-full text-[12px] font-bold">Masuk / Daftar</button>
+<button id="out" onclick="logout()" class="hidden bg-black/30 px-3 py-2 rounded-full text-[10px]">Keluar</button>
 </div>
-<div class="bg-white/10 backdrop-blur px-3 py-2 flex gap-2">
-<input id="searchInput" oninput="renderProduk()" placeholder="Cari beras, minyak, gula..." class="flex-1 rounded-full px-4 py-2 text-[12px] text-black outline-none">
-<select id="kategoriFilter" onchange="renderProduk()" class="rounded-full px-3 py-2 text-[11px] text-black outline-none">
-<option value="">Semua Kategori</option><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Bumbu</option><option>Lainnya</option>
-</select>
 </div>
 </div>
 
-<div class="max-w-6xl mx-auto p-3 grid grid-cols-12 gap-3">
-<div class="col-span-12 lg:col-span-8">
-<div class="flex justify-between items-center mb-3"><h2 class="font-black text-[14px] text-[#BE1E2D]">🛒 Katalog Produk <span id="countProd" class="text-[10px] bg-[#BE1E2D] text-white px-2 py-0.5 rounded-full">0</span></h2><div class="flex gap-2"><button onclick="openCart()" class="bg-white border-2 border-[#BE1E2D] text-[#BE1E2D] px-3 py-1 rounded-full text-[10px] font-bold"><i class="fa-solid fa-cart-shopping"></i> Keranjang <span id="cartCount">0</span></button><button id="btnTambahProd" onclick="openProdModal()" class="hidden bg-[#BE1E2D] text-white px-3 py-1 rounded-full text-[10px] font-bold">+ Produk</button></div></div>
-<div id="produkGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+<div class="max-w-5xl mx-auto p-3">
+<div class="bg-white rounded-xl p-3 flex gap-2 mb-3">
+<input id="q" oninput="render()" placeholder="Cari beras, minyak, gula..." class="flex-1 border rounded-full px-4 py-2 text-[12px]">
+<button id="addBtn" onclick="document.getElementById('add').style.display='flex'" class="hidden bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px] font-bold">+ Produk</button>
 </div>
-<div class="col-span-12 lg:col-span-4 space-y-3">
-<div class="bg-white rounded-2xl p-4 shadow border-t-4 border-[#BE1E2D]"><p class="font-black text-[12px] text-[#BE1E2D]">🏪 Gerai Offline</p><p class="text-[10px] text-slate-600 mt-1">Admin pencet -1 kalau ada pembeli offline, stok realtime di semua HP langsung berkurang.</p><div class="mt-3 bg-red-50 p-3 rounded-xl text-[10px]"><div class="flex justify-between"><span>Total Produk:</span><b id="statTotal">0</b></div><div class="flex justify-between"><span>Stok Tipis (<5):</span><b id="statLow" class="text-red-600">0</b></div><div class="flex justify-between"><span>Offline Hari Ini:</span><b id="statOffline">0</b></div></div><button id="btnKelolaUser" onclick="openUserModal()" class="hidden w-full mt-3 bg-slate-800 text-white py-2 rounded-full text-[10px] font-bold">👥 Kelola Akun</button></div>
-<div class="bg-white rounded-2xl p-4 shadow"><p class="font-black text-[11px]">👤 Akun Saya</p><div id="akunInfo" class="mt-2 text-[11px] text-slate-600">Belum login</div><div id="akunAction" class="mt-3 hidden flex-col gap-2"><input id="newPass" type="password" placeholder="Password baru" class="w-full border rounded-full px-3 py-2 text-[11px]"><input id="newPass2" type="password" placeholder="Ulang password baru" class="w-full border rounded-full px-3 py-2 text-[11px]"><button onclick="gantiPassword()" class="bg-[#BE1E2D] text-white py-2 rounded-full text-[10px] font-bold">🔑 Ganti Password</button><p class="text-[8px] text-slate-500">Password tidak pernah ditampilkan, hanya bisa diganti.</p></div></div>
-<div id="adminPanel" class="hidden bg-amber-50 border-2 border-amber-300 rounded-2xl p-4"><p class="font-black text-[11px] text-amber-800">⚡ Stok Cepat Offline</p><div id="stokCepatList" class="mt-2 space-y-2 max-h-[300px] overflow-auto"></div></div>
+<div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="auth" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99999;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-sm p-5">
+<div class="flex justify-between"><b class="text-[#BE1E2D]" id="tAuth">Masuk</b><button onclick="document.getElementById('auth').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
+<div class="mt-4 space-y-3">
+<input id="aNama" placeholder="Nama Lengkap" style="display:none" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
+<input id="aEmail" placeholder="Email / username" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
+<input id="aPass" type="password" placeholder="Password min 4" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
+<input id="aKode" placeholder="Kode Admin KASIH53354" style="display:none" class="w-full border-2 border-amber-300 bg-amber-50 rounded-full px-4 py-3 text-[11px]">
+<p id="aMsg" class="text-red-600 text-[11px] text-center"></p>
+<button onclick="doAuth()" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">PROSES</button>
+<button onclick="switchMode()" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold"><span id="aSw">Belum punya? Daftar</span></button>
+</div>
 </div>
 </div>
 
-<div id="authModal" class="fixed inset-0 bg-black/60 z-[999] hidden flex items-center justify-center p-3"><div class="bg-white rounded-2xl max-w-sm w-full p-5"><div class="flex justify-between items-center"><p id="authTitle" class="font-black text-[13px] text-[#BE1E2D]">Masuk Akun</p><button onclick="closeAuth()" class="w-7 h-7 bg-slate-100 rounded-full">X</button></div><div class="mt-4 space-y-3"><input id="authNama" placeholder="Nama Lengkap" class="hidden w-full border rounded-full px-4 py-2.5 text-[12px]"><input id="authEmail" placeholder="Email / Username" class="w-full border rounded-full px-4 py-2.5 text-[12px]"><input id="authPass" type="password" placeholder="Password" class="w-full border rounded-full px-4 py-2.5 text-[12px]"><input id="authKodeAdmin" placeholder="Kode Admin - KASIH53354" class="hidden w-full border-2 border-amber-300 bg-amber-50 rounded-full px-4 py-2.5 text-[11px]"><div class="flex gap-2"><button id="authSubmit" onclick="submitAuth()" class="flex-1 bg-[#BE1E2D] text-white py-2.5 rounded-full text-[11px] font-bold">Masuk</button><button onclick="toggleAuthMode()" class="flex-1 bg-slate-100 py-2.5 rounded-full text-[11px] font-bold"><span id="authToggleText">Daftar</span></button></div><p class="text-[8px] text-center text-slate-500">Password di-hash, tidak bisa dilihat siapapun.</p></div></div></div>
-<div id="prodModal" class="fixed inset-0 bg-black/60 z-[998] hidden flex items-center justify-center p-3"><div class="bg-white rounded-2xl max-w-md w-full p-5"><div class="flex justify-between"><p class="font-black text-[12px] text-[#BE1E2D]">Tambah / Edit Produk</p><button onclick="closeProdModal()" class="w-7 h-7 bg-slate-100 rounded-full">X</button></div><div class="mt-3 space-y-2"><input id="pNama" placeholder="Nama Produk" class="w-full border rounded-xl px-3 py-2 text-[11px]"><div class="grid grid-cols-2 gap-2"><input id="pHarga" type="number" placeholder="Harga" class="border rounded-xl px-3 py-2 text-[11px]"><input id="pStok" type="number" placeholder="Stok" class="border rounded-xl px-3 py-2 text-[11px]"></div><div class="grid grid-cols-2 gap-2"><select id="pKategori" class="border rounded-xl px-3 py-2 text-[11px]"><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Bumbu</option><option>Lainnya</option></select><input id="pGambar" placeholder="Link gambar" class="border rounded-xl px-3 py-2 text-[11px]"></div><textarea id="pDesk" placeholder="Deskripsi" class="w-full border rounded-xl px-3 py-2 text-[11px] h-16"></textarea><button onclick="saveProduk()" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full text-[11px] font-bold">💾 Simpan Produk</button></div></div></div>
-<div id="userModal" class="fixed inset-0 bg-black/60 z-[997] hidden flex items-center justify-center p-3"><div class="bg-white rounded-2xl max-w-md w-full p-5 max-h-[80vh] overflow-auto"><div class="flex justify-between"><p class="font-black text-[12px]">👥 Kelola Akun</p><button onclick="closeUserModal()" class="w-7 h-7 bg-slate-100 rounded-full">X</button></div><div id="userList" class="mt-3 space-y-2"></div></div></div>
-<div id="cartModal" class="fixed inset-0 bg-black/60 z-[996] hidden flex items-center justify-center p-3"><div class="bg-white rounded-2xl max-w-sm w-full p-5"><div class="flex justify-between"><p class="font-black text-[12px]">🛒 Keranjang</p><button onclick="closeCart()" class="w-7 h-7 bg-slate-100 rounded-full">X</button></div><div id="cartList" class="mt-3 space-y-2"></div><div class="border-t mt-3 pt-3 flex justify-between font-black text-[12px]"><span>Total:</span><span id="cartTotal">Rp 0</span></div><button onclick="checkoutWA()" class="w-full mt-3 bg-green-600 text-white py-2.5 rounded-full text-[11px] font-bold">💬 Pesan via WA</button></div></div>
+<!-- ADD MODAL -->
+<div id="add" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99998;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>Tambah Produk</b><button onclick="document.getElementById('add').style.display='none'" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div>
+<div class="mt-3 space-y-2">
+<input id="pNama" placeholder="Nama ex: Beras 5kg" class="w-full border rounded-xl px-3 py-2 text-[11px]">
+<input id="pHarga" type="number" placeholder="Harga" class="w-full border rounded-xl px-3 py-2 text-[11px]">
+<input id="pStok" type="number" placeholder="Stok" class="w-full border rounded-xl px-3 py-2 text-[11px]">
+<select id="pKat" class="w-full border rounded-xl px-3 py-2 text-[11px]"><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Lainnya</option></select>
+<button onclick="saveProd()" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">Simpan</button>
+</div></div>
+</div>
 
-<!-- FIREBASE BARU KAMU 7000764 -->
 <script type="module">
+// CONFIG PERSIS YANG KAMU KIRIM
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
-import { getDatabase, ref, set, onValue, push, update, remove, get } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
-
+import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBP1lvYR22XOf-IC_34gHEEkfolSthDTzo",
   authDomain: "kasih-kopdes.firebaseapp.com",
@@ -57,46 +68,77 @@ const firebaseConfig = {
   appId: "1:746954171317:web:7000764fc695b1b1ce2ffc",
   measurementId: "G-X1JQ7P97X9"
 };
-
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const db = getDatabase(app);
-window._db=db; window._ref=ref; window._set=set; window._onValue=onValue; window._push=push; window._update=update; window._remove=remove; window._get=get;
-window.dispatchEvent(new Event('fbReadyKatalog'));
-console.log("✅ Katalog Gerai - Firebase 7000764 connected");
+window.db=db; window.ref=ref; window.set=set; window.onValue=onValue; window.update=update; window.remove=remove;
 </script>
 
 <script>
-let produk={}, users={}, currentUser=null, cart={}, authMode='login', editId=null;
-const DB_PROD='katalog-produk-gerai-kasih-V2'; const DB_USER='katalog-users-kasih-V2'; const DB_STAT='katalog-stat-kasih-V2';
-function hashPass(p){let h=0; for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i); h|=0;} return 'h_'+Math.abs(h)+'_'+btoa(p).slice(0,8);}
-function startListener(){const db=window._db; if(!db) return; window._onValue(window._ref(db, DB_PROD), snap=>{produk=snap.val()||{}; renderProduk(); renderStokCepat(); updateStat();}); window._onValue(window._ref(db, DB_USER), snap=>{users=snap.val()||{}; renderUserList();});}
-window.addEventListener('fbReadyKatalog', startListener); setTimeout(startListener,1500);
-function openAuth(mode){authMode=mode; document.getElementById('authModal').classList.remove('hidden'); setAuthUI();}
-function closeAuth(){document.getElementById('authModal').classList.add('hidden');}
-function toggleAuthMode(){authMode=authMode==='login'?'register':'login'; setAuthUI();}
-function setAuthUI(){const isReg=authMode==='register'; document.getElementById('authTitle').textContent=isReg?'Daftar Akun Baru':'Masuk Akun'; document.getElementById('authNama').classList.toggle('hidden',!isReg); document.getElementById('authKodeAdmin').classList.toggle('hidden',!isReg); document.getElementById('authSubmit').textContent=isReg?'Daftar':'Masuk'; document.getElementById('authToggleText').textContent=isReg?'Sudah punya akun? Masuk':'Belum punya? Daftar';}
-async function submitAuth(){const email=document.getElementById('authEmail').value.trim().toLowerCase(); const pass=document.getElementById('authPass').value; const nama=document.getElementById('authNama').value.trim(); const kode=document.getElementById('authKodeAdmin').value.trim(); if(!email||!pass) return alert('Isi email & password'); const db=window._db; if(authMode==='register'){if(!nama) return alert('Isi nama'); const all=Object.values(users); if(all.find(u=>u.email===email)) return alert('Email sudah terdaftar'); let role='pembeli'; if(kode==='KASIH53354') role='admin'; else if(kode && kode!=='KASIH53354') return alert('Kode admin salah'); const id=Date.now().toString(); const data={id,email,nama,passHash:hashPass(pass),role,createdAt:new Date().toISOString()}; await window._set(window._ref(db, DB_USER+'/'+id), data); alert('Daftar sukses sebagai '+role+'! Silakan login'); authMode='login'; setAuthUI();} else {const found=Object.values(users).find(u=>u.email===email && u.passHash===hashPass(pass)); if(!found) return alert('Email/password salah'); currentUser=found; localStorage.setItem('katalog_currentUser_V2', JSON.stringify(found)); closeAuth(); afterLogin();}}
-function afterLogin(){document.getElementById('btnLogin').classList.add('hidden'); document.getElementById('btnLogout').classList.remove('hidden'); document.getElementById('roleBadge').classList.remove('hidden'); document.getElementById('roleBadge').textContent=currentUser.role.toUpperCase(); document.getElementById('akunInfo').innerHTML=`<b>${currentUser.nama}</b><br>${currentUser.email}<br><span class="text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full">${currentUser.role}</span>`; document.getElementById('akunAction').classList.remove('hidden'); document.getElementById('akunAction').classList.add('flex'); if(currentUser.role==='admin'){document.getElementById('btnTambahProd').classList.remove('hidden'); document.getElementById('btnKelolaUser').classList.remove('hidden'); document.getElementById('adminPanel').classList.remove('hidden');} renderProduk();}
-function logout(){localStorage.removeItem('katalog_currentUser_V2'); location.reload();}
-function loadSession(){const s=localStorage.getItem('katalog_currentUser_V2'); if(s){currentUser=JSON.parse(s); const fresh=Object.values(users).find(u=>u.id===currentUser.id); if(fresh) currentUser=fresh; afterLogin();}} setTimeout(loadSession,1800);
-async function gantiPassword(){const p1=document.getElementById('newPass').value; const p2=document.getElementById('newPass2').value; if(!p1||p1!==p2) return alert('Password baru tidak sama'); if(p1.length<4) return alert('Minimal 4 karakter'); const db=window._db; await window._update(window._ref(db, DB_USER+'/'+currentUser.id), {passHash:hashPass(p1)}); alert('Password berhasil diganti!'); logout();}
-function openProdModal(id=null){editId=id; document.getElementById('prodModal').classList.remove('hidden'); if(id && produk[id]){const p=produk[id]; document.getElementById('pNama').value=p.nama; document.getElementById('pHarga').value=p.harga; document.getElementById('pStok').value=p.stok; document.getElementById('pKategori').value=p.kategori; document.getElementById('pGambar').value=p.gambar||''; document.getElementById('pDesk').value=p.desk||'';} else {['pNama','pHarga','pStok','pGambar','pDesk'].forEach(i=>document.getElementById(i).value='');}}
-function closeProdModal(){document.getElementById('prodModal').classList.add('hidden'); editId=null;}
-async function saveProduk(){if(!currentUser||currentUser.role!=='admin') return alert('Hanya admin'); const nama=document.getElementById('pNama').value.trim(); const harga=parseInt(document.getElementById('pHarga').value)||0; const stok=parseInt(document.getElementById('pStok').value)||0; const kategori=document.getElementById('pKategori').value; const gambar=document.getElementById('pGambar').value.trim(); const desk=document.getElementById('pDesk').value.trim(); if(!nama||!harga) return alert('Nama & harga wajib'); const db=window._db; const data={nama,harga,stok,kategori,gambar,desk,updatedAt:new Date().toISOString(),updatedBy:currentUser.nama}; if(editId){await window._update(window._ref(db, DB_PROD+'/'+editId), data);} else {await window._push(window._ref(db, DB_PROD), data);} closeProdModal();}
-async function hapusProduk(id){if(!confirm('Hapus produk?')) return; await window._remove(window._ref(window._db, DB_PROD+'/'+id));}
-async function ubahStok(id, delta){if(!currentUser||currentUser.role!=='admin') return alert('Hanya admin'); const p=produk[id]; if(!p) return; let baru=(p.stok||0)+delta; if(baru<0) baru=0; await window._update(window._ref(window._db, DB_PROD+'/'+id), {stok:baru}); if(delta<0){const db=window._db; const sRef=window._ref(db, DB_STAT+'/offlineHariIni'); const snap=await window._get(sRef); let v=snap.val()||0; await window._set(sRef, v+Math.abs(delta));}}
-function renderProduk(){const grid=document.getElementById('produkGrid'); const q=(document.getElementById('searchInput').value||'').toLowerCase(); const kat=document.getElementById('kategoriFilter').value; const list=Object.entries(produk).filter(([id,p])=>{if(kat && p.kategori!==kat) return false; if(q && !((p.nama||'').toLowerCase().includes(q) || (p.kategori||'').toLowerCase().includes(q))) return false; return true;}); document.getElementById('countProd').textContent=list.length; if(list.length===0){grid.innerHTML=`<div class="col-span-2 md:col-span-3 bg-white rounded-2xl p-8 text-center"><p class="text-[30px]">📦</p><p class="font-bold text-[12px] mt-2">Belum ada produk</p><p class="text-[10px] text-slate-500">${currentUser?.role==='admin'?'Klik + Produk':'Tunggu admin'}</p></div>`; return;} grid.innerHTML=list.map(([id,p])=>{const low=p.stok<5; const isAdmin=currentUser?.role==='admin'; return `<div class="card-prod bg-white rounded-2xl overflow-hidden border ${low?'border-red-300':''} shadow-sm"><div class="h-[110px] bg-slate-100 flex items-center justify-center relative">${p.gambar?`<img src="${p.gambar}" class="w-full h-full object-cover">`:`<span class="text-[30px]">🛒</span>`}${low?`<span class="absolute top-2 left-2 bg-red-600 text-white text-[7px] px-2 py-0.5 rounded-full font-bold">TIPIS</span>`:''}<span class="absolute top-2 right-2 bg-white/90 px-2 py-0.5 rounded-full text-[8px] font-bold">${p.kategori}</span><span class="absolute bottom-2 right-2 bg-[#BE1E2D] text-white px-2 py-0.5 rounded-full text-[9px] font-black">Stok: ${p.stok}</span></div><div class="p-3"><p class="font-bold text-[11px] leading-3 line-clamp-2">${p.nama}</p><p class="text-[9px] text-slate-500 line-clamp-1 mt-1">${p.desk||''}</p><div class="flex justify-between items-center mt-2"><span class="font-black text-[12px] text-[#BE1E2D]">Rp ${Number(p.harga).toLocaleString('id-ID')}</span>${!isAdmin?`<button onclick="addCart('${id}')" class="bg-[#BE1E2D] text-white w-7 h-7 rounded-full text-[12px]">+</button>`:''}</div>${isAdmin?`<div class="grid grid-cols-5 gap-1 mt-2"><button onclick="ubahStok('${id}',-10)" class="bg-red-100 text-red-700 py-1 rounded-full text-[9px] font-bold">-10</button><button onclick="ubahStok('${id}',-1)" class="bg-red-600 text-white py-1 rounded-full text-[9px] font-bold">-1</button><button onclick="ubahStok('${id}',1)" class="bg-green-100 text-green-700 py-1 rounded-full text-[9px] font-bold">+1</button><button onclick="ubahStok('${id}',10)" class="bg-green-600 text-white py-1 rounded-full text-[9px] font-bold">+10</button><button onclick="openProdModal('${id}')" class="bg-slate-100 py-1 rounded-full text-[9px]">✏️</button></div><div class="flex gap-1 mt-1"><button onclick="hapusProduk('${id}')" class="flex-1 bg-slate-50 text-[8px] py-1 rounded-full">🗑️ Hapus</button></div>`:''}</div></div>`;}).join('');}
-function renderStokCepat(){const c=document.getElementById('stokCepatList'); const list=Object.entries(produk).slice(0,20); c.innerHTML=list.map(([id,p])=>`<div class="flex justify-between items-center bg-white p-2 rounded-xl border text-[10px]"><span class="flex-1 truncate font-bold">${p.nama} (${p.stok})</span><div class="flex gap-1"><button onclick="ubahStok('${id}',-1)" class="bg-red-600 text-white w-6 h-6 rounded-full font-bold">-1</button><button onclick="ubahStok('${id}',1)" class="bg-green-600 text-white w-6 h-6 rounded-full font-bold">+1</button></div></div>`).join('');}
-function updateStat(){const all=Object.values(produk); document.getElementById('statTotal').textContent=all.length; document.getElementById('statLow').textContent=all.filter(p=>p.stok<5).length; window._get(window._ref(window._db, DB_STAT+'/offlineHariIni')).then(s=>{document.getElementById('statOffline').textContent=s.val()||0;});}
-function addCart(id){if(!produk[id]) return; cart[id]=(cart[id]||0)+1; if(cart[id]>produk[id].stok) cart[id]=produk[id].stok; updateCartUI();}
-function updateCartUI(){document.getElementById('cartCount').textContent=Object.values(cart).reduce((a,b)=>a+b,0); const listEl=document.getElementById('cartList'); let total=0; listEl.innerHTML=Object.entries(cart).map(([id,qty])=>{const p=produk[id]; if(!p) return ''; const sub=p.harga*qty; total+=sub; return `<div class="flex justify-between items-center text-[11px]"><span>${p.nama} x ${qty}</span><div class="flex items-center gap-2"><span class="font-bold">Rp ${sub.toLocaleString()}</span><button onclick="delete cart['${id}']; updateCartUI()" class="text-red-600">X</button></div></div>`;}).join('')||'<p class="text-[10px] text-slate-500">Keranjang kosong</p>'; document.getElementById('cartTotal').textContent='Rp '+total.toLocaleString('id-ID');}
-function openCart(){document.getElementById('cartModal').classList.remove('hidden');} function closeCart(){document.getElementById('cartModal').classList.add('hidden');}
-function checkoutWA(){const all=Object.entries(cart).map(([id,q])=>`${produk[id].nama} x ${q}`).join(', '); if(!all) return alert('Keranjang kosong'); const wa=`https://wa.me/6281234567890?text=Halo%20Gerai%20KDKMP%20Kasih%2C%20saya%20mau%20pesan:%20${encodeURIComponent(all)}`; window.open(wa,'_blank');}
-function openUserModal(){document.getElementById('userModal').classList.remove('hidden');} function closeUserModal(){document.getElementById('userModal').classList.add('hidden');}
-function renderUserList(){const el=document.getElementById('userList'); const list=Object.values(users); el.innerHTML=list.map(u=>`<div class="flex justify-between items-center border p-2 rounded-xl text-[10px]"><div><b>${u.nama}</b><br>${u.email}<br><span class="text-[8px] px-2 py-0.5 rounded-full ${u.role==='admin'?'bg-red-100 text-red-700':'bg-slate-100'}">${u.role}</span></div><button onclick="hapusUser('${u.id}')" class="bg-red-50 text-red-700 px-2 py-1 rounded-full text-[8px]">Hapus</button></div>`).join('')||'Belum ada user';}
-async function hapusUser(id){if(!confirm('Hapus akun?')) return; await window._remove(window._ref(window._db, DB_USER+'/'+id));}
-window.addEventListener('fbReadyKatalog', async ()=>{setTimeout(async ()=>{if(Object.keys(produk).length===0 && currentUser?.role==='admin'){if(confirm('Isi contoh produk sembako awal?')){const contoh=[{nama:'Beras 5kg Premium',harga:62000,stok:20,kategori:'Beras',desk:'Beras pulen'},{nama:'Minyak Goreng 2L',harga:32000,stok:30,kategori:'Minyak',desk:'Minyak sawit'},{nama:'Gula Pasir 1kg',harga:16000,stok:25,kategori:'Gula',desk:'Gula kristal'},{nama:'Telur 1kg',harga:28000,stok:15,kategori:'Sembako',desk:'Telur ayam'},{nama:'Mie Instan 1 dus',harga:110000,stok:10,kategori:'Mie',desk:'Mie goreng/rebus'},{nama:'Kopi Sachet',harga:12000,stok:40,kategori:'Minuman',desk:'Kopi mix'}]; for(const p of contoh){await window._push(window._ref(window._db, DB_PROD), p);}}},2000);});
+let mode='login';
+let produk=JSON.parse(localStorage.getItem('prodV5')||'{}');
+let users=JSON.parse(localStorage.getItem('usersV5')||'{}');
+let cur=JSON.parse(localStorage.getItem('curV5')||'null');
+function hash(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return 'h'+Math.abs(h)+btoa(p).slice(0,4);}
+function switchMode(){mode=mode==='login'?'register':'login'; document.getElementById('tAuth').textContent=mode==='login'?'Masuk':'Daftar'; document.getElementById('aSw').textContent=mode==='login'?'Belum punya? Daftar':'Sudah punya? Masuk'; document.getElementById('aNama').style.display=mode==='login'?'none':'block'; document.getElementById('aKode').style.display=mode==='login'?'none':'block';}
+function doAuth(){
+ const email=document.getElementById('aEmail').value.trim().toLowerCase();
+ const pass=document.getElementById('aPass').value.trim();
+ const nama=document.getElementById('aNama').value.trim();
+ const kode=document.getElementById('aKode').value.trim();
+ const msg=document.getElementById('aMsg');
+ if(!email||!pass){msg.textContent='Isi email & password';return;}
+ if(pass.length<4){msg.textContent='Password min 4';return;}
+ if(mode==='register'){
+  if(!nama){msg.textContent='Isi nama';return;}
+  if(Object.values(users).find(u=>u.email===email)){msg.textContent='Email sudah ada';return;}
+  let role='pembeli'; if(kode){ if(kode==='KASIH53354') role='admin'; else {msg.textContent='Kode admin salah';return;} }
+  const id=Date.now().toString();
+  users[id]={id,email,nama,passHash:hash(pass),role};
+  localStorage.setItem('usersV5', JSON.stringify(users));
+  try{ if(window.db) window.set(window.ref(window.db,'users-katalog-V5/'+id), users[id]); }catch(e){}
+  msg.textContent='Sukses daftar '+role+'! Sekarang Masuk';
+  mode='login'; switchMode();
+ } else {
+  const f=Object.values(users).find(u=>u.email===email && u.passHash===hash(pass));
+  if(!f){msg.textContent='Salah email/pass';return;}
+  cur=f; localStorage.setItem('curV5', JSON.stringify(cur));
+  document.getElementById('auth').style.display='none';
+  afterLogin();
+ }
+}
+function afterLogin(){
+ document.getElementById('badge').classList.remove('hidden'); document.getElementById('badge').textContent=cur.role.toUpperCase();
+ document.getElementById('out').classList.remove('hidden');
+ if(cur.role==='admin') document.getElementById('addBtn').classList.remove('hidden');
+ render();
+}
+function logout(){localStorage.removeItem('curV5'); location.reload();}
+function saveProd(){
+ const nama=document.getElementById('pNama').value.trim();
+ const harga=parseInt(document.getElementById('pHarga').value)||0;
+ const stok=parseInt(document.getElementById('pStok').value)||0;
+ const kat=document.getElementById('pKat').value;
+ if(!nama||!harga) return alert('Isi nama & harga');
+ const id=Date.now().toString();
+ produk[id]={nama,harga,stok,kat};
+ localStorage.setItem('prodV5', JSON.stringify(produk));
+ try{ if(window.db) window.set(window.ref(window.db,'produk-katalog-V5/'+id), produk[id]); }catch(e){}
+ document.getElementById('add').style.display='none';
+ render();
+}
+function ubah(id,d){produk[id].stok=(produk[id].stok||0)+d; if(produk[id].stok<0) produk[id].stok=0; localStorage.setItem('prodV5', JSON.stringify(produk)); try{ if(window.db) window.update(window.ref(window.db,'produk-katalog-V5/'+id), {stok:produk[id].stok}); }catch(e){} render();}
+function hapus(id){if(!confirm('Hapus?'))return; delete produk[id]; localStorage.setItem('prodV5', JSON.stringify(produk)); try{ if(window.db) window.remove(window.ref(window.db,'produk-katalog-V5/'+id)); }catch(e){} render();}
+function render(){
+ const q=(document.getElementById('q').value||'').toLowerCase();
+ const grid=document.getElementById('grid');
+ const list=Object.entries(produk).filter(([id,p])=>!q||p.nama.toLowerCase().includes(q));
+ if(list.length===0){grid.innerHTML='<div class="col-span-2 bg-white p-6 rounded-xl text-center"><p>📦</p><p class="font-bold text-[11px] mt-2">Belum ada produk</p></div>'; return;}
+ grid.innerHTML=list.map(([id,p])=>`<div class="bg-white rounded-xl p-3 border"><p class="font-bold text-[11px]">${p.nama}</p><p class="text-[9px] text-slate-500">${p.kat}</p><p class="font-black text-[#BE1E2D] text-[13px] mt-1">Rp ${Number(p.harga).toLocaleString('id-ID')}</p><p class="text-[10px]">Stok: <b>${p.stok}</b></p>${cur?.role==='admin'?`<div class="flex gap-1 mt-2"><button onclick="ubah('${id}',-1)" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">-1</button><button onclick="ubah('${id}',1)" class="bg-green-600 text-white px-2 py-1 rounded-full text-[9px]">+1</button><button onclick="hapus('${id}')" class="bg-slate-100 px-2 py-1 rounded-full text-[9px]">Hapus</button></div>`:''}</div>`).join('');
+}
+if(cur) afterLogin();
+render();
+// sync dari firebase
+setTimeout(()=>{try{if(window.db){window.onValue(window.ref(window.db,'produk-katalog-V5'), s=>{const v=s.val()||{}; if(Object.keys(v).length>0){localStorage.setItem('prodV5', JSON.stringify(v)); produk=v; render();}}); window.onValue(window.ref(window.db,'users-katalog-V5'), s=>{const v=s.val()||{}; if(Object.keys(v).length>0){localStorage.setItem('usersV5', JSON.stringify(v)); users=v;}});}}catch(e){}},1000);
 </script>
 </body>
 </html>
