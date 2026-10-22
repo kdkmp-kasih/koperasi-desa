@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V34 FULL - 120 PENJELASAN</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBP1lvYR22XOf-IC_34gHEEkfolSthDTzo",
+  authDomain: "kasih-kopdes.firebaseapp.com",
+  databaseURL: "https://kasih-kopdes-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kasih-kopdes",
+  storageBucket: "kasih-kopdes.firebasestorage.app",
+  messagingSenderId: "746954171317",
+  appId: "1:746954171317:web:e51e1dbc5ea0d206ce2ffc"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const DB_KEY = 'kdkmp-kasih/kerja_30_hari_v34_full';
+let isSyncingFromCloud = false; let saveTimeout = null;
+function collectAllLocalData(){
+  const data = {};
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k.startsWith('need') || k.startsWith('nama') || k.startsWith('ttd') || k.startsWith('cap') || k.startsWith('deleted_') || k.startsWith('added_') || k.startsWith('custom_text_') || k.startsWith('status_') || k.startsWith('v28_') || k.startsWith('note') || k.startsWith('kdkmp_startDate') || k.startsWith('custom_footer') || k.startsWith('tunggakan_') || k.startsWith('check_time_')){
+      data[k] = localStorage.getItem(k);
+    }
+  }
+  return data;
+}
+window.saveToFirebase = () => {
+  if(isSyncingFromCloud) return;
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(()=>{ const allData = collectAllLocalData(); set(ref(db, DB_KEY), allData); }, 800);
+};
+window.listenFirebase = () => { onValue(ref(db, DB_KEY), (snap)=>{ const remote = snap.val(); if(remote && Object.keys(remote).length > 0){ const localCount = Object.keys(collectAllLocalData()).length; if(localCount === 0){ isSyncingFromCloud = true; Object.entries(remote).forEach(([k,v])=>{ localStorage.setItem(k, v); }); setTimeout(()=>{ isSyncingFromCloud = false; location.reload(); }, 500); } } }); };
+listenFirebase();
+</script>
+</head>
+<body class="bg-[#fef2f2]">
+<div class="bg-[#BE1E2D] text-white sticky top-0 z-[100] shadow-lg">
+<div class="max-w-5xl mx-auto p-3">
+<div class="flex justify-between items-center">
+<div><h1 class="font-bold text-[12px]">🇮🇩 KDKMP KASIH V34 FULL 120 PENJELASAN</h1><p id="tgl" class="text-[9px] font-bold text-yellow-200 mt-1"></p><span id="syncStatus" class="text-[9px] font-bold bg-white/20 text-white px-2 py-1 rounded-full mt-1 inline-block">● Live</span></div>
+<div class="text-right"><div class="w-28 h-2.5 bg-white/30 rounded-full"><div id="bar" class="h-2.5 bg-white rounded-full" style="width:0%"></div></div><p id="txt" class="text-[9px] font-bold mt-1">0%</p></div>
+</div>
+<div class="mt-2 bg-white/15 border border-white/30 rounded-xl p-2.5 flex flex-wrap gap-2 items-center">
+<label class="text-[10px] font-bold">📅 Hari 1:</label>
+<input id="startDateInput" type="date" class="text-black rounded-lg px-2 py-1 text-[11px]" onchange="setStartDate(this.value)">
+<button onclick="setStartDateToday()" class="bg-white text-[#BE1E2D] px-3 py-1.5 rounded-lg text-[10px] font-bold">Hari Ini = Hari 1</button>
+</div>
+<div class="mt-2 bg-white rounded-xl p-2 shadow-inner">
+<p class="text-[10px] font-bold text-[#BE1E2D] mb-1">🔗 NAV HARI 1-31 + ❓ = Penjelasan:</p>
+<div id="navHari" class="flex flex-wrap gap-1"></div>
+</div>
+<div class="flex gap-2 mt-2">
+<button id="tab1" onclick="switchTab(1)" class="px-4 py-2 rounded-lg text-[11px] font-bold bg-white text-[#BE1E2D]">TAB 1: 1-30</button>
+<button id="tab2" onclick="switchTab(2)" class="px-4 py-2 rounded-lg text-[11px] font-bold bg-black/20 text-white">TAB 2: TUNGGAKAN <span id="badgeTunggakan" class="bg-yellow-300 text-black px-1.5 py-0.5 rounded-full text-[9px] ml-1 hidden">0</span></button>
+<button id="tab3" onclick="switchTab(3)" class="px-4 py-2 rounded-lg text-[11px] font-bold bg-black/20 text-white">TAB 3: TTD</button>
+</div>
+</div>
+</div>
+
+<div id="explainModal" class="fixed inset-0 bg-black/60 z-[200] hidden flex items-end md:items-center justify-center p-3">
+<div class="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl">
+<div class="sticky top-0 bg-[#BE1E2D] text-white p-4 rounded-t-2xl flex justify-between items-center">
+<div><p class="font-bold text-[12px]" id="modalTitle">Penjelasan</p><p class="text-[9px] opacity-80" id="modalSub"></p></div>
+<button onclick="closeExplain()" class="bg-white/20 w-8 h-8 rounded-full">✕</button>
+</div>
+<div class="p-4 space-y-3 text-[11px] leading-relaxed" id="modalContent"></div>
+<div class="p-3 border-t flex gap-2">
+<button onclick="closeExplain()" class="flex-1 bg-slate-100 border px-4 py-2.5 rounded-xl text-[11px] font-bold">Tutup</button>
+<button onclick="copyExplain()" class="flex-1 bg-[#BE1E2D] text-white px-4 py-2.5 rounded-xl text-[11px] font-bold">📋 Copy</button>
+</div>
+</div>
+</div>
+<div class="max-w-5xl mx-auto p-3 space-y-3">
+<div id="content1"><div id="container1" class="grid gap-3"></div></div>
+<div id="content2" class="hidden"><div id="container2" class="grid gap-3"></div><div id="analisisTunggakan" class="mt-4 bg-white border-2 border-[#BE1E2D] rounded-xl p-4"><p class="font-bold text-[13px] text-[#BE1E2D]">📊 ANALISIS & RANGKUMAN TUNGGAKAN</p><div id="analisisContent" class="mt-3 text-[11px]"></div><div class="flex gap-2 mt-3"><button onclick="exportPDF(true)" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-lg text-[11px] font-bold">📄 Cetak PDF Analisis</button><button onclick="exportWord(true)" class="bg-blue-700 text-white px-4 py-2 rounded-lg text-[11px] font-bold">📝 Word</button></div><label class="flex gap-1 items-center mt-2 text-[10px]"><input type="checkbox" id="includeAnalisisInPrint" checked onchange="saveFooterSetting()"> Sertakan analisis saat cetak</label></div></div>
+<div id="content3" class="hidden space-y-3"><div class="bg-white border-2 border-[#BE1E2D] p-4 rounded-xl"><p class="font-bold text-[13px] text-[#BE1E2D]">TTD + CAP + NAMA</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3"><div class="border-2 border-orange-300 p-3 rounded-xl bg-orange-50"><p class="font-bold text-[11px]">BLOK KADES</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Kades</p><input id="namaKades" placeholder="Nama Kades" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdKades')"><img id="prevKades" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needKades" checked onchange="saveNeed()"> Tampilkan</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap Kades</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKades')"><img id="prevCapKades" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needCapKades" checked onchange="saveNeed()"> Tampilkan</label></div></div></div><div class="border-2 border-[#BE1E2D]/30 p-3 rounded-xl bg-red-50"><p class="font-bold text-[11px]">BLOK MANAJER</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Manajer</p><input id="namaManajer" placeholder="Nama Manajer" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdManajer')"><img id="prevManajer" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needManajer" checked onchange="saveNeed()"> Tampilkan</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap KDKMP</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKoperasi')"><img id="prevCap" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needCap" checked onchange="saveNeed()"> Tampilkan</label></div></div></div><div class="border-2 border-blue-300 p-3 rounded-xl bg-blue-50"><p class="font-bold text-[11px]">BLOK KETUA</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Ketua</p><input id="namaKetua" placeholder="Nama Ketua" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdKetua')"><img id="prevKetua" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needKetua" onchange="saveNeed()"> Aktif</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap Ketua</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKetua')"><img id="prevCapKetua" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needCapKetua" onchange="saveNeed()"> Tampilkan</label></div></div></div><div class="border p-3 rounded-xl bg-slate-50"><p class="font-bold text-[11px]">Pengawas</p><input id="namaPengawas" placeholder="Nama Pengawas" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdPengawas')"><img id="prevPengawas" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needPengawas" onchange="saveNeed()"> Aktif</label></div></div></div></div>
+
+<div class="bg-white p-3 rounded-xl border-2 border-slate-200">
+<p class="font-bold text-[11px] text-[#BE1E2D]">⚙️ SETTING FOOTER & CATATAN:</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+<div>
+<label class="text-[10px] font-bold flex gap-1 items-center"><input type="checkbox" id="needFooter" onchange="saveFooterSetting()"> Tampilkan Footer</label>
+<textarea id="footerText" class="w-full border rounded-lg p-2 text-[11px] h-16 mt-1" oninput="saveFooterSetting()"></textarea>
+</div>
+<div class="bg-amber-50 border border-amber-200 p-2 rounded-xl">
+<label class="text-[10px] flex gap-1"><input type="radio" name="catatanPos" value="inline" id="catatanInline" checked onchange="saveFooterSetting()"> Catatan di bawah ceklis</label>
+<label class="text-[10px] flex gap-1 mt-1"><input type="radio" name="catatanPos" value="nextpage" id="catatanNextPage" onchange="saveFooterSetting()"> Catatan di lembar baru</label>
+<label class="text-[10px] flex gap-1 mt-1"><input type="checkbox" id="includeCatatan" checked onchange="saveFooterSetting()"> Sertakan catatan</label>
+<label class="text-[10px] flex gap-1 mt-1"><input type="checkbox" id="includeAnalisisInPrint" checked onchange="saveFooterSetting()"> Sertakan analisis</label>
+<div id="footerPreview" class="mt-1 bg-white border border-dashed p-1 rounded text-[9px]">Preview: -</div>
+</div>
+</div>
+</div>
+
+<div class="bg-white p-4 rounded-xl border-2 border-[#BE1E2D]/20">
+<p class="font-bold text-[11px] mb-2 text-[#BE1E2D]">📥 DOWNLOAD V34 FULL:</p>
+<div class="grid grid-cols-2 gap-2">
+<button onclick="exportPDF(false)" class="bg-[#BE1E2D] text-white px-3 py-3 rounded-xl text-[11px] font-bold">📄 PDF SEMUA + PENJELASAN</button>
+<button onclick="exportPDF(true)" class="bg-amber-600 text-white px-3 py-3 rounded-xl text-[11px] font-bold">⚠️ PDF TUNGGAKAN + ANALISIS</button>
+<button onclick="exportWord(false)" class="bg-blue-700 text-white px-3 py-3 rounded-xl text-[11px] font-bold">📝 WORD SEMUA</button>
+<button onclick="exportWord(true)" class="bg-slate-700 text-white px-3 py-3 rounded-xl text-[11px] font-bold">📝 WORD TUNGGAKAN</button>
+</div>
+</div>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+let currentTab=1; let currentExplainText='';
+function switchTab(n){currentTab=n; document.getElementById('content1').classList.toggle('hidden',n!==1); document.getElementById('content2').classList.toggle('hidden',n!==2); document.getElementById('content3').classList.toggle('hidden',n!==3); ['tab1','tab2','tab3'].forEach((id,i)=>{const active=(i+1===n); document.getElementById(id).className= active?'px-4 py-2 rounded-lg text-[11px] font-bold bg-white text-[#BE1E2D] shadow':'px-4 py-2 rounded-lg text-[11px] font-bold bg-black/20 text-white';}); render();}
+function scrollToHari(d){ const el=document.getElementById('hari-'+d); if(el){ el.scrollIntoView({behavior:'smooth', block:'start'}); } switchTab(1); }
+function getStoredStart(){return localStorage.getItem('kdkmp_startDate');}
+function getStartDateObj(){const s=getStoredStart(); if(s){const d=new Date(s); d.setHours(0,0,0,0); return d;} const n=new Date(); n.setHours(0,0,0,0); return n;}
+function getHariIni(){const start=getStartDateObj(); const now=new Date(); now.setHours(0,0,0,0); return Math.max(1, Math.floor((now-start)/86400000)+1);}
+function setStartDate(val){ if(!val) return; const d = new Date(val); d.setHours(0,0,0,0); localStorage.setItem('kdkmp_startDate', d.toISOString()); if(window.saveToFirebase) saveToFirebase(); render(); loadStartInput(); }
+function setStartDateToday(){ const n=new Date(); n.setHours(0,0,0,0); localStorage.setItem('kdkmp_startDate', n.toISOString()); if(window.saveToFirebase) saveToFirebase(); render(); loadStartInput(); }
+function loadStartInput(){ const s=getStoredStart(); const el=document.getElementById('startDateInput'); if(s){ const d=new Date(s); const yyyy=d.getFullYear(); const mm=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); el.value=`${yyyy}-${mm}-${dd}`; } else { el.value=''; } }
+function saveNeed(){['Manajer','Kades','Cap','CapKades','CapKetua','Ketua','Pengawas'].forEach(k=>localStorage.setItem('need'+k,document.getElementById('need'+k).checked)); if(window.saveToFirebase) saveToFirebase();}
+function loadNeed(){['Manajer','Kades','Cap','CapKades','CapKetua','Ketua','Pengawas'].forEach(k=>{const v=localStorage.getItem('need'+k); if(v!==null) document.getElementById('need'+k).checked=v==='true'; else document.getElementById('need'+k).checked=(k==='Manajer'||k==='Kades'||k==='Cap'||k==='CapKades');});}
+function saveNames(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const el=document.getElementById('nama'+k); if(el) localStorage.setItem('nama'+k,el.value);}); if(window.saveToFirebase) saveToFirebase();}
+function loadNames(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const v=localStorage.getItem('nama'+k); if(v!==null){const el=document.getElementById('nama'+k); if(el) el.value=v;} else if(k==='Kades'){document.getElementById('namaKades').value='Supriyadi'; localStorage.setItem('namaKades','Supriyadi');}});}
+function saveImg(input,key){const f=input.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>{localStorage.setItem(key,e.target.result); loadImgs(); if(window.saveToFirebase) saveToFirebase();}; r.readAsDataURL(f);}
+function loadImgs(){const map={'ttdManajer':'prevManajer','ttdKades':'prevKades','capKoperasi':'prevCap','capKades':'prevCapKades','capKetua':'prevCapKetua','ttdKetua':'prevKetua','ttdPengawas':'prevPengawas'}; Object.entries(map).forEach(([k,el])=>{const d=localStorage.getItem(k); const e=document.getElementById(el); if(d){e.src=d; e.classList.remove('hidden');} else e.classList.add('hidden');});}
+loadNeed(); loadNames(); loadImgs(); loadStartInput();
+
+function getFooterSetting(){ const active = localStorage.getItem('custom_footer_active'); const text = localStorage.getItem('custom_footer_text'); const catatanPos = localStorage.getItem('custom_catatan_pos') || 'inline'; const includeCatatan = localStorage.getItem('custom_include_catatan'); const includeAnalisis = localStorage.getItem('custom_include_analisis'); return {active: active===null? true : active==='true', text: text || '', catatanPos: catatanPos, includeCatatan: includeCatatan===null? true : includeCatatan==='true', includeAnalisis: includeAnalisis===null? true : includeAnalisis==='true'}; }
+function saveFooterSetting(){ localStorage.setItem('custom_footer_active', document.getElementById('needFooter').checked ? 'true' : 'false'); localStorage.setItem('custom_footer_text', document.getElementById('footerText').value); const pos = document.getElementById('catatanNextPage').checked ? 'nextpage' : 'inline'; localStorage.setItem('custom_catatan_pos', pos); localStorage.setItem('custom_include_catatan', document.getElementById('includeCatatan').checked ? 'true' : 'false'); localStorage.setItem('custom_include_analisis', document.getElementById('includeAnalisisInPrint').checked ? 'true' : 'false'); if(window.saveToFirebase) saveToFirebase(); updateFooterPreview(); }
+function loadFooterSetting(){ const s = getFooterSetting(); document.getElementById('needFooter').checked = s.active; document.getElementById('footerText').value = s.text; document.getElementById('catatanInline').checked = s.catatanPos==='inline'; document.getElementById('catatanNextPage').checked = s.catatanPos==='nextpage'; document.getElementById('includeCatatan').checked = s.includeCatatan; document.getElementById('includeAnalisisInPrint').checked = s.includeAnalisis; updateFooterPreview(); }
+function setFooterDefault(){ document.getElementById('footerText').value = `KDKMP Kasih V34 | {tanggal} | Hari ke-{hari}`; document.getElementById('needFooter').checked = true; saveFooterSetting(); }
+function clearFooter(){ document.getElementById('footerText').value=''; document.getElementById('needFooter').checked=false; saveFooterSetting(); }
+function buildFooterText(){ const s = getFooterSetting(); if(!s.active) return null; let txt = s.text.trim(); if(!txt) txt = `KDKMP Kasih V34 | {tanggal} | Hari ke-{hari}`; const now = new Date().toLocaleString('id-ID'); const hariIni=getHariIni(); return txt.replace(/{tanggal}/g, now).replace(/{hari}/g, hariIni); }
+function updateFooterPreview(){ const txt = buildFooterText(); const el=document.getElementById('footerPreview'); if(!el) return; el.textContent= txt? 'Preview: '+txt : 'Preview: (disembunyikan)'; }
+loadFooterSetting();
+
+// PENJELASAN LENGKAP - INI INTINYA V34
+const EXPLANATIONS = {
+"Melaporkan keberadaan kepada Kepala Desa": {maksud:"Lapor ke Kades kalau kamu sudah resmi mulai tugas sebagai Manajer KDKMP.", tujuan:"Biar Kades mengakui, mendukung, dan kasih akses data desa. Ini kunci.", cara:"1. Bawa SK & KTP. 2. Datang ke Balai Desa. 3. Sampaikan: Saya manajer KDKMP Kasih mulai hari ini. 4. Minta buku tamu ditandatangani & foto bareng. 5. Catat no HP Kades."},
+"Serah terima penugasan kepada Pengurus": {maksud:"Pertemuan resmi dengan Ketua & Pengurus Koperasi.", tujuan:"Agar pengurus lama menyerahkan aset, data, tanggung jawab ke kamu.", cara:"Buat berita acara sederhana: daftar aset, saldo, kunci kantor. TTD Ketua, Kades, kamu."},
+"Catat kontak Kades": {maksud:"Simpan nomor penting.", tujuan:"Memudahkan koordinasi cepat.", cara:"Simpan di HP dengan nama 'Kades Kasih - Supriyadi' + WA."},
+"Melaporkan kepada Babinsa": {maksud:"Lapor ke aparat TNI desa.", tujuan:"Keamanan & dukungan.", cara:"Datang ke Koramil, sampaikan tugas, minta dukungan keamanan gerai."},
+"Silaturahmi Ketua BPD": {maksud:"Kunjungan ke BPD.", tujuan:"BPD adalah pengawas desa, dukungannya penting.", cara:"Sowan ke Ketua BPD, jelaskan program KDKMP, minta masukan."},
+"Silaturahmi Ketua RT": {maksud:"Kenal semua Ketua RT.", tujuan:"RT adalah ujung tombak data anggota & sosialisasi.", cara:"Keliling RT, minta data warga, jelaskan keuntungan jadi anggota."},
+"Sampaikan visi inklusif": {maksud:"Koperasi untuk semua, tidak pilih-pilih.", tujuan:"Menghilangkan kesan eksklusif.", cara:"Katakan: Semua warga Kasih, dari Desil 1-10, boleh jadi anggota."},
+"Periksa kantor koperasi": {maksud:"Cek fisik gerai/kantor.", tujuan:"Tau kondisi layak atau perlu renovasi.", cara:"Foto 4 sisi, cek atap bocor, listrik, kunci."},
+"Catat ukuran kantor": {maksud:"Ukur luas bangunan.", tujuan:"Untuk BAST & laporan aset.", cara:"Pakai meteran, catat P x L, misal 6x4 meter."},
+"Foto aset untuk BAST": {maksud:"Dokumentasi aset untuk Berita Acara Serah Terima.", tujuan:"Bukti legal aset koperasi.", cara:"Foto semua aset, upload ke Drive, cetak untuk BAST."},
+"Periksa dokumen legalitas": {maksud:"Cek Akta, NIB, NPWP Koperasi.", tujuan:"Pastikan koperasi legal & bisa buka rekening.", cara:"Minta ke Ketua, foto, cek masa berlaku."},
+"Test login SIMKOPDES": {maksud:"Coba masuk aplikasi SIMKOPDES.", tujuan:"Pastikan akun manajer aktif. Semua laporan wajib via SIMKOPDES.", cara:"Buka simkopdes.kemenkop.go.id, login pakai NIK, jika error hubungi Pendamping."},
+"Kumpulkan data anggota aktif": {maksud:"Data anggota yang masih transaksi.", tujuan:"Basis data untuk SHU & layanan.", cara:"Minta list dari Ketua, cek KTP yang masih aktif belanja."},
+"Tinjau data Desil wilayah": {maksud:"Data kemiskinan Desil 1-10 dari Kemensos.", tujuan:"Target Quick Win untuk warga kurang mampu.", cara:"Minta ke Kades/Operator Desa, data DTKS."},
+"Susun BAST Aset": {maksud:"Buat Berita Acara Serah Terima Aset.", tujuan:"Legalitas serah terima dari Desa ke Koperasi.", cara:"Template: Pada hari ini telah diserahkan... Daftar aset... TTD Kades, Ketua, Manajer."},
+"Input data keanggotaan": {maksud:"Masukkan data anggota ke SIMKOPDES.", tujuan:"Database resmi.", cara:"Di SIMKOPDES > Menu Anggota > Tambah, input satu-satu atau upload Excel."},
+"Tata alur pembukuan": {maksud:"Buat sistem catat keuangan.", tujuan:"Keuangan rapi & audit mudah.", cara:"Pakai buku kas harian: Tanggal, Uraian, Masuk, Keluar, Saldo."},
+"Pastikan ttd dokumen terintegrasi": {maksud:"TTD digital terhubung ke PrivyID.", tujuan:"Kontrak digital sah.", cara:"Daftar PrivyID, hubungkan ke SIMKOPDES."},
+"Susun SOP kas kecil": {maksud:"Aturan pakai uang kecil max 500rb.", tujuan:"Kontrol pengeluaran.", cara:"Tulis: Kas kecil max 1jt, untuk beli ATK, bensin, dll. Harus ada nota."},
+"SOP pendaftaran anggota baru": {maksud:"Langkah daftar anggota.", tujuan:"Seragam & jelas.", cara:"1. Isi form, 2. FC KTP, 3. Bayar simpanan pokok 50rb, 4. Input SIMKOPDES, 5. Dapat kartu."},
+"Presentasi pemetaan ke Pengurus": {maksud:"Jelaskan hasil pemetaan.", tujuan:"Dapat masukan & persetujuan.", cara:"Presentasi 20 menit, tanya jawab."},
+"Tentukan Quick Win": {maksud:"Pilih 1-2 program cepat hasil.", tujuan:"Biar warga langsung merasakan manfaat koperasi.", cara:"Pilih yang paling dibutuhkan: misal Sembako Murah."},
+"Cek harga bersaing": {maksud:"Bandingkan harga koperasi vs warung.", tujuan:"Harus lebih murah.", cara:"Survey 3 warung, catat harga, jual 5% lebih murah."},
+"Data kebutuhan pupuk": {maksud:"Berapa pupuk dibutuhkan petani.", tujuan:"Jadi layanan pertanian.", cara:"Tanya poktan: butuh Urea 2 ton, NPK 1 ton."},
+"Layanan listrik": {maksud:"Jual token listrik di koperasi.", tujuan:"Tambahan pendapatan & layanan.", cara:"Daftar jadi agen PPOB (Bukalapak, Mitra Shopee), modal 1jt."},
+"Catat transaksi Quick Win real-time": {maksud:"Setiap jual beli langsung catat.", tujuan:"Data akurat, tidak lupa.", cara:"Pakai buku kasir / langsung input di SIMKOPDES > Penjualan."},
+"Sosialisasi rembug warga": {maksud:"Datang ke forum warga.", tujuan:"Promosi koperasi.", cara:"Minta waktu 10 menit di rembug RW, jelaskan keuntungan."},
+"Jelaskan hak anggota": {maksud:"Hak: dapat SHU, pinjam, belanja murah.", tujuan:"Warga paham keuntungan.", cara:"Bikin brosur: 5 Hak Anggota."},
+"Jelaskan SHU": {maksud:"Sisa Hasil Usaha = keuntungan koperasi dibagi ke anggota.", tujuan:"Motivasi jadi anggota.", cara:"Rumus: SHU dibagi berdasarkan belanja & simpanan."},
+"Buka posko pendaftaran": {maksud:"Buka stand pendaftaran di tempat ramai.", tujuan:"Rekrut anggota.", cara:"Di depan gerai, pasang spanduk 'DAFTAR ANGGOTA KDKMP', meja + form."},
+"Cocokkan kas fisik": {maksud:"Hitung uang tunai di brankas.", tujuan:"Pastikan sama dengan catatan.", cara:"Hitung lembar per lembar."},
+"Susun Laba/Rugi": {maksud:"Laporan untung rugi.", tujuan:"Tau koperasi untung atau rugi.", cara:"Rumus: Pendapatan - Biaya = Laba. Buat di Excel/SIMKOPDES."},
+"Analisis omzet": {maksud:"Analisis penjualan.", tujuan:"Tau produk laku.", cara:"Lihat: Beras laku 100kg, minyak 50L. Fokus stok beras."},
+"Siapkan Laporan Kinerja Manajer": {maksud:"Laporan kerja kamu 30 hari.", tujuan:"Untuk dinilai Kades, Dinkop, Kementerian.", cara:"Template: Capaian, Kendala, Rencana Bulan 2."},
+"Kirim ke Dinkop": {maksud:"Kirim laporan ke Dinkop.", tujuan:"Resmi tercatat.", cara:"Via WA/email Dinkop atau bawa langsung."},
+"Diskusi dengan Pendamping": {maksud:"Ngobrol evaluasi.", tujuan:"Dapat solusi kendala.", cara:"Janjian ketemu, bawa catatan kendala."},
+"Siapkan materi evaluasi": {maksud:"Siapkan bahan rapat evaluasi 30 hari.", tujuan:"Rapat lancar.", cara:"PPT: Capaian 30 hari, Grafik, Kendala, Rencana Bulan 2."},
+"Rapat dengan Pengurus": {maksud:"Rapat evaluasi akhir bulan.", tujuan:"Sepakati rencana bulan 2.", cara:"Undang pengurus, Kades, BPD. Rapat 2 jam."},
+"Susun Rencana Bulan 2": {maksud:"Buat plan 30 hari ke depan.", tujuan:"Ada arah.", cara:"Tentukan: Bulan 2 fokus Simpan Pinjam & Pupuk."},
+"Finalisasi Laporan Resmi": {maksud:"Laporan 30 hari final.", tujuan:"Disahkan.", cara:"Print, jilid, TTD Manajer, Ketua, Kades."},
+"Export untuk Kades": {maksud:"Export PDF untuk Kades.", tujuan:"Laporan ke desa.", cara:"Klik Export PDF di aplikasi, pilih versi Kades."}
+};
+<script>
+let currentExplainText='';
+function showExplain(day, idx, isAdd){
+  const base = baseDays.find(x=>x.d===day);
+  const taskDef = isAdd ? getAdded(day)[idx] : (base?.tasks[idx] || '');
+  const realText = isAdd ? taskDef : getText(day,idx,taskDef);
+  const exp = EXPLANATIONS[realText] || EXPLANATIONS[taskDef] || {maksud:"Tugas lapangan Hari "+day+" yang harus diselesaikan sesuai SOP KDKMP.", tujuan:"Untuk mencapai target 30 hari KDKMP Kasih sesuai arahan Agrinas & Kementerian.", cara:"1. Siapkan alat/bahan. 2. Kerjakan sesuai SOP. 3. Dokumentasikan (foto). 4. Catat di buku & SIMKOPDES. 5. Laporkan ke Pengurus/Kades."};
+  document.getElementById('modalTitle').textContent = realText;
+  document.getElementById('modalSub').textContent = `Hari ${day} • ${isAdd?'Tugas Tambahan':'Tugas SOP'}`;
+  document.getElementById('modalContent').innerHTML = `<div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded"><p class="font-bold text-[11px] text-blue-700">📌 MAKSUDNYA APA?</p><p class="mt-1">${exp.maksud}</p></div><div class="bg-green-50 border-l-4 border-green-500 p-3 rounded"><p class="font-bold text-[11px] text-green-700">🎯 BUAT APA / TUJUANNYA?</p><p class="mt-1">${exp.tujuan}</p></div><div class="bg-amber-50 border-l-4 border-amber-500 p-3 rounded"><p class="font-bold text-[11px] text-amber-700">🛠️ CARA MEMBUATNYA / LANGKAH:</p><p class="mt-1 whitespace-pre-line">${exp.cara}</p></div><div class="bg-slate-50 border p-2 rounded text-[9px] text-slate-500">💡 Tips: Jika masih bingung, copy penjelasan ini & kirim ke WA Pendamping Desa / Korwil Agrinas.</div>`;
+  currentExplainText = `TUGAS: ${realText}\n\nMAKSUD: ${exp.maksud}\n\nTUJUAN: ${exp.tujuan}\n\nCARA: ${exp.cara}`;
+  document.getElementById('explainModal').classList.remove('hidden');
+}
+function closeExplain(){ document.getElementById('explainModal').classList.add('hidden'); }
+function copyExplain(){ navigator.clipboard.writeText(currentExplainText).then(()=>{ alert('Penjelasan dicopy!'); }); }
+
+function getDeleted(day){return JSON.parse(localStorage.getItem(`deleted_${day}`)||'[]');}
+function getAdded(day){return JSON.parse(localStorage.getItem(`added_${day}`)||'[]');}
+function getText(day,idx,def){return localStorage.getItem(`custom_text_${day}_${idx}`)||def;}
+function getStatus(day,idx,isAdd){return localStorage.getItem(isAdd?`status_${day}_add_${idx}`:`status_${day}_${idx}`)||'';}
+function isChecked(day,idx,isAdd){const prefixes=['v28','v27','v26']; for(let p of prefixes){const key=isAdd?`${p}_${day}_add_${idx}`:`${p}_${day}_${idx}`; if(localStorage.getItem(key)==='1') return true;} return false;}
+function getCheckTime(day,idx,isAdd){return localStorage.getItem(`check_time_${day}_${isAdd?'add_':''}${idx}`)||'';}
+function getTunggakanNote(day,idx,isAdd){return localStorage.getItem(`tunggakan_${day}_${isAdd?'add_':''}${idx}`)||'';}
+
+const baseDays=[
+{d:1,t:"Laporan Diri Tingkat Desa",m:"DESA",tasks:["Melaporkan keberadaan kepada Kepala Desa","Melaporkan kepada Lurah","Serah terima penugasan kepada Pengurus","Perkenalkan diri sebagai Manajer","Catat kontak Kades","Melaporkan kepada Babinsa","Catat kontak babinsa","Catat kontak ketua pengurus"]},
+{d:2,t:"Silaturahmi",m:"DESA",tasks:["Silaturahmi Ketua BPD","Silaturahmi Anggota BPD","Silaturahmi Tokoh Masyarakat","Silaturahmi Ketua RT","Silaturahmi Ketua RW","Sampaikan visi inklusif","Sampaikan visi kolaboratif","Sampaikan visi transparan","Catat aspirasi"]},
+{d:3,t:"Inventarisasi Aset",m:"GERAI",tasks:["Periksa kantor koperasi","Catat ukuran kantor","Periksa mesin/peralatan","Catat kondisi mesin","Periksa persediaan barang","Catat stok barang","Foto aset untuk BAST"]},
+{d:4,t:"Audit Administrasi",m:"RUMAH",tasks:["Periksa dokumen legalitas","Periksa buku rekening bank","Periksa arsip keuangan","Test login SIMKOPDES","Pastikan SIMKOPDES lancar"]},
+{d:5,t:"Pemetaan Anggota",m:"RUMAH",tasks:["Kumpulkan data anggota aktif","Kumpulkan data anggota pasif","Data calon anggota potensial","Rekap jumlah anggota","Siapkan untuk input SIMKOPDES"]},
+{d:6,t:"Pemetaan Ekonomi",m:"RUMAH",tasks:["Tinjau data Desil wilayah","Identifikasi kelompok sasaran","Petakan potensi ekonomi","Catat kelompok tani/nelayan"]},
+{d:7,t:"BAST Minggu 1",m:"RUMAH",tasks:["Susun BAST Aset","Susun Pemetaan Awal","Kirim laporan Minggu 1 ke Kades"]},
+{d:8,t:"SIMKOPDES Anggota",m:"RUMAH",tasks:["Input data keanggotaan","Update data keanggotaan","Input profil KDKMP","Verifikasi NIK"]},
+{d:9,t:"SIMKOPDES Keuangan",m:"RUMAH",tasks:["Tata alur pembukuan","Sesuaikan dengan standar SIMKOPDES","Input saldo kas","Input saldo bank"]},
+{d:10,t:"Integrasi Privy",m:"RUMAH",tasks:["Pastikan ttd dokumen terintegrasi","Pastikan kontrak terintegrasi Privy","Uji coba Privy"]},
+{d:11,t:"SOP Kas",m:"RUMAH",tasks:["Susun SOP kas kecil","Susun SOP penerimaan","Susun SOP laporan harian"]},
+{d:12,t:"SOP Pelayanan & Stok",m:"RUMAH",tasks:["SOP pendaftaran anggota baru","SOP simpanan","SOP prosedur pengajuan","SOP pengelolaan stok","SOP perdagangan/waserda"]},
+{d:13,t:"Persiapan Rapat",m:"RUMAH",tasks:["Siapkan materi pemetaan","Siapkan draf SOP","Buat undangan Pengurus","Buat undangan Pengawas"]},
+{d:14,t:"Rapat Konsolidasi",m:"DESA",tasks:["Presentasi pemetaan ke Pengurus","Presentasi SOP ke Pengawas","Sepakati Q1 Targets","Deliverable SIMKOPDES & SOP"]},
+{d:15,t:"Quick Win Sembako",m:"RUMAH",tasks:["Tentukan Quick Win","Daftar kebutuhan pokok","Cek harga bersaing","Koordinasi 1 pintu Agrinas"]},
+{d:16,t:"Quick Win Pertanian & PPOB",m:"RUMAH",tasks:["Data kebutuhan pupuk","Data kebutuhan pakan","Data kebutuhan bibit","Layanan listrik","Layanan air","Layanan BPJS"]},
+{d:17,t:"Pencatatan Real-time",m:"GERAI",tasks:["Catat transaksi Quick Win real-time","Cek stok harian","Cek kas harian"]},
+{d:18,t:"Sosialisasi Forum",m:"DESA",tasks:["Sosialisasi rembug warga","Sosialisasi pengajian","Sosialisasi RWT/RTL"]},
+{d:19,t:"Edukasi Keanggotaan",m:"DESA",tasks:["Jelaskan hak anggota","Jelaskan kewajiban","Jelaskan keuntungan","Jelaskan SHU","Jelaskan akses usaha"]},
+{d:20,t:"Posko Pendaftaran",m:"DESA",tasks:["Buka posko pendaftaran","Tentukan lokasi strategis","Bagi formulir","Catat calon anggota"]},
+{d:21,t:"Deliverable Minggu 3",m:"GERAI",tasks:["Evaluasi layanan Quick Win","Hitung anggota baru","Laporan Minggu 3"]},
+{d:22,t:"Reconcile",m:"RUMAH",tasks:["Cocokkan kas fisik","Cocokkan rekening bank","Cocokkan SIMKOPDES","Catat selisih"]},
+{d:23,t:"Laporan Keuangan",m:"RUMAH",tasks:["Susun Laba/Rugi","Susun Neraca Kas","Susun Perkembangan Anggota"]},
+{d:24,t:"Analisis",m:"RUMAH",tasks:["Analisis omzet","Analisis margin","Analisis animo warga"]},
+{d:25,t:"Persiapan Eksternal",m:"RUMAH",tasks:["Siapkan Laporan Kinerja Manajer","Siapkan data Dinkop","Siapkan data Kementerian"]},
+{d:26,t:"Pelaporan Eksternal",m:"RUMAH",tasks:["Kirim ke Dinkop","Kirim ke Kementerian","Hubungi Pendamping","Hubungi Pembina"]},
+{d:27,t:"Diskusi",m:"RUMAH",tasks:["Diskusi dengan Pendamping","Catat masukan","Catat arahan"]},
+{d:28,t:"Persiapan Evaluasi",m:"RUMAH",tasks:["Siapkan materi evaluasi","Daftar capaian","Daftar kendala"]},
+{d:29,t:"Rapat Evaluasi",m:"DESA",tasks:["Rapat dengan Pengurus","Bahasa capaian 30 hari","Catat masukan"]},
+{d:30,t:"Rencana Bulan 2",m:"RUMAH",tasks:["Susun Rencana Bulan 2","Fokus unit usaha baru","Rencana kemitraan","Rencana permodalan","Finalisasi Laporan Resmi","Finalisasi Master Plan","Export untuk Kades","Export untuk Korwil","Export untuk Dinas"]},
+];
+
+function render(){
+ const startObj=getStartDateObj(); const hariIni=getHariIni();
+ document.getElementById('tgl').innerText=`Start: ${startObj.toLocaleDateString('id-ID')} | Hari ke-${hariIni}`;
+ const all=[...baseDays]; let total=0,done=0; all.forEach(d=>{const del=getDeleted(d.d); const add=getAdded(d.d); total+=d.tasks.length-del.length+add.length; d.tasks.forEach((_,i)=>{if(!del.includes(i)&&isChecked(d.d,i,false)) done++;}); add.forEach((_,i)=>{if(isChecked(d.d,i,true)) done++;});});
+ const persen=total?Math.round(done/total*100):0; document.getElementById('bar').style.width=persen+'%'; document.getElementById('txt').innerText=persen+'% ('+done+'/'+total+')';
+ const nav=document.getElementById('navHari'); nav.innerHTML='';
+ for(let i=1;i<=30;i++){ const isToday=i===hariIni; const btn=document.createElement('button'); btn.textContent=i; btn.className=`px-2.5 py-1 rounded-full text-[10px] font-bold border ${isToday?'bg-[#BE1E2D] text-white border-[#BE1E2D]':'bg-white text-slate-700 border-slate-300'}`; btn.onclick=()=>scrollToHari(i); nav.appendChild(btn); }
+ function buildTaskHtml(day, modeTunggakan){
+   const deleted=getDeleted(day.d); const added=getAdded(day.d); let html='';
+   day.tasks.forEach((orig,i)=>{
+     if(deleted.includes(i)) return;
+     const text=getText(day.d,i,orig);
+     const chk=isChecked(day.d,i,false);
+     if(modeTunggakan && (chk || day.d >= hariIni)) return;
+     const status=getStatus(day.d,i,false);
+     if(modeTunggakan){
+       const tungNote=getTunggakanNote(day.d,i,false); const checkTime=getCheckTime(day.d,i,false);
+       html+=`<div class="p-2 border-b"><div class="flex items-center gap-2"><input type="checkbox" data-day="${day.d}" data-idx="${i}" data-add="0" ${chk?'checked':''} class="w-5 h-5 accent-[#BE1E2D]"><span class="flex-1 text-[12px]">${text}</span><button onclick="showExplain(${day.d},${i},false)" class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-[10px] font-bold">❓</button></div><div class="mt-1 ml-7"><input id="tunggakan_note_${day.d}_${i}" value="${tungNote.replace(/"/g,'&quot;')}" placeholder="Keterangan" class="border rounded p-1 text-[10px] w-full" oninput="saveTunggakanNote(${day.d},${i},false)"><div class="text-[9px] text-slate-500">${checkTime?`✅ ${checkTime}`:''}</div></div></div>`;
+     } else {
+       html+=`<div class="flex items-center gap-1 py-2.5 px-2 border-b hover:bg-slate-50"><input type="checkbox" data-day="${day.d}" data-idx="${i}" data-add="0" ${chk?'checked':''} class="w-5 h-5 accent-[#BE1E2D] shrink-0"><span class="flex-1 text-[11px] ${chk?'line-through text-slate-400':''}">${text}</span><button onclick="showExplain(${day.d},${i},false)" class="bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded-full text-[9px] font-bold shrink-0">❓</button><div class="flex gap-1 shrink-0"><button onclick="setStatus(${day.d},${i},'ADA',false)" class="text-[8px] px-1.5 py-1 rounded-full border ${status==='ADA'?'bg-green-600 text-white':'bg-white'}">ADA</button><button onclick="editTask(${day.d},${i},false)" class="text-[9px] bg-slate-100 px-1.5 py-1 rounded">✏️</button></div></div>`;
+     }
+   });
+   added.forEach((t,i)=>{
+     let clean=t.trim(); const chk=isChecked(day.d,i,true); if(modeTunggakan && (chk || day.d >= hariIni)) return;
+     html+=`<div class="flex items-center gap-1 py-2 px-2 border-b bg-red-50/30"><input type="checkbox" data-day="${day.d}" data-idx="${i}" data-add="1" ${chk?'checked':''} class="w-5 h-5 accent-[#BE1E2D]"><span class="flex-1 text-[11px]">${clean}</span><button onclick="showExplain(${day.d},${i},true)" class="bg-blue-50 text-blue-600 border px-2 py-1 rounded-full text-[9px] font-bold">❓</button></div>`;
+   });
+   return html;
+ }
+ const container1=document.getElementById('container1'); container1.innerHTML='';
+ baseDays.sort((a,b)=>a.d-b.d).forEach(day=>{
+   const html=buildTaskHtml(day,false);
+   const isToday=day.d===hariIni; const color=day.m==='RUMAH'?'bg-blue-100 text-blue-700':day.m==='DESA'?'bg-orange-100 text-orange-700':'bg-green-100 text-green-700';
+   const noteActive=localStorage.getItem(`noteActive_${day.d}`)==='1'; const noteText=localStorage.getItem(`note_${day.d}`)||'';
+   const div=document.createElement('div'); div.id='hari-'+day.d; div.className=`bg-white p-3 rounded-xl border shadow-sm ${isToday?'ring-2 ring-[#BE1E2D]':''}`;
+   div.innerHTML=`<div class="flex justify-between items-center mb-2"><p class="font-bold text-[12px]">${isToday?'👉 ':''}HARI ${day.d}: ${day.t}</p><span class="text-[9px] px-2 py-0.5 rounded-full ${color}">${day.m}</span></div><div class="border rounded-lg overflow-hidden">${html}</div><div class="flex gap-2 mt-2"><input id="input_${day.d}" placeholder="Tambah kotak..." class="flex-1 border rounded-lg p-2 text-[11px]"><button onclick="addTaskBox(${day.d})" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-lg text-[11px]">+ Kotak</button></div><div class="mt-3 bg-amber-50/50 p-3 rounded-lg border"><div class="flex justify-between"><p class="font-bold text-[11px]">📝 Catatan Hari ${day.d}</p><label class="text-[10px] font-bold"><input type="checkbox" id="checkNote_${day.d}" ${noteActive?'checked':''} onchange="toggleNote(${day.d})"> Aktif</label></div><textarea id="note_${day.d}" class="w-full border rounded-lg p-2 text-[11px] h-20 mt-2" ${!noteActive?'disabled':''} oninput="saveNote(${day.d})">${noteText}</textarea></div>`;
+   container1.appendChild(div);
+ });
+ const container2=document.getElementById('container2'); container2.innerHTML='';
+ let tunggakanList=[];
+ baseDays.forEach(d=>{ const del=getDeleted(d.d); d.tasks.forEach((_,i)=>{ if(del.includes(i)) return; if(!isChecked(d.d,i,false) && d.d < hariIni){ tunggakanList.push({day:d.d}); } }); });
+ const badge=document.getElementById('badgeTunggakan');
+ if(tunggakanList.length>0){ badge.textContent=tunggakanList.length; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+ if(tunggakanList.length===0){ container2.innerHTML=`<div class="bg-white border p-6 rounded-xl text-center"><p class="text-[14px] font-bold text-green-600">✅ Tidak ada tunggakan!</p></div>`; }
+ else { baseDays.filter(d=>d.d < hariIni).forEach(d=>{ const html=buildTaskHtml(d,true); if(html){ const div=document.createElement('div'); div.className=`bg-white p-3 rounded-xl border-l-4 border-[#BE1E2D] shadow-sm`; div.innerHTML=`<div class="flex justify-between items-center mb-2"><p class="font-bold text-[12px] text-[#BE1E2D]">HARI ${d.d}: ${d.t}</p></div><div class="border rounded-lg overflow-hidden">${html}</div>`; container2.appendChild(div); } }); }
+ const analisisEl=document.getElementById('analisisContent');
+ let htmlAnalisis=`<div class="grid grid-cols-2 gap-2"><div class="bg-red-50 border p-3 rounded-xl text-center"><p class="text-[10px]">Tunggakan</p><p class="font-bold text-[18px] text-[#BE1E2D]">${tunggakanList.length}</p></div><div class="bg-green-50 border p-3 rounded-xl text-center"><p class="text-[10px]">Progress</p><p class="font-bold text-[16px] text-green-700">${done}/${total} (${persen}%)</p></div></div>`;
+ if(analisisEl) analisisEl.innerHTML=htmlAnalisis;
+ document.querySelectorAll('#container1 input[type=checkbox], #container2 input[type=checkbox]').forEach(cb=>{
+   if(cb.id.startsWith('checkNote_')) return;
+   cb.addEventListener('change',e=>{
+     const day=e.target.dataset.day; const idx=e.target.dataset.idx; const isAdd=e.target.dataset.add==='1';
+     const key=`v28_${day}${isAdd?'_add':''}_${idx}`;
+     const isCheckedNow=e.target.checked;
+     localStorage.setItem(key,isCheckedNow?'1':'0');
+     if(isCheckedNow){ const now=new Date().toLocaleString('id-ID'); localStorage.setItem(`check_time_${day}_${isAdd?'add_':''}${idx}`, now); } else { localStorage.removeItem(`check_time_${day}_${isAdd?'add_':''}${idx}`); }
+     if(window.saveToFirebase) saveToFirebase(); render();
+   });
+ });
+}
+function toggleNote(day){localStorage.setItem(`noteActive_${day}`,document.getElementById(`checkNote_${day}`).checked?'1':'0'); if(window.saveToFirebase) saveToFirebase(); render();}
+function saveNote(day){localStorage.setItem(`note_${day}`,document.getElementById(`note_${day}`).value); if(window.saveToFirebase) saveToFirebase();}
+function editTask(d,i,a){if(a){const ad=getAdded(d); const cur=ad[i]; const b=prompt('Edit:',cur); if(b!==null&&b.trim()){ad[i]=b.trim(); localStorage.setItem(`added_${d}`,JSON.stringify(ad)); if(window.saveToFirebase) saveToFirebase(); render();}} else {const def=baseDays.find(x=>x.d===d)?.tasks[i]||''; const cur=getText(d,i,def); const b=prompt('Edit:',cur); if(b===null) return; if(b.trim()===def||!b.trim()) localStorage.removeItem(`custom_text_${d}_${i}`); else localStorage.setItem(`custom_text_${d}_${i}`,b.trim()); if(window.saveToFirebase) saveToFirebase(); render();}}
+function addTaskBox(d){let v=document.getElementById(`input_${d}`).value.trim(); if(!v) return; const ad=getAdded(d); ad.push(v); localStorage.setItem(`added_${d}`,JSON.stringify(ad)); document.getElementById(`input_${d}`).value=''; if(window.saveToFirebase) saveToFirebase(); render();}
+function setStatus(d,i,v,a){const k=a?`status_${d}_add_${i}`:`status_${d}_${i}`; const cur=localStorage.getItem(k); if(cur===v) localStorage.removeItem(k); else localStorage.setItem(k,v); if(window.saveToFirebase) saveToFirebase(); render();}
+function saveTunggakanNote(day,idx,isAdd){ const el=document.getElementById(`tunggakan_note_${day}_${isAdd?'add_':''}${idx}`); if(el) localStorage.setItem(`tunggakan_${day}_${isAdd?'add_':''}${idx}`, el.value); if(window.saveToFirebase) saveToFirebase(); }
+render();
+function getNeedMap(){ return {Kades: {need: localStorage.getItem('needKades')==='true', nama: localStorage.getItem('namaKades')||'Kades', ttd: localStorage.getItem('ttdKades'), cap: localStorage.getItem('capKades'), needCap: localStorage.getItem('needCapKades')==='true', label: 'Kepala Desa'}, Manajer: {need: localStorage.getItem('needManajer')==='true', nama: localStorage.getItem('namaManajer')||'Manajer', ttd: localStorage.getItem('ttdManajer'), cap: localStorage.getItem('capKoperasi'), needCap: localStorage.getItem('needCap')==='true', label: 'Manajer'}, Ketua: {need: localStorage.getItem('needKetua')==='true', nama: localStorage.getItem('namaKetua')||'Ketua', ttd: localStorage.getItem('ttdKetua'), cap: localStorage.getItem('capKetua'), needCap: localStorage.getItem('needCapKetua')==='true', label: 'Ketua KDKMP'}, Pengawas: {need: localStorage.getItem('needPengawas')==='true', nama: localStorage.getItem('namaPengawas')||'Pengawas', ttd: localStorage.getItem('ttdPengawas'), cap: null, needCap: false, label: 'Pengawas'}, }; }
+function exportPDF(onlyTunggakan=false){
+ const doc=new jsPDF('l','mm','a4'); const startObj=getStartDateObj(); const hariIni=getHariIni(); const footerSetting=getFooterSetting();
+ doc.setFillColor(190,30,45); doc.rect(0,0,297,32,'F'); doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text(onlyTunggakan?`TUNGGAKAN + ANALISIS V34`:`KERJA 30 HARI V34 FULL + PENJELASAN`,148.5,14,{align:'center'});
+ doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.text(`Start: ${startObj.toLocaleDateString('id-ID')} = Hari 1 | Cetak: ${new Date().toLocaleDateString('id-ID')} - Hari ke-${hariIni}`,148.5,22,{align:'center'});
+ const rows=[];
+ [...baseDays].sort((a,b)=>a.d-b.d).forEach(day=>{
+   const del=getDeleted(day.d); const isOverdue=day.d < hariIni;
+   day.tasks.forEach((orig,i)=>{
+     if(del.includes(i)) return; const chk=isChecked(day.d,i,false); if(onlyTunggakan && (chk || !isOverdue)) return;
+     let text=getText(day.d,i,orig); const status=chk?'SELESAI':'BELUM'; const kondisi=getStatus(day.d,i,false)||'-';
+     const tungNote=getTunggakanNote(day.d,i,false); const checkTime=getCheckTime(day.d,i,false); let extra = tungNote ? ` | Ket: ${tungNote}` : ''; if(checkTime) extra+=` | ${checkTime}`;
+     const exp=EXPLANATIONS[text]||EXPLANATIONS[orig]; let penjelasan = exp? ` | Maksud: ${exp.maksud} Tujuan: ${exp.tujuan} Cara: ${exp.cara}` : '';
+     rows.push([`Hari ${day.d}${isOverdue && !chk ?' (TUNGGAK)':''}`,day.t,text+extra+penjelasan,status,kondisi]);
+   });
+ });
+ doc.autoTable({startY:36, head:[['HARI','JUDUL','KEGIATAN + KETERANGAN + WAKTU + PENJELASAN','STATUS','KONDISI']], body:rows, theme:'grid', styles:{fontSize:6, cellPadding:1.5}, headStyles:{fillColor:[190,30,45]}, columnStyles:{2:{cellWidth:160}}});
+ doc.save(onlyTunggakan ? `TUNGGAKAN-V34-FULL.pdf` : `LENGKAP-V34-FULL-PENJELASAN.pdf`);
+}
+function exportWord(onlyTunggakan=false){
+  let htmlContent = `<html><head><meta charset="UTF-8"><style>table{width:100%;border-collapse:collapse;} th{background:#BE1E2D;color:white;} td,th{border:1px solid #ccc;padding:5px;font-size:11px;}</style></head><body><h1>KERJA 30 HARI V34 FULL + PENJELASAN</h1><table><tr><th>HARI</th><th>KEGIATAN</th><th>PENJELASAN</th><th>STATUS</th></tr>`;
+  baseDays.forEach(day=>{
+    day.tasks.forEach((orig,i)=>{
+      const del=getDeleted(day.d); if(del.includes(i)) return; const chk=isChecked(day.d,i,false); if(onlyTunggakan && chk) return;
+      const text=getText(day.d,i,orig); const exp = EXPLANATIONS[text] || EXPLANATIONS[orig] || {maksud:"-", tujuan:"-", cara:"-"};
+      htmlContent+=`<tr><td>Hari ${day.d}</td><td>${text}</td><td><b>Maksud:</b> ${exp.maksud}<br><b>Tujuan:</b> ${exp.tujuan}<br><b>Cara:</b> ${exp.cara}</td><td>${chk?'SELESAI':'BELUM'}</td></tr>`;
+    });
+  });
+  htmlContent+=`</table></body></html>`;
+  const blob = new Blob([htmlContent], {type:'application/msword'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download = `V34-FULL-PENJELASAN.doc`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
