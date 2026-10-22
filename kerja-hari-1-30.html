@@ -4,6 +4,8 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>V51 - FIX KOTAK BELUM + FOTO BUKTI</title>
 <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 <style>
@@ -17,6 +19,30 @@ html{scroll-behavior:smooth}
 .foto-thumb{width:48px;height:36px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
 </style>
 </head>
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyA_W3BHIYkVdRiK13Pem7ubixGNtBDsyRI",
+    authDomain: "kdmp-kasih-1-30-hari.firebaseapp.com",
+    databaseURL: "https://kdmp-kasih-1-30-hari-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "kdmp-kasih-1-30-hari",
+    storageBucket: "kdmp-kasih-1-30-hari.firebasestorage.app",
+    messagingSenderId: "455037993309",
+    appId: "1:455037993309:web:abc6b2dc14e49e8e6768b4",
+    measurementId: "G-0S6LZ9RX9C"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 <body class="bg-[#fef2f2]">
 <div class="bg-[#BE1E2D] text-white sticky top-0 z-40 shadow">
 <div class="max-w-6xl mx-auto p-2">
@@ -312,6 +338,8 @@ function exportWord(onlyT){
   const blob=new Blob([fullHtml],{type:'application/msword'});
   const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=(onlyT?"tunggakan":"lengkap")+"-V51-FIX-BELUM.doc"; a.click();
 }
+  <button onclick="pushV51keFirebase()" class="bg-green-600 text-white px-3 py-2 rounded text-[10px] font-bold">🔥 Push ke Firebase</button>
+<button onclick="tarikV51dariFirebase()" class="bg-white border-2 border-green-600 text-green-700 px-3 py-2 rounded text-[10px] font-bold">⬇️ Tarik dari Firebase</button>
 loadNeed(); loadNames(); loadImgs(); loadFooter();
 if(!localStorage.getItem('kdkmp_startDate')){setStartDate('2026-10-01');}
 render();
