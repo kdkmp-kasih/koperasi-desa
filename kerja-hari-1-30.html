@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>V51 FULL LAPORAN CLEAN NO CORET NO FOOTER FOTO DI CATATAN</title>
+<title>V51 FINAL CLEAN - NO CORET - NO FOOTER - FOTO DI CATATAN - TAB3</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -14,38 +14,17 @@
 .task-row{display:flex;align-items:center;gap:6px;padding:8px 6px;border-bottom:1px solid #e5e7eb}
 .task-right{display:flex;gap:2px;flex-wrap:wrap;justify-content:flex-end}
 .foto-thumb{width:48px;height:36px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
-.laporan{font-family:'Inter', Arial, sans-serif; color:#111; background:white; padding:20px; line-height:1.5}
-.laporan .kop-clean{border-bottom:2px solid #111; padding-bottom:10px; margin-bottom:14px; text-align:center}
-.laporan .kop-clean h1{font-size:15px; font-weight:800; margin:0; letter-spacing:0.5px}
-.laporan .kop-clean p{font-size:10px; margin:2px 0; color:#333}
-.laporan .judul-clean{text-align:center; margin:14px 0 10px 0}
-.laporan .judul-clean h2{font-size:13px; font-weight:800; margin:0; text-transform:uppercase}
-.laporan .judul-clean p{font-size:9px; margin-top:4px; color:#555}
-.laporan .meta-clean{font-size:9px; border:1px solid #111; padding:6px 10px; display:flex; justify-content:space-between; margin-bottom:12px}
-.laporan table{width:100%; border-collapse:collapse; font-size:10px; margin-top:6px}
-.laporan th{background:#111; color:white; padding:6px; text-align:left; font-size:9px}
-.laporan td{padding:6px; border:1px solid #111; vertical-align:top}
-.laporan .hari-clean{background:#f3f3f3; font-weight:800; font-size:10px; padding:8px !important; border:1px solid #111}
-.laporan .badge{font-size:8px; font-weight:700; padding:2px 6px; border:1px solid #111; display:inline-block}
-.laporan .badge-ada{background:#e6ffe6} .badge-tidak{background:#ffe6e6} .badge-belum{background:#fff6cc}
-.laporan .catatan-clean{border:1px solid #111; padding:8px; margin-top:8px; font-size:9px; background:#fafafa}
-.laporan .catatan-clean .foto-di-catatan{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
-.laporan .catatan-clean .foto-box{border:1px solid #111; padding:4px; width:90px; text-align:center; font-size:7px}
-.laporan .catatan-clean .foto-box img{width:100%; height:60px; object-fit:cover; border:1px solid #ddd}
-.laporan .ttd-clean{display:flex; justify-content:center; gap:40px; margin-top:30px}
-.laporan .ttd-clean-box{width:150px; text-align:center; font-size:9px}
-.laporan .ttd-clean-box .kotak-ttd{height:70px; border-bottom:1px solid #111; margin-bottom:6px; display:flex; align-items:center; justify-content:center}
 </style>
 </head>
 <body class="bg-[#fef2f2]">
 <div class="bg-[#BE1E2D] text-white sticky top-0 z-40 shadow">
 <div class="max-w-6xl mx-auto p-2">
 <div class="flex justify-between items-center">
-<h1 class="font-bold text-[11px]">🇮🇩 V51 LAPORAN CLEAN NO CORET - TAB3 PDF/WORD <span id="liveStatus" class="bg-green-500 px-2 py-0.5 rounded text-[7px]">AUTO LIVE</span></h1>
+<h1 class="font-bold text-[11px]">🇮🇩 V51 CLEAN FINAL - NO CORET - TAB3 PDF/WORD <span id="liveStatus" class="bg-green-500 px-2 py-0.5 rounded text-[7px]">AUTO LIVE</span></h1>
 <span id="status" class="text-[8px] bg-white/20 px-2 py-0.5 rounded">Live</span>
 </div>
 <div class="flex gap-1 mt-2">
-<button onclick="switchTab(1)" class="px-2 py-1.5 rounded text-[8px] font-bold bg-white text-[#BE1E2D]">1-31</button>
+<button onclick="switchTab(1)" class="px-2 py-1.5 rounded text-[8px] font-bold bg-white text-[#BE1E2D]">1-31 HARI</button>
 <button onclick="switchTab(2)" class="px-2 py-1.5 rounded text-[8px] font-bold bg-black/20 text-white">TUNG</button>
 <button onclick="switchTab(3)" class="px-2 py-1.5 rounded text-[8px] font-bold bg-black/20 text-white">TTD + DOWNLOAD CLEAN</button>
 </div>
@@ -53,46 +32,30 @@
 </div>
 </div>
 
-<div id="previewModal" class="fixed inset-0 bg-black/80 z-[999] hidden"><div class="flex items-center justify-center min-h-screen p-2"><div class="bg-white rounded-xl max-w-5xl w-full max-h-[92vh] flex flex-col"><div class="bg-[#BE1E2D] text-white p-3 flex justify-between rounded-t-xl"><div><p class="font-bold text-[12px]">👁️ PREVIEW LAPORAN CLEAN - NO CORET - NO FOOTER - FOTO DI CATATAN</p><p id="previewSub" class="text-[8px] opacity-80"></p></div><button onclick="closePreview()" class="bg-white/20 w-8 h-8 rounded-full">X</button></div><div id="previewContent" class="flex-1 overflow-auto bg-slate-200 p-3"></div><div class="p-3 border-t bg-white flex gap-2 rounded-b-xl"><button onclick="closePreview()" class="flex-1 bg-slate-200 py-2.5 rounded-lg text-[10px] font-bold">Tutup</button><button onclick="exportPDFFromPreview()" class="flex-1 bg-[#BE1E2D] text-white py-2.5 rounded-lg text-[10px] font-bold">📄 PDF Clean</button><button onclick="exportWordFromPreview()" class="flex-1 bg-blue-700 text-white py-2.5 rounded-lg text-[10px] font-bold">📝 Word Clean</button></div></div></div></div>
-<div id="fotoModal" class="fixed inset-0 bg-black/80 z-[1000] hidden flex items-center justify-center p-3"><div class="bg-white rounded-xl max-w-md w-full"><div class="bg-[#BE1E2D] text-white p-3 flex justify-between rounded-t-xl"><p class="font-bold text-[11px]">📷 Foto Bukti - Masuk ke Catatan</p><button onclick="closeFotoModal()" class="bg-white/20 w-6 h-6 rounded-full">X</button></div><div class="p-3 space-y-3"><p id="fotoTaskName" class="font-bold text-[11px] bg-slate-100 p-2 rounded"></p><input type="file" id="fotoInput" accept="image/*" class="w-full border-2 border-dashed rounded-lg p-3 text-[10px]"><input type="text" id="fotoCaption" placeholder="Keterangan foto - akan tampil di catatan" class="w-full border rounded p-2 text-[10px]"><div id="fotoPreviewBox" class="hidden"><img id="fotoPreviewImg" class="w-full h-32 object-contain border rounded bg-slate-50"></div><div class="flex gap-2"><button onclick="closeFotoModal()" class="flex-1 bg-slate-200 py-2 rounded text-[10px] font-bold">Batal</button><button onclick="saveFoto()" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded text-[10px] font-bold">💾 Simpan ke Catatan & Auto Live</button></div></div></div></div>
+<div id="previewModal" class="fixed inset-0 bg-black/80 z-[999] hidden"><div class="flex items-center justify-center min-h-screen p-2"><div class="bg-white rounded-xl max-w-5xl w-full max-h-[92vh] flex flex-col"><div class="bg-[#BE1E2D] text-white p-3 flex justify-between rounded-t-xl"><div><p class="font-bold text-[12px]">👁️ PREVIEW LAPORAN CLEAN - KOP BERSIH - NO CORET - FOTO DI CATATAN</p><p id="previewSub" class="text-[8px] opacity-80"></p></div><button onclick="closePreview()" class="bg-white/20 w-8 h-8 rounded-full">X</button></div><div id="previewContent" class="flex-1 overflow-auto bg-slate-200 p-3"></div><div class="p-3 border-t bg-white flex gap-2 rounded-b-xl"><button onclick="closePreview()" class="flex-1 bg-slate-200 py-2.5 rounded-lg text-[10px] font-bold">Tutup</button><button onclick="exportPDFFromPreview()" class="flex-1 bg-[#BE1E2D] text-white py-2.5 rounded-lg text-[10px] font-bold">📄 PDF Clean</button><button onclick="exportWordFromPreview()" class="flex-1 bg-blue-700 text-white py-2.5 rounded-lg text-[10px] font-bold">📝 Word Clean</button></div></div></div></div>
+<div id="fotoModal" class="fixed inset-0 bg-black/80 z-[1000] hidden flex items-center justify-center p-3"><div class="bg-white rounded-xl max-w-md w-full"><div class="bg-[#BE1E2D] text-white p-3 flex justify-between rounded-t-xl"><p class="font-bold text-[11px]">📷 Foto - Akan Masuk ke Catatan</p><button onclick="closeFotoModal()" class="bg-white/20 w-6 h-6 rounded-full">X</button></div><div class="p-3 space-y-3"><p id="fotoTaskName" class="font-bold text-[11px] bg-slate-100 p-2 rounded"></p><input type="file" id="fotoInput" accept="image/*" class="w-full border-2 border-dashed rounded-lg p-3 text-[10px]"><input type="text" id="fotoCaption" placeholder="Keterangan foto - tampil di catatan" class="w-full border rounded p-2 text-[10px]"><div id="fotoPreviewBox" class="hidden"><img id="fotoPreviewImg" class="w-full h-32 object-contain border rounded bg-slate-50"></div><div class="flex gap-2"><button onclick="closeFotoModal()" class="flex-1 bg-slate-200 py-2 rounded text-[10px] font-bold">Batal</button><button onclick="saveFoto()" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded text-[10px] font-bold">💾 Simpan ke Catatan</button></div></div></div></div>
 
 <div class="max-w-6xl mx-auto p-2 space-y-3">
 <div id="content1"><div id="container1" class="grid gap-3"></div></div>
 <div id="content2" class="hidden"><div id="container2" class="grid gap-3"></div></div>
 <div id="content3" class="hidden space-y-3">
 <div class="bg-white border-2 border-[#BE1E2D] rounded-xl p-4">
-<p class="font-bold text-[12px] text-[#BE1E2D]">✍️ TTD LENGKAP</p>
+<p class="font-bold text-[12px] text-[#BE1E2D]">✍️ TTD - DESA KASIH 53354</p>
 <div class="grid grid-cols-2 gap-3 mt-3">
 <div class="border-2 border-orange-300 bg-orange-50 p-3 rounded-xl"><p class="font-bold text-[10px]">1️⃣ KADES</p><input id="namaKades" placeholder="Nama Kades" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdKades')"><img id="prevKades" class="hidden w-full h-12 object-contain border bg-white mt-1"><label class="text-[7px]"><input type="checkbox" id="needKades" checked onchange="saveNeed()"> Tampil</label></div>
-<div class="border-2 border-blue-300 bg-blue-50 p-3 rounded-xl"><p class="font-bold text-[10px]">2️⃣ KETUA KDKMP</p><input id="namaKetua" placeholder="Nama Ketua" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdKetua')"><img id="prevKetua" class="hidden w-full h-12 object-contain border bg-white mt-1"><label class="text-[7px]"><input type="checkbox" id="needKetua" checked onchange="saveNeed()"> Tampil</label></div>
+<div class="border-2 border-blue-300 bg-blue-50 p-3 rounded-xl"><p class="font-bold text-[10px]">2️⃣ KETUA</p><input id="namaKetua" placeholder="Nama Ketua" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdKetua')"><img id="prevKetua" class="hidden w-full h-12 object-contain border bg-white mt-1"><label class="text-[7px]"><input type="checkbox" id="needKetua" checked onchange="saveNeed()"> Tampil</label></div>
 <div class="border-2 border-green-300 bg-green-50 p-3 rounded-xl"><p class="font-bold text-[10px]">3️⃣ PENGAWAS</p><input id="namaPengawas" placeholder="Nama Pengawas" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdPengawas')"><img id="prevPengawas" class="hidden w-full h-12 object-contain border bg-white mt-1"><label class="text-[7px]"><input type="checkbox" id="needPengawas" checked onchange="saveNeed()"> Tampil</label></div>
 <div class="border-2 border-red-200 bg-red-50 p-3 rounded-xl"><p class="font-bold text-[10px]">4️⃣ MANAJER</p><input id="namaManajer" placeholder="Nama Manajer" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdManajer')"><img id="prevManajer" class="hidden w-full h-12 object-contain border bg-white mt-1"><label class="text-[7px]"><input type="checkbox" id="needManajer" checked onchange="saveNeed()"> Tampil</label></div>
 </div>
 </div>
-<div class="bg-white border-2 border-slate-300 rounded-xl p-4"><p class="font-bold text-[11px] text-[#BE1E2D]">⚙️ CATATAN & FOTO DI CATATAN</p><div class="mt-3"><textarea id="footerText" class="w-full border rounded p-2 text-[10px] h-12 hidden">-</textarea><div class="flex gap-3 mt-2 text-[10px]"><label><input type="checkbox" id="includeCatatan" checked onchange="saveFooter()"> Tampilkan Catatan di Laporan</label><label><input type="checkbox" id="includeFoto" checked onchange="saveFooter()"> Foto Masuk Catatan (bukan di list)</label><label class="hidden"><input type="checkbox" id="needFooter"><input type="checkbox" id="catatanBelow" checked></label></div><div id="footerPreview" class="text-[9px] bg-yellow-50 border p-2 rounded mt-2">Foto akan tampil di dalam kotak catatan, bukan di tabel tugas. Laporan tanpa coret dan tanpa footer.</div></div></div>
+<div class="bg-white border-2 border-slate-300 rounded-xl p-4"><p class="font-bold text-[11px] text-[#BE1E2D]">⚙️ CATATAN & FOTO DI CATATAN</p><div class="mt-2 flex gap-3 text-[10px]"><label><input type="checkbox" id="includeCatatan" checked onchange="saveFooter()"> Tampilkan Catatan</label><label><input type="checkbox" id="includeFoto" checked onchange="saveFooter()"> Foto di Catatan (bukan di list)</label><label class="hidden"><input type="checkbox" id="needFooter"><input type="checkbox" id="catatanBelow" checked><textarea id="footerText" class="hidden">-</textarea></label></div><div id="footerPreview" class="text-[9px] bg-green-50 border border-green-300 p-2 rounded mt-2">✅ CLEAN: Kop bersih - Tabel No,Tugas,Status - Tanpa coret - Tanpa footer - Foto hanya di kotak catatan</div></div>
 
 <div class="bg-white border-4 border-[#BE1E2D] rounded-xl p-4 shadow-xl">
-<p class="font-bold text-[14px] text-[#BE1E2D] text-center">📥 DOWNLOAD LAPORAN CLEAN - NO CORET - NO FOOTER - FOTO DI CATATAN</p>
-<p class="text-[9px] text-center">Kop bersih - Tabel 3 kolom (No, Tugas, Status) - Tidak dicoret - Foto hanya di catatan</p>
+<p class="font-bold text-[14px] text-[#BE1E2D] text-center">📥 DOWNLOAD LAPORAN CLEAN - DI TAB 3</p>
+<p class="text-[9px] text-center">Kop bersih - Tanpa coret - Tanpa footer - Foto di catatan</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-<div class="border-2 border-red-300 bg-red-50 rounded-xl p-4">
-<p class="font-bold text-[12px] text-[#BE1E2D]">📄 PDF CLEAN</p>
-<div class="grid grid-cols-2 gap-2 mt-3">
-<button onclick="previewPDF(false)" class="bg-white border-2 border-[#BE1E2D] text-[#BE1E2D] py-3 rounded-lg text-[10px] font-bold">👁️ Preview PDF Clean FULL</button>
-<button onclick="exportPDF(false)" class="bg-[#BE1E2D] text-white py-3 rounded-lg text-[10px] font-bold">📄 Download PDF Clean</button>
-<button onclick="previewPDF(true)" class="bg-white border-2 border-amber-600 text-amber-700 py-3 rounded-lg text-[10px] font-bold">👁️ Preview Tung Clean</button>
-<button onclick="exportPDF(true)" class="bg-amber-600 text-white py-3 rounded-lg text-[10px] font-bold">⚠️ PDF Tung Clean</button>
-</div>
-</div>
-<div class="border-2 border-blue-300 bg-blue-50 rounded-xl p-4">
-<p class="font-bold text-[12px] text-blue-700">📝 WORD CLEAN</p>
-<div class="grid grid-cols-2 gap-2 mt-3">
-<button onclick="previewWord(false)" class="bg-white border-2 border-blue-700 text-blue-700 py-3 rounded-lg text-[10px] font-bold">👁️ Preview Word Clean FULL</button>
-<button onclick="exportWord(false)" class="bg-blue-700 text-white py-3 rounded-lg text-[10px] font-bold">📝 Download Word Clean</button>
-<button onclick="previewWord(true)" class="bg-white border-2 border-slate-700 text-slate-700 py-3 rounded-lg text-[10px] font-bold">👁️ Preview Word Tung</button>
-<button onclick="exportWord(true)" class="bg-slate-700 text-white py-3 rounded-lg text-[10px] font-bold">📝 Word Tung Clean</button>
-</div>
-</div>
+<div class="border-2 border-red-300 bg-red-50 rounded-xl p-4"><p class="font-bold text-[12px] text-[#BE1E2D]">📄 PDF CLEAN</p><div class="grid grid-cols-2 gap-2 mt-3"><button onclick="previewPDF(false)" class="bg-white border-2 border-[#BE1E2D] text-[#BE1E2D] py-3 rounded-lg text-[10px] font-bold">👁️ Preview PDF Clean FULL</button><button onclick="exportPDF(false)" class="bg-[#BE1E2D] text-white py-3 rounded-lg text-[10px] font-bold">📄 Download PDF Clean</button><button onclick="previewPDF(true)" class="bg-white border-2 border-amber-600 text-amber-700 py-3 rounded-lg text-[10px] font-bold">👁️ Preview Tung Clean</button><button onclick="exportPDF(true)" class="bg-amber-600 text-white py-3 rounded-lg text-[10px] font-bold">⚠️ PDF Tung Clean</button></div></div>
+<div class="border-2 border-blue-300 bg-blue-50 rounded-xl p-4"><p class="font-bold text-[12px] text-blue-700">📝 WORD CLEAN</p><div class="grid grid-cols-2 gap-2 mt-3"><button onclick="previewWord(false)" class="bg-white border-2 border-blue-700 text-blue-700 py-3 rounded-lg text-[10px] font-bold">👁️ Preview Word Clean FULL</button><button onclick="exportWord(false)" class="bg-blue-700 text-white py-3 rounded-lg text-[10px] font-bold">📝 Download Word Clean</button><button onclick="previewWord(true)" class="bg-white border-2 border-slate-700 text-slate-700 py-3 rounded-lg text-[10px] font-bold">👁️ Preview Tung</button><button onclick="exportWord(true)" class="bg-slate-700 text-white py-3 rounded-lg text-[10px] font-bold">📝 Word Tung Clean</button></div></div>
 </div>
 </div>
 </div>
@@ -110,21 +73,9 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const REF = db.ref('v51-full-auto-realtime-kasih');
 let isLocalChange=false; let autoPushTimer=null; let lastPreviewOnlyTung=false;
-function autoPush(){
-  clearTimeout(autoPushTimer);
-  autoPushTimer=setTimeout(()=>{
-    isLocalChange=true;
-    const payload={updatedAt:new Date().toISOString()};
-    for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i); if(k.startsWith('chk_')||k.startsWith('ada_')||k.startsWith('catatan_')||k.startsWith('foto_')||k.startsWith('custom_')||k.startsWith('edited_')||k.startsWith('deleted_')||k.startsWith('nama')||k.startsWith('need')||k.startsWith('custom_footer')||k.startsWith('include')||k.startsWith('ttd')||k.startsWith('cap')||k.startsWith('kdkmp_')) payload[k]=localStorage.getItem(k);}
-    REF.set(payload).then(()=>{document.getElementById('status').textContent="✅ Auto Live "+new Date().toLocaleTimeString('id-ID'); setTimeout(()=>isLocalChange=false,1500);});
-  },600);
-}
-REF.on('value', snap=>{
-  if(isLocalChange) return;
-  const data=snap.val(); if(!data||!data.updatedAt) return;
-  let c=0; Object.keys(data).forEach(k=>{ if(localStorage.getItem(k)!==data[k]){localStorage.setItem(k,data[k]); c++;} });
-  if(c>0){document.getElementById('status').textContent="🔴 LIVE "+c+" update"; document.getElementById('liveStatus').textContent="🔴 UPDATE"; render(); loadNeed(); loadNames(); loadImgs(); loadFooter(); setTimeout(()=>document.getElementById('liveStatus').textContent="AUTO LIVE",3000);}
-});
+function autoPush(){ clearTimeout(autoPushTimer); autoPushTimer=setTimeout(()=>{ isLocalChange=true; const payload={updatedAt:new Date().toISOString()}; for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i); if(k.startsWith('chk_')||k.startsWith('ada_')||k.startsWith('catatan_')||k.startsWith('foto_')||k.startsWith('custom_')||k.startsWith('edited_')||k.startsWith('deleted_')||k.startsWith('nama')||k.startsWith('need')||k.startsWith('include')||k.startsWith('ttd')||k.startsWith('cap')||k.startsWith('kdkmp_')) payload[k]=localStorage.getItem(k);} REF.set(payload).then(()=>{document.getElementById('status').textContent="✅ Auto Live "+new Date().toLocaleTimeString('id-ID'); setTimeout(()=>isLocalChange=false,1500);}); },600); }
+REF.on('value', snap=>{ if(isLocalChange) return; const data=snap.val(); if(!data||!data.updatedAt) return; let c=0; Object.keys(data).forEach(k=>{ if(localStorage.getItem(k)!==data[k]){localStorage.setItem(k,data[k]); c++;} }); if(c>0){document.getElementById('status').textContent="🔴 LIVE "+c+" update"; document.getElementById('liveStatus').textContent="🔴 UPDATE"; render(); loadNeed(); loadNames(); loadImgs(); loadFooter(); setTimeout(()=>document.getElementById('liveStatus').textContent="AUTO LIVE",3000);} });
+
 const baseDays=[
 {d:1,t:"Laporan Diri Tingkat Desa",m:"DESA",tasks:["Melaporkan keberadaan kepada Kepala Desa","Melaporkan kepada Lurah","Serah terima penugasan kepada Pengurus","Perkenalkan diri sebagai Manajer","Catat kontak Kades","Melaporkan kepada Babinsa","Catat kontak babinsa","Catat kontak ketua pengurus"]},
 {d:2,t:"Silaturahmi",m:"DESA",tasks:["Silaturahmi Ketua BPD","Silaturahmi Anggota BPD","Silaturahmi Tokoh Masyarakat","Silaturahmi Ketua RT","Silaturahmi Ketua RW","Sampaikan visi inklusif","Sampaikan visi kolaboratif","Sampaikan visi transparan","Catat aspirasi"]},
@@ -172,15 +123,15 @@ function getTanggalForHari(h){const s=getStart(); const d=new Date(s); d.setDate
 function formatTanggalIndo(date){return date.toLocaleDateString('id-ID',{weekday:'long', day:'numeric', month:'long', year:'numeric'});}
 function switchTab(n){document.getElementById('content1').classList.toggle('hidden',n!==1); document.getElementById('content2').classList.toggle('hidden',n!==2); document.getElementById('content3').classList.toggle('hidden',n!==3); }
 function scrollToHari(d){switchTab(1); setTimeout(()=>{const el=document.getElementById('hari-'+d); if(el){const y=el.getBoundingClientRect().top+window.pageYOffset-160; window.scrollTo({top:y,behavior:'smooth'});}},100);}
-function saveNeed(){['Manajer','Kades','Cap','CapKades','Ketua','CapKetua','Pengawas','CapPengawas'].forEach(k=>{const el=document.getElementById('need'+k); if(el) localStorage.setItem('need'+k,el.checked);}); autoPush();}
-function loadNeed(){['Manajer','Kades','Cap','CapKades','Ketua','CapKetua','Pengawas','CapPengawas'].forEach(k=>{const v=localStorage.getItem('need'+k); const el=document.getElementById('need'+k); if(el&&v!==null) el.checked=v==='true';});}
+function saveNeed(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const el=document.getElementById('need'+k); if(el) localStorage.setItem('need'+k,el.checked);}); autoPush();}
+function loadNeed(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const v=localStorage.getItem('need'+k); const el=document.getElementById('need'+k); if(el&&v!==null) el.checked=v==='true';});}
 function saveNames(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const el=document.getElementById('nama'+k); if(el) localStorage.setItem('nama'+k,el.value);}); autoPush();}
 function loadNames(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const v=localStorage.getItem('nama'+k); const el=document.getElementById('nama'+k); if(v&&el) el.value=v;});}
 function saveImg(input,key){const f=input.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>{localStorage.setItem(key,e.target.result); loadImgs(); autoPush();}; r.readAsDataURL(f);}
-function loadImgs(){const map={'ttdManajer':'prevManajer','ttdKades':'prevKades','capKoperasi':'prevCap','capKades':'prevCapKades','ttdKetua':'prevKetua','capKetua':'prevCapKetua','ttdPengawas':'prevPengawas','capPengawas':'prevCapPengawas'}; Object.entries(map).forEach(([k,el])=>{const d=localStorage.getItem(k); const e=document.getElementById(el); if(d&&e){e.src=d; e.classList.remove('hidden');}});}
-function saveFooter(){localStorage.setItem('custom_footer_active',document.getElementById('needFooter')?.checked); localStorage.setItem('custom_footer_text',document.getElementById('footerText')?.value||""); localStorage.setItem('includeCatatan',document.getElementById('includeCatatan').checked); localStorage.setItem('includeFoto',document.getElementById('includeFoto').checked); updateFooterPreview(); autoPush();}
+function loadImgs(){const map={'ttdManajer':'prevManajer','ttdKades':'prevKades','ttdKetua':'prevKetua','ttdPengawas':'prevPengawas'}; Object.entries(map).forEach(([k,el])=>{const d=localStorage.getItem(k); const e=document.getElementById(el); if(d&&e){e.src=d; e.classList.remove('hidden');}});}
+function saveFooter(){localStorage.setItem('includeCatatan',document.getElementById('includeCatatan').checked); localStorage.setItem('includeFoto',document.getElementById('includeFoto').checked); updateFooterPreview(); autoPush();}
 function loadFooter(){const incC=localStorage.getItem('includeCatatan'); if(incC!==null) document.getElementById('includeCatatan').checked=incC==='true'; const incF=localStorage.getItem('includeFoto'); if(incF!==null) document.getElementById('includeFoto').checked=incF==='true'; updateFooterPreview();}
-function updateFooterPreview(){document.getElementById('footerPreview').innerHTML="Laporan Clean: Tanpa coret, Kop bersih, Tanpa footer, Foto hanya di catatan";}
+function updateFooterPreview(){document.getElementById('footerPreview').innerHTML="✅ CLEAN: Kop bersih - Tabel No,Tugas,Status - Tanpa coret - Tanpa footer - Foto hanya di kotak catatan";}
 function editTask(d,i){const cur=getEdited()[d+'_'+i]||baseDays.find(x=>x.d===d).tasks[i]; const baru=prompt('Edit:',cur); if(!baru) return; const ed=getEdited(); ed[d+'_'+i]=baru; localStorage.setItem('edited_tasks',JSON.stringify(ed)); autoPush(); render();}
 function deleteTask(d,i){if(!confirm('Hapus?')) return; const del=getDeleted(); del.push(d+'_'+i); localStorage.setItem('deleted_tasks',JSON.stringify(del)); autoPush(); render();}
 function setAda(d,i,val){if(getAda(d,i)===val) localStorage.removeItem('ada_'+d+'_'+i); else localStorage.setItem('ada_'+d+'_'+i,val); autoPush(); render();}
@@ -188,82 +139,47 @@ function addCustomTask(d){const inp=document.getElementById('addInput-'+d); cons
 function deleteCustom(d,idx){const cur=getCustom(d); cur.splice(idx,1); localStorage.setItem('custom_'+d,JSON.stringify(cur)); autoPush(); render();}
 function toggleCatatan(d){localStorage.setItem('catatan_active_'+d, isCatatanActive(d)?'false':'true'); autoPush(); render();}
 function saveCatatan(d){localStorage.setItem('catatan_'+d,document.getElementById('catatan-'+d).value); autoPush();}
-let curFoto={}; function openFotoModal(d,i){curFoto={day:d, idx:i}; const task=getEdited()[d+'_'+i]||baseDays.find(x=>x.d===d).tasks[i]; document.getElementById('fotoTaskName').textContent="Hari "+d+" - "+task+" (Foto akan masuk ke Catatan Hari "+d+")"; document.getElementById('fotoModal').classList.remove('hidden');} function closeFotoModal(){document.getElementById('fotoModal').classList.add('hidden');}
+let curFoto={}; function openFotoModal(d,i){curFoto={day:d, idx:i}; const task=getEdited()[d+'_'+i]||baseDays.find(x=>x.d===d).tasks[i]; document.getElementById('fotoTaskName').textContent="Hari "+d+" - "+task+" (Foto masuk ke Catatan)"; document.getElementById('fotoModal').classList.remove('hidden');} function closeFotoModal(){document.getElementById('fotoModal').classList.add('hidden');}
 document.getElementById('fotoInput').addEventListener('change',function(e){const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=ev=>{const img=new Image(); img.onload=()=>{const c=document.createElement('canvas'); let w=img.width,h=img.height; if(w>800){h=h*(800/w); w=800;} c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); const comp=c.toDataURL('image/jpeg',0.6); document.getElementById('fotoPreviewImg').src=comp; document.getElementById('fotoPreviewBox').classList.remove('hidden'); document.getElementById('fotoPreviewImg').dataset.comp=comp;}; img.src=ev.target.result;}; r.readAsDataURL(file);});
 function saveFoto(){const cap=document.getElementById('fotoCaption').value; const data=document.getElementById('fotoPreviewImg').dataset.comp; if(!data) return alert('Pilih foto'); localStorage.setItem('foto_'+curFoto.day+'_'+curFoto.idx, JSON.stringify({data, caption:cap, date:new Date().toISOString()})); closeFotoModal(); autoPush(); render();}
 function deleteFoto(d,i){if(!confirm('Hapus foto?')) return; localStorage.removeItem('foto_'+d+'_'+i); autoPush(); render();}
-function getTTDData(){return [{id:'Kades', label:'KEPALA DESA', nama:localStorage.getItem('namaKades')||'Kepala Desa', ttd:localStorage.getItem('ttdKades'), need:localStorage.getItem('needKades')!=='false'}, {id:'Ketua', label:'KETUA KDKMP', nama:localStorage.getItem('namaKetua')||'Ketua', ttd:localStorage.getItem('ttdKetua'), need:localStorage.getItem('needKetua')!=='false'}, {id:'Pengawas', label:'PENGAWAS', nama:localStorage.getItem('namaPengawas')||'Pengawas', ttd:localStorage.getItem('ttdPengawas'), need:localStorage.getItem('needPengawas')!=='false'}, {id:'Manajer', label:'MANAJER', nama:localStorage.getItem('namaManajer')||'Manajer', ttd:localStorage.getItem('ttdManajer'), need:localStorage.getItem('needManajer')!=='false'}].filter(x=>x.need);}
+function getTTDData(){return [{label:'KEPALA DESA', nama:localStorage.getItem('namaKades')||'Kepala Desa', ttd:localStorage.getItem('ttdKades'), need:localStorage.getItem('needKades')!=='false'}, {label:'KETUA KDKMP', nama:localStorage.getItem('namaKetua')||'Ketua', ttd:localStorage.getItem('ttdKetua'), need:localStorage.getItem('needKetua')!=='false'}, {label:'PENGAWAS', nama:localStorage.getItem('namaPengawas')||'Pengawas', ttd:localStorage.getItem('ttdPengawas'), need:localStorage.getItem('needPengawas')!=='false'}, {label:'MANAJER', nama:localStorage.getItem('namaManajer')||'Manajer', ttd:localStorage.getItem('ttdManajer'), need:localStorage.getItem('needManajer')!=='false'}].filter(x=>x.need);}
 
-// LAPORAN CLEAN - TANPA CORET - TANPA FOOTER - KOP BERSIH - FOTO DI CATATAN
 function buildReportHTML(onlyTunggakan){
-  const hariIni=getHariIni();
   const edited=getEdited(); const del=getDeleted();
-
-  let html=`<div class="laporan">
-    <div class="kop-clean">
-      <h1>KOPERASI DESA MERAH PUTIH - DESA KASIH</h1>
-      <p>Kec. Kertanegara - Kab. Purbalingga 53354</p>
+  let html=`<div style="font-family:Arial;padding:20px;background:white;color:#111">
+    <div style="border-bottom:2px solid #111;padding-bottom:10px;text-align:center;margin-bottom:12px">
+      <h1 style="margin:0;font-size:15px;font-weight:800">KOPERASI DESA MERAH PUTIH - DESA KASIH</h1>
+      <p style="margin:2px 0;font-size:10px">Kec. Kertanegara - Kab. Purbalingga 53354</p>
     </div>
-    <div class="judul-clean">
-      <h2>Laporan Kerja ${onlyTunggakan?'Tunggakan':'31 Hari'}</h2>
-      <p>Periode ${formatTanggalIndo(getStart())} - ${formatTanggalIndo(getTanggalForHari(31))} | Cetak ${formatTanggalIndo(new Date())}</p>
+    <div style="text-align:center;margin:10px 0">
+      <h2 style="margin:0;font-size:13px;font-weight:800;text-transform:uppercase">LAPORAN KERJA ${onlyTunggakan?'TUNGGAKAN':'31 HARI'}</h2>
+      <p style="font-size:9px;color:#555;margin-top:4px">Periode ${formatTanggalIndo(getStart())} - ${formatTanggalIndo(getTanggalForHari(31))} | Cetak ${formatTanggalIndo(new Date())}</p>
     </div>`;
 
   baseDays.forEach(day=>{
-    if(onlyTunggakan && day.d>=hariIni) return;
-    let tasks=[]; 
-    day.tasks.forEach((orig,i)=>{ 
-      if(del.includes(day.d+'_'+i)) return; 
-      const name=edited[day.d+'_'+i]||orig; 
-      const chk=isChecked(day.d,i); 
-      if(onlyTunggakan && chk) return; 
-      const ada=getAda(day.d,i); 
-      tasks.push({name,chk,ada}); 
-    });
-    getCustom(day.d).forEach(ct=>{ tasks.push({name:ct+" (Tambahan)", chk:false, ada:""}); });
-    if(tasks.length===0 && onlyTunggakan) return;
-
-    html+=`<div style="margin-top:12px"><div class="hari-clean">HARI ${day.d}: ${day.t} - ${formatTanggalIndo(getTanggalForHari(day.d))}</div>
-    <table><thead><tr><th style="width:30px">No</th><th>Tugas / Kegiatan</th><th style="width:90px">Status</th></tr></thead><tbody>`;
-    tasks.forEach((t,idx)=>{
-      let badge=""; if(t.ada==='ADA') badge=`<span class="badge badge-ada">ADA</span>`; else if(t.ada==='TIDAK') badge=`<span class="badge badge-tidak">TIDAK</span>`; else if(t.ada==='BELUM') badge=`<span class="badge badge-belum">BELUM</span>`; else badge=`<span style="font-size:8px">-</span>`;
-      // TIDAK DICORET - selalu normal
-      html+=`<tr><td style="text-align:center">${idx+1}</td><td>${t.name}</td><td style="text-align:center">${badge}</td></tr>`;
-    });
-    html+=`</tbody></table>`;
-
-    // CATATAN + FOTO DI CATATAN (BUKAN DI LIST)
-    const cat=getCatatan(day.d);
-    const showCat=document.getElementById('includeCatatan').checked;
-    const showFoto=document.getElementById('includeFoto').checked;
-    if(showCat || showFoto){
-      let fotos=[]; 
-      day.tasks.forEach((_,i)=>{ const f=getFoto(day.d,i); if(f) fotos.push(f); });
-      if((cat && showCat) || (fotos.length>0 && showFoto)){
-        html+=`<div class="catatan-clean">`;
-        if(cat && showCat){ html+=`<div><b>Catatan Hari ${day.d}:</b> ${cat}</div>`; }
-        if(fotos.length>0 && showFoto){
-          html+=`<div style="margin-top:6px"><b>Foto Bukti:</b><div class="foto-di-catatan">`;
-          fotos.forEach(f=>{ html+=`<div class="foto-box"><img src="${f.data}"><div>${(f.caption||"Bukti").substring(0,25)}</div></div>`; });
-          html+=`</div></div>`;
-        }
-        html+=`</div>`;
-      }
+    if(onlyTunggakan && day.d>=getHariIni()) return;
+    let tasks=[]; day.tasks.forEach((o,i)=>{ if(del.includes(day.d+'_'+i)) return; const name=edited[day.d+'_'+i]||o; const chk=isChecked(day.d,i); if(onlyTunggakan && chk) return; tasks.push({name, ada:getAda(day.d,i)}); });
+    getCustom(day.d).forEach(ct=>{ tasks.push({name:ct+' (Tambahan)', ada:""}); });
+    if(tasks.length==0 && onlyTunggakan) return;
+    html+=`<div style="margin-top:14px"><div style="background:#f3f3f3;font-weight:800;font-size:10px;padding:6px;border:1px solid #111">HARI ${day.d}: ${day.t} - ${formatTanggalIndo(getTanggalForHari(day.d))}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:10px"><tr style="background:#111;color:white"><th style="width:30px;padding:6px;border:1px solid #111">No</th><th style="padding:6px;border:1px solid #111">TUGAS / KEGIATAN</th><th style="width:90px;padding:6px;border:1px solid #111">STATUS</th></tr>`;
+    tasks.forEach((t,idx)=>{ html+=`<tr><td style="text-align:center;padding:6px;border:1px solid #111">${idx+1}</td><td style="padding:6px;border:1px solid #111">${t.name}</td><td style="text-align:center;padding:6px;border:1px solid #111">${t.ada||'-'}</td></tr>`; });
+    html+=`</table>`;
+    const cat=getCatatan(day.d); let fotos=[]; day.tasks.forEach((_,i)=>{ const f=getFoto(day.d,i); if(f) fotos.push(f); });
+    if((cat && document.getElementById('includeCatatan').checked) || (fotos.length>0 && document.getElementById('includeFoto').checked)){
+      html+=`<div style="border:1px solid #111;padding:8px;margin-top:6px;font-size:9px;background:#fafafa">`;
+      if(cat) html+=`<div><b>Catatan Hari ${day.d}:</b> ${cat}</div>`;
+      if(fotos.length>0){ html+=`<div style="margin-top:6px"><b>Foto Bukti:</b><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">`; fotos.forEach(f=>{ html+=`<div style="border:1px solid #111;padding:3px;width:90px;text-align:center;font-size:7px"><img src="${f.data}" style="width:100%;height:60px;object-fit:cover"><div>${(f.caption||"Bukti").substring(0,20)}</div></div>`; }); html+=`</div></div>`; }
+      html+=`</div>`;
     }
     html+=`</div>`;
   });
-
-  // TTD CLEAN - tanpa cap ramai
-  const ttd=getTTDData();
-  html+=`<div class="ttd-clean">`;
-  ttd.forEach(b=>{
-    html+=`<div class="ttd-clean-box"><div style="font-weight:700; text-transform:uppercase; font-size:8px; min-height:18px">${b.label}</div><div class="kotak-ttd">${b.ttd?`<img src="${b.ttd}" style="max-height:60px">`:``}</div><div style="font-weight:700; border-top:1px solid #111; padding-top:4px">${b.nama}</div></div>`;
-  });
-  html+=`</div></div>`;
+  const ttd=getTTDData(); html+=`<div style="display:flex;justify-content:center;gap:40px;margin-top:32px">`; ttd.forEach(b=>{ html+=`<div style="width:150px;text-align:center;font-size:9px"><div style="font-size:8px;font-weight:700;text-transform:uppercase">${b.label}</div><div style="height:70px;border-bottom:1px solid #111;display:flex;align-items:center;justify-content:center">${b.ttd?`<img src="${b.ttd}" style="max-height:60px">`:``}</div><div style="font-weight:700;margin-top:4px">${b.nama}</div></div>`; }); html+=`</div></div>`;
   return html;
 }
 
-function previewPDF(onlyT){ lastPreviewOnlyTung=onlyT; const html=buildReportHTML(onlyT); document.getElementById('previewContent').innerHTML=`<div style="background:white; border-radius:8px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1)">${html}</div>`; document.getElementById('previewSub').textContent=(onlyT?"Tunggakan Clean":"FULL 31 Hari Clean")+" - Tanpa coret, Kop bersih, Tanpa footer, Foto di catatan"; document.getElementById('previewModal').classList.remove('hidden'); }
+function previewPDF(onlyT){ lastPreviewOnlyTung=onlyT; const html=buildReportHTML(onlyT); document.getElementById('previewContent').innerHTML=`<div style="background:white;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);overflow:hidden">${html}</div>`; document.getElementById('previewSub').textContent=(onlyT?"Tunggakan Clean":"FULL 31 Hari Clean")+" - No coret, Kop bersih, No footer, Foto di catatan"; document.getElementById('previewModal').classList.remove('hidden'); }
 function previewWord(onlyT){ previewPDF(onlyT); }
 function closePreview(){ document.getElementById('previewModal').classList.add('hidden'); }
 function exportPDFFromPreview(){ exportPDF(lastPreviewOnlyTung); }
@@ -271,34 +187,21 @@ function exportWordFromPreview(){ exportWord(lastPreviewOnlyTung); }
 function exportPDF(onlyT){
   const {jsPDF}=window.jspdf; const doc=new jsPDF('p','mm','a4');
   doc.setFontSize(11); doc.setFont(undefined,'bold'); doc.text("KOPERASI DESA MERAH PUTIH - DESA KASIH - 53354",10,12);
-  doc.setFontSize(9); doc.setFont(undefined,'normal'); doc.text(`Laporan ${onlyT?"Tunggakan":"31 Hari"} - ${new Date().toLocaleDateString('id-ID')} - TANPA CORET - FOTO DI CATATAN`,10,18);
+  doc.setFontSize(9); doc.setFont(undefined,'normal'); doc.text(`Laporan ${onlyT?"Tunggakan":"31 Hari"} - ${new Date().toLocaleDateString('id-ID')} - CLEAN`,10,18);
   let y=24; const edited=getEdited(); const del=getDeleted();
   baseDays.forEach(day=>{
     if(onlyT && day.d>=getHariIni()) return;
     if(y>260){doc.addPage(); y=12;}
     doc.setFontSize(9); doc.setFont(undefined,'bold'); doc.text(`HARI ${day.d}: ${day.t}`,10,y); y+=4;
-    const rows=[]; 
-    day.tasks.forEach((orig,i)=>{ if(del.includes(day.d+'_'+i)) return; const name=edited[day.d+'_'+i]||orig; const chk=isChecked(day.d,i); if(onlyT && chk) return; rows.push([rows.length+1, name, getAda(day.d,i)||"-"]); });
+    const rows=[]; day.tasks.forEach((o,i)=>{ if(del.includes(day.d+'_'+i)) return; const name=edited[day.d+'_'+i]||o; const chk=isChecked(day.d,i); if(onlyT && chk) return; rows.push([rows.length+1, name, getAda(day.d,i)||"-"]); });
     getCustom(day.d).forEach(ct=>{ rows.push([rows.length+1, ct+" (Tambahan)", ""]); });
-    if(rows.length>0){ 
-      doc.autoTable({startY:y, head:[['No','TUGAS / KEGIATAN','STATUS ADA/TIDAK/BELUM']], body:rows, styles:{fontSize:7, cellPadding:2, lineWidth:0.2, lineColor:0}, headStyles:{fillColor:[0,0,0], fontSize:8}}); 
-      y=doc.lastAutoTable.finalY+4; 
-      // catatan + foto info
-      const cat=getCatatan(day.d); let fotos=[]; day.tasks.forEach((_,i)=>{ const f=getFoto(day.d,i); if(f) fotos.push(f.caption||"Foto"); });
-      if(cat || fotos.length>0){
-        doc.setFontSize(7); doc.setFont(undefined,'normal');
-        if(cat) { doc.text(`Catatan: ${cat.substring(0,100)}`,10,y); y+=4; }
-        if(fotos.length>0){ doc.text(`Foto Bukti (${fotos.length}): ${fotos.join(', ').substring(0,80)}`,10,y); y+=5; }
-      }
-      y+=2;
-    }
+    if(rows.length>0){ doc.autoTable({startY:y, head:[['No','TUGAS','STATUS']], body:rows, styles:{fontSize:7, lineWidth:0.2, lineColor:0}, headStyles:{fillColor:[0,0,0]}}); y=doc.lastAutoTable.finalY+6; }
   });
-  doc.save(`LAPORAN-CLEAN-NO-CORET-FOTO-CATATAN-${onlyT?"TUNGGAKAN":"FULL"}-KASIH.pdf`);
+  doc.save(`LAPORAN-CLEAN-${onlyT?"TUNGGAKAN":"FULL"}-KASIH.pdf`);
 }
 function exportWord(onlyT){
   const html=buildReportHTML(onlyT);
-  const full=`<html><head><meta charset="utf-8"><style>body{font-family:Arial}</style></head><body>${html}</body></html>`;
-  const blob=new Blob([full],{type:'application/msword'});
+  const blob=new Blob([`<html><head><meta charset="utf-8"></head><body>${html}</body></html>`],{type:'application/msword'});
   const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`LAPORAN-CLEAN-KASIH-${onlyT?"TUNGGAKAN":"FULL"}.doc`; a.click();
 }
 function render(){
@@ -319,7 +222,7 @@ function render(){
     });
     html+="</div><div class='mt-2 flex gap-1'><input id='addInput-"+day.d+"' placeholder='Tambah tugas...' class='flex-1 border rounded-lg px-2 py-1.5 text-[10px]'><button onclick='addCustomTask("+day.d+")' class='bg-[#BE1E2D] text-white px-3 py-1.5 rounded-lg text-[10px] font-bold'>+ Tugas</button></div>";
     const catActive=isCatatanActive(day.d);
-    html+="<div class='mt-2 border rounded-lg overflow-hidden "+(catActive?"border-blue-300":"")+"'><div class='flex justify-between items-center px-2 py-1 bg-slate-50'><p class='text-[9px] font-bold'>📝 Catatan Hari "+day.d+" (Foto tampil di sini di laporan)</p><label class='flex items-center gap-1 text-[9px]'><input type='checkbox' "+(catActive?"checked":"")+" onchange='toggleCatatan("+day.d+")' class='w-3 h-3'> ON</label></div>"+(catActive?"<textarea id='catatan-"+day.d+"' oninput='saveCatatan("+day.d+")' class='w-full p-2 text-[10px] h-16'>"+getCatatan(day.d)+"</textarea>":"<p class='text-[8px] text-slate-400 p-2 italic'>Nonaktif</p>")+"</div>";
+    html+="<div class='mt-2 border rounded-lg overflow-hidden "+(catActive?"border-blue-300":"")+"'><div class='flex justify-between items-center px-2 py-1 bg-slate-50'><p class='text-[9px] font-bold'>📝 Catatan Hari "+day.d+" (Foto di sini)</p><label class='flex items-center gap-1 text-[9px]'><input type='checkbox' "+(catActive?"checked":"")+" onchange='toggleCatatan("+day.d+")' class='w-3 h-3'> ON</label></div>"+(catActive?"<textarea id='catatan-"+day.d+"' oninput='saveCatatan("+day.d+")' class='w-full p-2 text-[10px] h-16'>"+getCatatan(day.d)+"</textarea>":"<p class='text-[8px] text-slate-400 p-2 italic'>Nonaktif</p>")+"</div>";
     div.innerHTML=html; c1.appendChild(div);
   });
   const c2=document.getElementById('container2'); c2.innerHTML=""; let tung=0; baseDays.forEach(d=>{const del=getDeleted(); d.tasks.forEach((_,i)=>{if(!del.includes(d.d+'_'+i) && d.d<getHariIni() && !isChecked(d.d,i)) tung++;});});
@@ -329,7 +232,6 @@ function render(){
 loadNeed(); loadNames(); loadImgs(); loadFooter();
 if(!localStorage.getItem('kdkmp_startDate')){localStorage.setItem('kdkmp_startDate',new Date('2026-10-01T00:00:00').toISOString());}
 render();
-document.getElementById('status').textContent="✅ LAPORAN CLEAN NO CORET NO FOOTER FOTO DI CATATAN SIAP";
 </script>
 </body>
 </html>
