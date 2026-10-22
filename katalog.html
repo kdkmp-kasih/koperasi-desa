@@ -2,25 +2,29 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GERAI KDKMP - V8 MANAJER - 7000764</title>
+<title>GERAI KDKMP - V9 REALTIME - 7000764</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>.no-scrollbar::-webkit-scrollbar{display:none}</style>
 </head>
-<body class="bg-[#fff5f5]">
-<div class="bg-[#BE1E2D] text-white p-3 sticky top-0 z-20">
+<body class="bg-[#fff8f8]">
+<!-- HEADER -->
+<div class="bg-[#BE1E2D] text-white p-3 sticky top-0 z-30">
 <div class="max-w-6xl mx-auto flex justify-between items-center">
-<b class="text-[11px]">GERAI KDKMP KASIH 53354 - V8</b>
+<b class="text-[11px]">GERAI KDKMP KASIH 53354 - V9</b>
 <div class="flex gap-1 items-center">
 <span id="badge" class="hidden bg-white text-[#BE1E2D] px-2 py-1 rounded-full text-[8px] font-black"></span>
-<button onclick="switchView('belanja')" id="bBelanja" class="bg-white text-[#BE1E2D] px-2 py-1.5 rounded-full text-[9px] font-bold">🛒 Belanja</button>
-<button onclick="switchView('toko')" id="bToko" class="bg-black/20 px-2 py-1.5 rounded-full text-[9px] font-bold">🏪 Toko</button>
-<button id="btnPengguna" onclick="openPengguna()" style="display:none" class="bg-amber-300 text-black px-2 py-1.5 rounded-full text-[9px] font-bold">👥 Pengguna</button>
+<button onclick="switchView('toko')" id="bToko" class="bg-white text-[#BE1E2D] px-2 py-1.5 rounded-full text-[9px] font-bold">🏪 Toko</button>
+<button onclick="switchView('belanja')" id="bBelanja" class="bg-black/20 px-2 py-1.5 rounded-full text-[9px] font-bold">🛒 Belanja</button>
+<button id="btnEvent" onclick="openEventAdmin()" style="display:none" class="bg-amber-300 text-black px-2 py-1.5 rounded-full text-[9px] font-bold">📢 Event</button>
+<button id="btnPay" onclick="openPayAdmin()" style="display:none" class="bg-white/20 px-2 py-1.5 rounded-full text-[9px] font-bold">💳 Bayar</button>
+<button id="btnVoucher" onclick="openVoucherAdmin()" style="display:none" class="bg-white/20 px-2 py-1.5 rounded-full text-[9px] font-bold">🎫 Voucher</button>
+<button id="btnPengguna" onclick="openPengguna()" style="display:none" class="bg-white/20 px-2 py-1.5 rounded-full text-[9px] font-bold">👥 Pengguna</button>
 <button id="btnMasuk" onclick="openAuth()" class="bg-white text-[#BE1E2D] px-3 py-1.5 rounded-full text-[10px] font-bold">Masuk</button>
 <button id="btnKeluar" onclick="logout()" style="display:none" class="bg-black/40 px-3 py-1.5 rounded-full text-[10px] font-bold">Keluar</button>
 </div>
 </div>
 <div class="max-w-6xl mx-auto mt-2 flex gap-2">
-<!-- PENCARIAN KOSONG - FIX AUTOFILL -->
-<input id="q" autocomplete="off" autocorrect="off" spellcheck="false" oninput="render()" placeholder="Cari produk..." class="flex-1 rounded-full px-4 py-2 text-[12px] text-black">
+<input id="q" autocomplete="off" value="" placeholder="Cari produk..." class="flex-1 rounded-full px-4 py-2 text-[12px] text-black">
 <select id="kat" onchange="render()" class="rounded-full px-3 py-2 text-[10px] text-black"><option value="">Semua</option><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Lainnya</option></select>
 <button id="addBtn" onclick="openAdd()" style="display:none" class="bg-white text-[#BE1E2D] px-3 py-2 rounded-full text-[10px] font-bold">+ Produk</button>
 <button onclick="openCart()" class="bg-white text-[#BE1E2D] px-3 py-2 rounded-full text-[10px] font-bold">Keranjang <span id="cartCount">0</span></button>
@@ -29,98 +33,149 @@
 
 <div class="max-w-6xl mx-auto p-3">
 <div id="viewToko"><div id="gridToko" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
-<div id="viewBelanja" class="hidden"><div id="gridBelanja" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
+<div id="viewBelanja" class="hidden"><h2 class="font-black text-[12px] text-[#BE1E2D] mb-2">Simulasi Belanja - Harga realtime</h2><div id="gridBelanja" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
 </div>
 
-<!-- AUTH - KONSUMEN & MANAJER -->
-<div id="auth" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99999;align-items:center;justify-content:center;padding:16px">
-<div class="bg-white rounded-2xl w-full max-w-sm p-5 max-h-[90vh] overflow-auto">
-<div class="flex justify-between"><b id="tAuth" class="text-[#BE1E2D]">Masuk Akun</b><button onclick="closeAuth()" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
+<!-- POPUP EVENT -->
+<div id="popupEvent" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100000;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-md p-4 relative"><button onclick="closePopupEvent()" class="absolute top-2 right-2 bg-black text-white w-8 h-8 rounded-full">X</button><div id="popupContent"></div></div>
+</div>
 
-<!-- LOGIN FORM -->
+<!-- AUTH -->
+<div id="auth" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99999;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-sm p-5">
+<div class="flex justify-between"><b id="tAuth" class="text-[#BE1E2D]">Masuk Akun</b><button onclick="closeAuth()" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
 <div id="formLogin" class="mt-4 space-y-3">
 <input id="lUser" autocomplete="off" placeholder="Username / Email / No.HP" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
 <input id="lPass" type="password" placeholder="Password" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
-<p class="text-[8px] text-slate-500">Admin Manajer: Username = Admin Manajer | Password = Manajer0k3</p>
 <p id="lMsg" class="text-red-600 text-[11px] text-center"></p>
 <button onclick="doLogin()" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">MASUK</button>
-<button onclick="toDaftar()" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold">Belum punya akun? Daftar Konsumen</button>
+<button onclick="toDaftar()" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold">Belum punya? Daftar Konsumen</button>
 </div>
-
-<!-- DAFTAR KONSUMEN FORM -->
 <div id="formDaftar" style="display:none" class="mt-4 space-y-3">
-<p class="font-bold text-[11px]">Daftar Konsumen Baru</p>
 <input id="dNama" autocomplete="off" placeholder="Nama Pengguna *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
 <input id="dKontak" autocomplete="off" placeholder="Email / No.HP *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
 <input id="dAlamat" autocomplete="off" placeholder="Alamat Terdaftar *" class="w-full border-2 rounded-xl px-4 py-3 text-[13px]">
-<input id="dPass" type="password" placeholder="Password min 4 *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
+<input id="dPass" type="password" placeholder="Password *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
 <input id="dPass2" type="password" placeholder="Ulang Password *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
 <p id="dMsg" class="text-red-600 text-[11px] text-center"></p>
-<button onclick="doDaftar()" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">DAFTAR KONSUMEN</button>
+<button onclick="doDaftar()" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">DAFTAR</button>
 <button onclick="toLogin()" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold">Sudah punya? Masuk</button>
 </div>
-
 </div>
 </div>
 
-<!-- ADD/EDIT PRODUK -->
+<!-- ADD PRODUK -->
 <div id="add" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99998;align-items:center;justify-content:center;padding:16px">
 <div class="bg-white rounded-2xl w-full max-w-md p-5 max-h-[90vh] overflow-auto">
-<div class="flex justify-between"><b id="addTitle">Tambah Produk</b><button onclick="closeAdd()" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div>
+<div class="flex justify-between"><b id="addTitle">Produk</b><button onclick="closeAdd()" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div>
 <div class="mt-3 space-y-2">
 <input id="pNama" placeholder="Nama" class="w-full border rounded-xl px-3 py-2 text-[11px]">
 <div class="grid grid-cols-2 gap-2"><input id="pHarga" type="number" placeholder="Harga" class="border rounded-xl px-3 py-2 text-[11px]"><input id="pStok" type="number" placeholder="Stok" class="border rounded-xl px-3 py-2 text-[11px]"></div>
 <select id="pKat" class="w-full border rounded-xl px-3 py-2 text-[11px]"><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Lainnya</option></select>
 <textarea id="pDesk" placeholder="Deskripsi" class="w-full border rounded-xl px-3 py-2 text-[11px] h-12"></textarea>
-<div class="border-2 border-dashed rounded-xl p-2 text-center"><input type="file" id="pFoto" accept="image/*" class="w-full text-[10px]"><div id="prevBox" class="hidden mt-2"><img id="prevImg" class="w-full h-28 object-contain border rounded"><button onclick="hapusFoto()" class="text-[9px] text-red-600">Hapus Foto</button></div></div>
-<button onclick="saveProd()" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 SIMPAN PRODUK</button>
-<p id="saveMsg" class="text-[10px] text-center text-green-600"></p>
+<div class="border-2 border-dashed rounded-xl p-2 text-center"><input type="file" id="pFoto" accept="image/*" class="w-full text-[10px]"><div id="prevBox" class="hidden mt-2"><img id="prevImg" class="w-full h-28 object-contain border rounded"></div></div>
+<button onclick="saveProd()" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 SIMPAN REALTIME</button>
 </div>
 </div>
 </div>
 
-<!-- LIST PENGGUNA + EDIT -->
+<!-- PENGGUNA -->
 <div id="pengguna" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99997;align-items:center;justify-content:center;padding:16px">
 <div class="bg-white rounded-2xl w-full max-w-lg p-5 max-h-[85vh] overflow-auto">
-<div class="flex justify-between items-center"><b>👥 List Pengguna</b><button onclick="document.getElementById('pengguna').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
-
+<div class="flex justify-between"><b>👥 Pengguna</b><button onclick="document.getElementById('pengguna').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
 <div id="manajerPanel" style="display:none" class="mt-3 bg-amber-50 border-2 border-amber-300 rounded-xl p-3">
-<p class="font-bold text-[10px]">Tambah Admin Karyawan (Khusus Admin Manajer)</p>
-<div class="grid grid-cols-2 gap-2 mt-2">
-<input id="kNama" placeholder="Nama Karyawan" class="border rounded-full px-3 py-2 text-[10px]">
-<input id="kKontak" placeholder="Email/No.HP" class="border rounded-full px-3 py-2 text-[10px]">
-<input id="kAlamat" placeholder="Alamat" class="border rounded-full px-3 py-2 text-[10px]">
-<input id="kPass" type="password" placeholder="Password" class="border rounded-full px-3 py-2 text-[10px]">
+<p class="font-bold text-[10px]">Tambah Admin Karyawan (khusus Manajer)</p>
+<div class="grid grid-cols-2 gap-2 mt-2"><input id="kNama" placeholder="Nama" class="border rounded-full px-3 py-2 text-[10px]"><input id="kKontak" placeholder="Email/HP" class="border rounded-full px-3 py-2 text-[10px]"><input id="kAlamat" placeholder="Alamat" class="border rounded-full px-3 py-2 text-[10px]"><input id="kPass" type="password" placeholder="Password" class="border rounded-full px-3 py-2 text-[10px]"></div>
+<button onclick="addKaryawan()" class="w-full mt-2 bg-amber-500 text-white py-2 rounded-full text-[10px] font-bold">+ Tambah Karyawan</button>
 </div>
-<button onclick="addKaryawan()" class="w-full mt-2 bg-amber-500 text-white py-2 rounded-full text-[10px] font-bold">+ Tambah Admin Karyawan</button>
-</div>
-
 <div id="listPengguna" class="mt-3 space-y-2"></div>
 </div>
 </div>
 
-<!-- EDIT PENGGUNA MODAL -->
 <div id="editUser" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99996;align-items:center;justify-content:center;padding:16px">
-<div class="bg-white rounded-2xl w-full max-w-sm p-5">
-<div class="flex justify-between"><b class="text-[12px]">Edit Pengguna</b><button onclick="document.getElementById('editUser').style.display='none'" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div>
-<div class="mt-3 space-y-2">
-<input id="eNama" placeholder="Nama Pengguna" class="w-full border rounded-xl px-3 py-2 text-[11px]">
-<input id="eKontak" placeholder="Email/No.HP" class="w-full border rounded-xl px-3 py-2 text-[11px]">
-<input id="eAlamat" placeholder="Alamat Terdaftar" class="w-full border rounded-xl px-3 py-2 text-[11px]">
-<select id="eRole" class="w-full border rounded-xl px-3 py-2 text-[11px]"><option value="konsumen">Konsumen</option><option value="admin_karyawan">Admin Karyawan</option><option value="admin_manajer">Admin Manajer</option></select>
-<input id="ePass" type="password" placeholder="Password Baru (kosongkan jika tidak ganti)" class="w-full border rounded-xl px-3 py-2 text-[11px]">
-<button onclick="saveEditUser()" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full text-[11px] font-bold">Simpan Edit</button>
+<div class="bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b class="text-[12px]">Edit Pengguna</b><button onclick="document.getElementById('editUser').style.display='none'" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div>
+<div class="mt-3 space-y-2"><input id="eNama" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="eKontak" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="eAlamat" class="w-full border rounded-xl px-3 py-2 text-[11px]"><select id="eRole" class="w-full border rounded-xl px-3 py-2 text-[11px]"><option value="konsumen">Konsumen</option><option value="admin_karyawan">Admin Karyawan</option><option value="admin_manajer">Admin Manajer</option></select><input id="ePass" type="password" placeholder="Password baru (kosong jika tidak ganti)" class="w-full border rounded-xl px-3 py-2 text-[11px]"><button onclick="saveEditUser()" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full text-[11px] font-bold">Simpan</button></div></div>
 </div>
+
+<!-- PAYMENT ADMIN -->
+<div id="payAdmin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99995;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-md p-5 max-h-[85vh] overflow-auto">
+<div class="flex justify-between"><b>💳 Metode Pembayaran</b><button onclick="document.getElementById('payAdmin').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
+<div class="mt-3 space-y-2 border rounded-xl p-3 bg-slate-50">
+<select id="payType" class="w-full border rounded-full px-3 py-2 text-[11px]"><option value="COD">COD / Cash</option><option value="TRANSFER">Transfer Bank</option></select>
+<input id="payName" placeholder="Nama Metode ex: BCA Kasih 123456" class="w-full border rounded-full px-3 py-2 text-[11px]">
+<input id="payInfo" placeholder="Info ex: No Rek / Ket COD" class="w-full border rounded-full px-3 py-2 text-[11px]">
+<button onclick="savePay()" class="w-full bg-[#BE1E2D] text-white py-2 rounded-full text-[11px] font-bold">+ Tambah Metode</button>
+</div>
+<div id="listPay" class="mt-3 space-y-2"></div>
 </div>
 </div>
 
-<!-- DETAIL & CART -->
-<div id="detail" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99995;align-items:center;justify-content:center;padding:16px">
+<!-- VOUCHER ADMIN -->
+<div id="voucherAdmin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99994;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-lg p-5 max-h-[85vh] overflow-auto">
+<div class="flex justify-between"><b>🎫 Voucher & Analisis</b><button onclick="document.getElementById('voucherAdmin').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
+<div class="mt-3 space-y-2 border rounded-xl p-3 bg-amber-50">
+<input id="vCode" placeholder="Kode VOUCHER ex: KASIH10" class="w-full border rounded-full px-3 py-2 text-[11px]">
+<div class="grid grid-cols-2 gap-2"><select id="vType" class="border rounded-full px-3 py-2 text-[11px]"><option value="nominal">Nominal Rp</option><option value="persen">Persen %</option></select><input id="vValue" type="number" placeholder="Nilai ex: 10000 atau 10" class="border rounded-full px-3 py-2 text-[11px]"></div>
+<div class="grid grid-cols-2 gap-2"><input id="vMin" type="number" placeholder="Min Belanja" class="border rounded-full px-3 py-2 text-[11px]"><input id="vExp" type="date" class="border rounded-full px-3 py-2 text-[11px]"></div>
+<select id="vUser" class="w-full border rounded-full px-3 py-2 text-[11px]"><option value="all">Semua Pengguna</option></select>
+<button onclick="saveVoucher()" class="w-full bg-[#BE1E2D] text-white py-2 rounded-full text-[11px] font-bold">+ Buat Voucher</button>
+</div>
+<div id="listVoucher" class="mt-3 space-y-2"></div>
+</div>
+</div>
+
+<!-- EVENT ADMIN -->
+<div id="eventAdmin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99993;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-md p-5 max-h-[85vh] overflow-auto">
+<div class="flex justify-between"><b>📢 Popup Event</b><button onclick="document.getElementById('eventAdmin').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
+<div class="mt-3 space-y-2 border rounded-xl p-3">
+<textarea id="evText" placeholder="Tulisan event ex: Promo Beras 5kg diskon!" class="w-full border rounded-xl px-3 py-2 text-[11px] h-20"></textarea>
+<div class="border-2 border-dashed rounded-xl p-2 text-center"><input type="file" id="evFoto" accept="image/*" class="w-full text-[10px]"><div id="evPrevBox" class="hidden mt-2"><img id="evPrevImg" class="w-full h-32 object-contain border rounded"></div></div>
+<label class="flex gap-2 text-[11px]"><input type="checkbox" id="evActive" checked> Aktifkan popup</label>
+<button onclick="saveEvent()" class="w-full bg-[#BE1E2D] text-white py-2 rounded-full text-[11px] font-bold">Simpan Event</button>
+</div>
+<div id="listEvent" class="mt-3 space-y-2"></div>
+</div>
+</div>
+
+<!-- DETAIL -->
+<div id="detail" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99992;align-items:center;justify-content:center;padding:16px">
 <div class="bg-white rounded-2xl w-full max-w-md p-4"><div class="flex justify-between"><b id="dNama">Detail</b><button onclick="document.getElementById('detail').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div><img id="dFoto" class="w-full h-56 object-contain bg-slate-50 rounded-xl mt-3 border"><div class="mt-3"><p id="dKat" class="text-[9px] bg-red-50 text-[#BE1E2D] inline px-2 py-1 rounded-full font-bold"></p><p id="dHarga" class="font-black text-[#BE1E2D] text-[18px] mt-2"></p><p id="dStok" class="text-[11px]"></p><p id="dDesk" class="text-[11px] text-slate-600 mt-2"></p></div><div class="flex gap-2 mt-4"><button onclick="addCartFromDetail()" class="flex-1 bg-[#BE1E2D] text-white py-3 rounded-full font-bold text-[12px]">+ Keranjang</button><button onclick="document.getElementById('detail').style.display='none'" class="flex-1 bg-slate-100 py-3 rounded-full font-bold text-[12px]">Tutup</button></div></div>
 </div>
 
-<div id="cart" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99994;align-items:center;justify-content:center;padding:16px">
-<div class="bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>🛒 Keranjang</b><button onclick="document.getElementById('cart').style.display='none'" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div><div id="cartList" class="mt-3 space-y-2 max-h-[300px] overflow-auto"></div><div class="border-t mt-3 pt-3 flex justify-between font-black"><span>Total:</span><span id="cartTotal">Rp 0</span></div><button onclick="checkoutWA()" class="w-full mt-3 bg-green-600 text-white py-2.5 rounded-full font-bold text-[11px]">💬 Pesan WA Gerai</button></div>
+<!-- CART & CHECKOUT -->
+<div id="cart" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99991;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-md p-5 max-h-[90vh] overflow-auto">
+<div class="flex justify-between"><b>🛒 Keranjang & Checkout</b><button onclick="document.getElementById('cart').style.display='none'" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div>
+<div id="cartList" class="mt-3 space-y-2 max-h-[200px] overflow-auto"></div>
+
+<div class="mt-4 border-t pt-3 space-y-2">
+<div class="flex justify-between text-[11px]"><span>Subtotal:</span><b id="cartSub">Rp 0</b></div>
+<div class="flex gap-2"><input id="voucherInput" placeholder="Kode Voucher" class="flex-1 border rounded-full px-3 py-2 text-[11px]"><button onclick="applyVoucher()" class="bg-[#BE1E2D] text-white px-3 py-2 rounded-full text-[10px]">Pakai</button></div>
+<p id="voucherMsg" class="text-[10px] text-green-600"></p>
+<div class="flex justify-between text-[11px]"><span>Diskon Voucher:</span><b id="cartDiskon" class="text-green-600">Rp 0</b></div>
+<div class="flex justify-between text-[11px]"><span>Ongkir (jika diantar):</span><b id="cartOngkir">Rp 0</b></div>
+<div class="flex justify-between font-black text-[13px] border-t pt-2"><span>Total Bayar:</span><span id="cartTotal">Rp 0</span></div>
+</div>
+
+<div class="mt-4 space-y-2 border rounded-xl p-3 bg-slate-50">
+<p class="font-bold text-[11px]">Pengambilan:</p>
+<div class="flex gap-2"><label class="flex-1 flex gap-1 items-center text-[11px] bg-white border rounded-full px-3 py-2"><input type="radio" name="ambil" value="diambil" checked onchange="toggleAntar()"> Diambil di Gerai</label><label class="flex-1 flex gap-1 items-center text-[11px] bg-white border rounded-full px-3 py-2"><input type="radio" name="ambil" value="diantar" onchange="toggleAntar()"> Diantar</label></div>
+<div id="antarBox" style="display:none" class="space-y-2">
+<button onclick="shareLok()" class="w-full bg-blue-600 text-white py-2 rounded-full text-[10px] font-bold">📍 Share Lokasi Saya</button>
+<p id="lokResult" class="text-[9px] text-slate-600"></p>
+</div>
+<textarea id="note" placeholder="Note untuk toko ex: Tolong beras yang pulen" class="w-full border rounded-xl px-3 py-2 text-[11px] h-14"></textarea>
+<p class="font-bold text-[11px] mt-2">Metode Pembayaran:</p>
+<select id="paySelect" class="w-full border rounded-full px-3 py-2 text-[11px]"></select>
+</div>
+
+<button onclick="doCheckout()" class="w-full mt-4 bg-green-600 text-white py-3 rounded-full font-bold text-[12px]">✅ Checkout Sekarang</button>
+<p class="text-[8px] text-center text-slate-500 mt-2">Jika belum login, akan diminta login/daftar dulu</p>
+</div>
 </div>
 
 <script type="module">
@@ -142,146 +197,139 @@ window.db=db; window.ref=ref; window.set=set; window.onValue=onValue; window.upd
 </script>
 
 <script>
-let mode='login', editId=null, editUserId=null, detailId=null, cart={}, view='toko';
-let produk=JSON.parse(localStorage.getItem('prodV8')||'{}');
-let users=JSON.parse(localStorage.getItem('usersV8')||'{}');
-let cur=JSON.parse(localStorage.getItem('curV8')||'null');
+let mode='login', editId=null, editUserId=null, detailId=null, cart={}, view='toko', voucherActive=null, currentLoc=null;
+let produk=JSON.parse(localStorage.getItem('prodV9')||'{}');
+let users=JSON.parse(localStorage.getItem('usersV9')||'{}');
+let payments=JSON.parse(localStorage.getItem('paysV9')||'{}');
+let vouchers=JSON.parse(localStorage.getItem('vouchV9')||'{}');
+let events=JSON.parse(localStorage.getItem('eventsV9')||'{}');
+let cur=JSON.parse(localStorage.getItem('curV9')||'null');
 function hash(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return 'h'+Math.abs(h)+btoa(p).slice(0,4);}
-
-// KOSONGKAN PENCARIAN SAAT LOAD - FIX DARI SCREENSHOT
 window.addEventListener('load',()=>{document.getElementById('q').value='';});
-
-// BUAT ADMIN MANAJER OTOMATIS
 function ensureManajer(){
-  const manajerExists=Object.values(users).find(u=>u.nama==='Admin Manajer');
-  if(!manajerExists){
-    const id='admin_manajer_001';
-    users[id]={id, nama:'Admin Manajer', kontak:'Admin Manajer', alamat:'Kantor Gerai KDKMP Kasih', passHash:hash('Manajer0k3'), role:'admin_manajer', createdAt:new Date().toISOString()};
-    localStorage.setItem('usersV8', JSON.stringify(users));
-    try{ if(window.db) window.set(window.ref(window.db,'users-katalog-V8/'+id), users[id]); }catch(e){}
-  }
+  const ex=Object.values(users).find(u=>u.nama==='Admin Manajer');
+  if(!ex){const id='admin_manajer_001'; users[id]={id,nama:'Admin Manajer',kontak:'Admin Manajer',alamat:'Kantor',passHash:hash('Manajer0k3'),role:'admin_manajer',createdAt:new Date().toISOString()}; localStorage.setItem('usersV9', JSON.stringify(users)); try{if(window.db) window.set(window.ref(window.db,'users-katalog-V9/'+id), users[id]);}catch(e){}}
 }
 ensureManajer();
-
 function toDaftar(){document.getElementById('formLogin').style.display='none'; document.getElementById('formDaftar').style.display='block'; document.getElementById('tAuth').textContent='Daftar Konsumen';}
 function toLogin(){document.getElementById('formDaftar').style.display='none'; document.getElementById('formLogin').style.display='block'; document.getElementById('tAuth').textContent='Masuk Akun';}
 function openAuth(){document.getElementById('auth').style.display='flex'; toLogin();}
 function closeAuth(){document.getElementById('auth').style.display='none';}
 function switchView(v){view=v; document.getElementById('viewToko').classList.toggle('hidden', v!=='toko'); document.getElementById('viewBelanja').classList.toggle('hidden', v!=='belanja'); document.getElementById('bToko').className=v==='toko'?'bg-white text-[#BE1E2D] px-2 py-1.5 rounded-full text-[9px] font-bold':'bg-black/20 px-2 py-1.5 rounded-full text-[9px] font-bold'; document.getElementById('bBelanja').className=v==='belanja'?'bg-white text-[#BE1E2D] px-2 py-1.5 rounded-full text-[9px] font-bold':'bg-black/20 px-2 py-1.5 rounded-full text-[9px] font-bold'; render();}
-
-function doLogin(){
-  const user=document.getElementById('lUser').value.trim(); const pass=document.getElementById('lPass').value.trim(); const msg=document.getElementById('lMsg');
-  if(!user||!pass){msg.textContent='Isi username & password'; return;}
-  const f=Object.values(users).find(u=> (u.nama.toLowerCase()===user.toLowerCase() || (u.kontak||'').toLowerCase()===user.toLowerCase()) && u.passHash===hash(pass));
-  if(!f){msg.textContent='Username / Password salah'; return;}
-  cur=f; localStorage.setItem('curV8', JSON.stringify(cur)); closeAuth(); afterLogin();
-}
-function doDaftar(){
-  const nama=document.getElementById('dNama').value.trim(); const kontak=document.getElementById('dKontak').value.trim(); const alamat=document.getElementById('dAlamat').value.trim(); const pass=document.getElementById('dPass').value.trim(); const pass2=document.getElementById('dPass2').value.trim(); const msg=document.getElementById('dMsg');
-  if(!nama||!kontak||!alamat||!pass){msg.textContent='Semua wajib diisi *'; return;}
-  if(pass.length<4){msg.textContent='Password min 4'; return;}
-  if(pass!==pass2){msg.textContent='Password tidak sama'; return;}
-  if(Object.values(users).find(u=> (u.kontak||'').toLowerCase()===kontak.toLowerCase() || u.nama.toLowerCase()===nama.toLowerCase())){msg.textContent='Nama / Email/No.HP sudah terdaftar'; return;}
-  const id=Date.now().toString();
-  users[id]={id, nama, kontak, alamat, passHash:hash(pass), role:'konsumen', createdAt:new Date().toISOString()};
-  localStorage.setItem('usersV8', JSON.stringify(users));
-  try{ if(window.db) window.set(window.ref(window.db,'users-katalog-V8/'+id), users[id]); }catch(e){}
-  msg.textContent='✅ Daftar sukses! Silakan Masuk';
-  setTimeout(()=>{toLogin();},800);
-}
-
-function afterLogin(){
-  document.getElementById('badge').classList.remove('hidden'); document.getElementById('badge').textContent=cur.role.toUpperCase().replace('_',' ');
-  document.getElementById('btnMasuk').style.display='none'; document.getElementById('btnKeluar').style.display='block';
-  if(cur.role==='admin_manajer' || cur.role==='admin_karyawan'){document.getElementById('addBtn').style.display='block'; document.getElementById('btnPengguna').style.display='block';}
-  if(cur.role==='admin_manajer'){document.getElementById('manajerPanel').style.display='block';}
-  render(); renderPengguna();
-}
-function logout(){localStorage.removeItem('curV8'); location.reload();}
+function doLogin(){const u=document.getElementById('lUser').value.trim(); const p=document.getElementById('lPass').value.trim(); const m=document.getElementById('lMsg'); if(!u||!p){m.textContent='Isi username & pass';return;} const f=Object.values(users).find(x=>(x.nama.toLowerCase()===u.toLowerCase()||(x.kontak||'').toLowerCase()===u.toLowerCase())&&x.passHash===hash(p)); if(!f){m.textContent='Salah';return;} cur=f; localStorage.setItem('curV9', JSON.stringify(cur)); closeAuth(); afterLogin();}
+function doDaftar(){const nama=document.getElementById('dNama').value.trim(); const kontak=document.getElementById('dKontak').value.trim(); const alamat=document.getElementById('dAlamat').value.trim(); const pass=document.getElementById('dPass').value.trim(); const pass2=document.getElementById('dPass2').value.trim(); const m=document.getElementById('dMsg'); if(!nama||!kontak||!alamat||!pass){m.textContent='Semua wajib';return;} if(pass!==pass2){m.textContent='Pass tidak sama';return;} if(Object.values(users).find(u=> (u.kontak||'').toLowerCase()===kontak.toLowerCase() || u.nama.toLowerCase()===nama.toLowerCase())){m.textContent='Sudah terdaftar';return;} const id=Date.now().toString(); users[id]={id,nama,kontak,alamat,passHash:hash(pass),role:'konsumen',createdAt:new Date().toISOString()}; localStorage.setItem('usersV9', JSON.stringify(users)); try{if(window.db) window.set(window.ref(window.db,'users-katalog-V9/'+id), users[id]);}catch(e){} m.textContent='✅ Sukses! Silakan Masuk'; setTimeout(()=>toLogin(),800);}
+function afterLogin(){document.getElementById('badge').classList.remove('hidden'); document.getElementById('badge').textContent=cur.role.toUpperCase().replace('_',' '); document.getElementById('btnMasuk').style.display='none'; document.getElementById('btnKeluar').style.display='block'; if(cur.role==='admin_manajer'||cur.role==='admin_karyawan'){document.getElementById('addBtn').style.display='block'; document.getElementById('btnPengguna').style.display='block'; document.getElementById('btnPay').style.display='block'; document.getElementById('btnVoucher').style.display='block'; document.getElementById('btnEvent').style.display='block';} if(cur.role==='admin_manajer'){document.getElementById('manajerPanel').style.display='block';} render(); renderPay(); renderVoucher(); renderEvent(); renderPengguna();}
+function logout(){localStorage.removeItem('curV9'); location.reload();}
 function openPengguna(){document.getElementById('pengguna').style.display='flex'; renderPengguna();}
+function renderPengguna(){const el=document.getElementById('listPengguna'); const list=Object.values(users); const sel=document.getElementById('vUser'); if(sel){sel.innerHTML='<option value="all">Semua Pengguna</option>'+list.map(u=>`<option value="${u.id}">${u.nama} - ${u.role}</option>`).join('');} el.innerHTML=list.map(u=>`<div class="border rounded-xl p-3"><p class="font-bold text-[11px]">${u.nama} <span class="text-[7px] px-2 py-0.5 rounded-full ${u.role==='admin_manajer'?'bg-red-600 text-white':u.role==='admin_karyawan'?'bg-amber-300':'bg-slate-100'}">${u.role}</span></p><p class="text-[10px]">${u.kontak||''}</p><p class="text-[9px] text-slate-500">${u.alamat||''}</p><div class="flex gap-1 mt-2"><button onclick="openEditUser('${u.id}')" class="flex-1 bg-blue-600 text-white py-1.5 rounded-full text-[8px]">✏️ Edit</button><button onclick="hapusUser('${u.id}')" class="flex-1 bg-red-600 text-white py-1.5 rounded-full text-[8px]">🗑️ Hapus</button></div></div>`).join('');}
+function openEditUser(id){const u=users[id]; if(!u) return; if(cur.role==='admin_karyawan'&&u.role==='admin_manajer') return alert('Tidak bisa edit Manajer'); editUserId=id; document.getElementById('eNama').value=u.nama; document.getElementById('eKontak').value=u.kontak||''; document.getElementById('eAlamat').value=u.alamat||''; document.getElementById('eRole').value=u.role; document.getElementById('ePass').value=''; document.getElementById('editUser').style.display='flex';}
+function saveEditUser(){const u=users[editUserId]; if(!u) return; const nama=document.getElementById('eNama').value.trim(); const kontak=document.getElementById('eKontak').value.trim(); const alamat=document.getElementById('eAlamat').value.trim(); const role=document.getElementById('eRole').value; const pass=document.getElementById('ePass').value.trim(); if(cur.role==='admin_karyawan'&&role==='admin_manajer') return alert('Karyawan tidak bisa jadi Manajer'); u.nama=nama; u.kontak=kontak; u.alamat=alamat; if(cur.role==='admin_manajer') u.role=role; if(pass){u.passHash=hash(pass);} localStorage.setItem('usersV9', JSON.stringify(users)); try{if(window.db) window.update(window.ref(window.db,'users-katalog-V9/'+editUserId), u);}catch(e){} document.getElementById('editUser').style.display='none'; renderPengguna();}
+function hapusUser(id){if(id==='admin_manajer_001') return alert('Manajer utama tidak bisa dihapus'); if(cur.id===id) return alert('Tidak bisa hapus diri'); if(!confirm('Hapus?')) return; delete users[id]; localStorage.setItem('usersV9', JSON.stringify(users)); try{if(window.db) window.remove(window.ref(window.db,'users-katalog-V9/'+id));}catch(e){} renderPengguna();}
+function addKaryawan(){if(cur.role!=='admin_manajer') return alert('Hanya Manajer'); const nama=document.getElementById('kNama').value.trim(); const kontak=document.getElementById('kKontak').value.trim(); const alamat=document.getElementById('kAlamat').value.trim(); const pass=document.getElementById('kPass').value.trim(); if(!nama||!kontak||!pass) return alert('Isi semua'); const id=Date.now().toString(); users[id]={id,nama,kontak,alamat,passHash:hash(pass),role:'admin_karyawan',createdAt:new Date().toISOString()}; localStorage.setItem('usersV9', JSON.stringify(users)); try{if(window.db) window.set(window.ref(window.db,'users-katalog-V9/'+id), users[id]);}catch(e){} alert('Karyawan ditambah'); ['kNama','kKontak','kAlamat','kPass'].forEach(i=>document.getElementById(i).value=''); renderPengguna();}
 
-function renderPengguna(){
-  const el=document.getElementById('listPengguna');
-  const list=Object.values(users).sort((a,b)=>a.role==='admin_manajer'?-1:1);
-  el.innerHTML=list.map(u=>`<div class="border rounded-xl p-3"><div class="flex justify-between"><div><p class="font-bold text-[11px]">${u.nama} <span class="text-[7px] px-2 py-0.5 rounded-full ${u.role==='admin_manajer'?'bg-red-600 text-white':u.role==='admin_karyawan'?'bg-amber-300 text-black':'bg-slate-100'}">${u.role}</span></p><p class="text-[10px] text-slate-600">${u.kontak||''}</p><p class="text-[9px] text-slate-500">${u.alamat||''}</p></div></div><div class="flex gap-1 mt-2"><button onclick="openEditUser('${u.id}')" class="flex-1 bg-blue-600 text-white py-1.5 rounded-full text-[8px] font-bold">✏️ Edit</button><button onclick="hapusUser('${u.id}')" class="flex-1 bg-red-600 text-white py-1.5 rounded-full text-[8px] font-bold">🗑️ Hapus</button></div></div>`).join('')||'<p class="text-center text-[11px] text-slate-500">Belum ada pengguna</p>';
-}
-function openEditUser(id){
-  const u=users[id]; if(!u) return;
-  // hanya manajer bisa edit role manajer, karyawan tidak bisa edit manajer
-  if(cur.role==='admin_karyawan' && u.role==='admin_manajer') return alert('Karyawan tidak bisa edit Admin Manajer');
-  editUserId=id; document.getElementById('eNama').value=u.nama; document.getElementById('eKontak').value=u.kontak||''; document.getElementById('eAlamat').value=u.alamat||''; document.getElementById('eRole').value=u.role; document.getElementById('ePass').value=''; document.getElementById('editUser').style.display='flex';
-  // karyawan tidak bisa ubah role jadi manajer
-  if(cur.role==='admin_karyawan'){document.getElementById('eRole').innerHTML='<option value="konsumen">Konsumen</option><option value="admin_karyawan">Admin Karyawan</option>'; if(u.role==='admin_manajer') document.getElementById('eRole').innerHTML='<option value="admin_manajer">Admin Manajer</option>';}
-  else {document.getElementById('eRole').innerHTML='<option value="konsumen">Konsumen</option><option value="admin_karyawan">Admin Karyawan</option><option value="admin_manajer">Admin Manajer</option>'; document.getElementById('eRole').value=u.role;}
-}
-function saveEditUser(){
-  const u=users[editUserId]; if(!u) return;
-  const nama=document.getElementById('eNama').value.trim(); const kontak=document.getElementById('eKontak').value.trim(); const alamat=document.getElementById('eAlamat').value.trim(); const role=document.getElementById('eRole').value; const pass=document.getElementById('ePass').value.trim();
-  if(!nama||!kontak) return alert('Nama & kontak wajib');
-  // cegah karyawan jadi manajer
-  if(cur.role==='admin_karyawan' && role==='admin_manajer') return alert('Karyawan tidak bisa jadi Manajer');
-  u.nama=nama; u.kontak=kontak; u.alamat=alamat;
-  if(cur.role==='admin_manajer') u.role=role;
-  if(pass){ if(pass.length<4) return alert('Password min 4'); u.passHash=hash(pass); }
-  localStorage.setItem('usersV8', JSON.stringify(users));
-  try{ if(window.db) window.update(window.ref(window.db,'users-katalog-V8/'+editUserId), u); }catch(e){}
-  document.getElementById('editUser').style.display='none'; renderPengguna(); render();
-}
-function hapusUser(id){
-  if(id==='admin_manajer_001') return alert('Admin Manajer utama tidak bisa dihapus');
-  if(cur.id===id) return alert('Tidak bisa hapus akun sendiri');
-  if(cur.role==='admin_karyawan' && users[id].role==='admin_manajer') return alert('Karyawan tidak bisa hapus Manajer');
-  if(!confirm('Hapus pengguna ini permanen?')) return;
-  delete users[id]; localStorage.setItem('usersV8', JSON.stringify(users));
-  try{ if(window.db) window.remove(window.ref(window.db,'users-katalog-V8/'+id)); }catch(e){}
-  renderPengguna();
-}
-function addKaryawan(){
-  if(cur.role!=='admin_manajer') return alert('Hanya Admin Manajer');
-  const nama=document.getElementById('kNama').value.trim(); const kontak=document.getElementById('kKontak').value.trim(); const alamat=document.getElementById('kAlamat').value.trim(); const pass=document.getElementById('kPass').value.trim();
-  if(!nama||!kontak||!pass) return alert('Isi semua');
-  if(Object.values(users).find(u=>u.kontak===kontak || u.nama===nama)) return alert('Sudah ada');
-  const id=Date.now().toString();
-  users[id]={id, nama, kontak, alamat, passHash:hash(pass), role:'admin_karyawan', createdAt:new Date().toISOString()};
-  localStorage.setItem('usersV8', JSON.stringify(users));
-  try{ if(window.db) window.set(window.ref(window.db,'users-katalog-V8/'+id), users[id]); }catch(e){}
-  alert('Admin Karyawan ditambah'); ['kNama','kKontak','kAlamat','kPass'].forEach(i=>document.getElementById(i).value=''); renderPengguna();
-}
-
-// PRODUK
+// PRODUK REALTIME
 let tempFoto=null;
 document.getElementById('pFoto').addEventListener('change', function(e){
  const file=e.target.files[0]; if(!file) return;
  const r=new FileReader(); r.onload=ev=>{
   const img=new Image(); img.onload=()=>{
-   const c=document.createElement('canvas'); let w=img.width, h=img.height; if(w>800){h=h*(800/w); w=800;} c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
-   tempFoto=c.toDataURL('image/jpeg',0.65);
-   document.getElementById('prevImg').src=tempFoto; document.getElementById('prevBox').classList.remove('hidden');
+   const c=document.createElement('canvas'); let w=img.width,h=img.height; if(w>800){h=h*(800/w);w=800;} c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
+   tempFoto=c.toDataURL('image/jpeg',0.65); document.getElementById('prevImg').src=tempFoto; document.getElementById('prevBox').classList.remove('hidden');
   }; img.src=ev.target.result;
  }; r.readAsDataURL(file);
 });
-function hapusFoto(){tempFoto=null; document.getElementById('prevBox').classList.add('hidden'); document.getElementById('pFoto').value='';}
-function openAdd(id=null){editId=id; document.getElementById('add').style.display='flex'; document.getElementById('addTitle').textContent=id?'Edit Produk + Foto':'Tambah Produk + Foto'; if(id && produk[id]){const p=produk[id]; document.getElementById('pNama').value=p.nama; document.getElementById('pHarga').value=p.harga; document.getElementById('pStok').value=p.stok; document.getElementById('pKat').value=p.kat; document.getElementById('pDesk').value=p.desk||''; tempFoto=p.foto||null; if(p.foto){document.getElementById('prevImg').src=p.foto; document.getElementById('prevBox').classList.remove('hidden');} else {document.getElementById('prevBox').classList.add('hidden');}} else {['pNama','pHarga','pStok','pDesk'].forEach(i=>document.getElementById(i).value=''); tempFoto=null; document.getElementById('prevBox').classList.add('hidden'); document.getElementById('pFoto').value='';}}
+function openAdd(id=null){editId=id; document.getElementById('add').style.display='flex'; document.getElementById('addTitle').textContent=id?'Edit Produk':'Tambah Produk'; if(id&&produk[id]){const p=produk[id]; document.getElementById('pNama').value=p.nama; document.getElementById('pHarga').value=p.harga; document.getElementById('pStok').value=p.stok; document.getElementById('pKat').value=p.kat; document.getElementById('pDesk').value=p.desk||''; tempFoto=p.foto||null; if(p.foto){document.getElementById('prevImg').src=p.foto; document.getElementById('prevBox').classList.remove('hidden');}} else {['pNama','pHarga','pStok','pDesk'].forEach(i=>document.getElementById(i).value=''); tempFoto=null; document.getElementById('prevBox').classList.add('hidden'); document.getElementById('pFoto').value='';}}
 function closeAdd(){document.getElementById('add').style.display='none'; editId=null; tempFoto=null;}
-function saveProd(){const nama=document.getElementById('pNama').value.trim(); const harga=parseInt(document.getElementById('pHarga').value)||0; const stok=parseInt(document.getElementById('pStok').value)||0; const kat=document.getElementById('pKat').value; const desk=document.getElementById('pDesk').value.trim(); if(!nama||!harga){document.getElementById('saveMsg').textContent='Isi nama & harga'; return;} const id=editId||Date.now().toString(); const data={nama,harga,stok,kat,desk,foto:tempFoto!==null?tempFoto:(produk[id]?.foto||null)}; produk[id]=data; localStorage.setItem('prodV8', JSON.stringify(produk)); document.getElementById('saveMsg').textContent='✅ Tersimpan!'; try{ if(window.db) window.set(window.ref(window.db,'produk-katalog-V8/'+id), data);}catch(e){} setTimeout(()=>{closeAdd(); render();},600);}
-function ubahStok(id,d){produk[id].stok=(produk[id].stok||0)+d; if(produk[id].stok<0) produk[id].stok=0; localStorage.setItem('prodV8', JSON.stringify(produk)); try{ if(window.db) window.update(window.ref(window.db,'produk-katalog-V8/'+id), {stok:produk[id].stok}); }catch(e){} render();}
-function hapusProd(id){if(!confirm('Hapus produk?')) return; delete produk[id]; localStorage.setItem('prodV8', JSON.stringify(produk)); try{ if(window.db) window.remove(window.ref(window.db,'produk-katalog-V8/'+id)); }catch(e){} render();}
+function saveProd(){const nama=document.getElementById('pNama').value.trim(); const harga=parseInt(document.getElementById('pHarga').value)||0; const stok=parseInt(document.getElementById('pStok').value)||0; const kat=document.getElementById('pKat').value; const desk=document.getElementById('pDesk').value.trim(); if(!nama||!harga) return alert('Isi nama & harga'); const id=editId||Date.now().toString(); const data={nama,harga,stok,kat,desk,foto:tempFoto!==null?tempFoto:(produk[id]?.foto||null), updatedAt:Date.now()}; produk[id]=data; localStorage.setItem('prodV9', JSON.stringify(produk)); try{if(window.db) window.set(window.ref(window.db,'produk-katalog-V9/'+id), data);}catch(e){} closeAdd(); render();}
+
+// PAYMENTS
+function openPayAdmin(){document.getElementById('payAdmin').style.display='flex'; renderPay();}
+function savePay(){const type=document.getElementById('payType').value; const name=document.getElementById('payName').value.trim(); const info=document.getElementById('payInfo').value.trim(); if(!name) return alert('Isi nama metode'); const id=Date.now().toString(); payments[id]={id,type,name,info}; localStorage.setItem('paysV9', JSON.stringify(payments)); try{if(window.db) window.set(window.ref(window.db,'payments-V9/'+id), payments[id]);}catch(e){} document.getElementById('payName').value=''; document.getElementById('payInfo').value=''; renderPay();}
+function renderPay(){const el=document.getElementById('listPay'); const sel=document.getElementById('paySelect'); el.innerHTML=Object.entries(payments).map(([id,p])=>`<div class="border rounded-xl p-2 flex justify-between items-center"><div><p class="font-bold text-[11px]">${p.name} - ${p.type}</p><p class="text-[9px] text-slate-500">${p.info}</p></div><button onclick="hapusPay('${id}')" class="text-red-600 text-[10px]">Hapus</button></div>`).join('')||'<p class="text-[10px] text-slate-500">Belum ada metode. Tambah COD & Transfer.</p>'; if(sel) sel.innerHTML=Object.values(payments).map(p=>`<option value="${p.id}">${p.name} (${p.type})</option>`).join('')||'<option>Belum ada metode - hubungi admin</option>';}
+function hapusPay(id){if(!confirm('Hapus metode?')) return; delete payments[id]; localStorage.setItem('paysV9', JSON.stringify(payments)); try{if(window.db) window.remove(window.ref(window.db,'payments-V9/'+id));}catch(e){} renderPay();}
+
+// VOUCHERS
+function openVoucherAdmin(){document.getElementById('voucherAdmin').style.display='flex'; renderVoucher();}
+function saveVoucher(){const code=document.getElementById('vCode').value.trim().toUpperCase(); const type=document.getElementById('vType').value; const value=parseInt(document.getElementById('vValue').value)||0; const min=parseInt(document.getElementById('vMin').value)||0; const exp=document.getElementById('vExp').value; const userId=document.getElementById('vUser').value; if(!code||!value) return alert('Isi kode & nilai'); const id=Date.now().toString(); vouchers[id]={id,code,type,value,min,exp,userId,usedBy:[],usedCount:0,createdAt:Date.now()}; localStorage.setItem('vouchV9', JSON.stringify(vouchers)); try{if(window.db) window.set(window.ref(window.db,'vouchers-V9/'+id), vouchers[id]);}catch(e){} renderVoucher(); document.getElementById('vCode').value='';}
+function renderVoucher(){const el=document.getElementById('listVoucher'); el.innerHTML=Object.values(vouchers).map(v=>`<div class="border rounded-xl p-3"><div class="flex justify-between"><div><p class="font-bold text-[11px]">${v.code} - ${v.type==='nominal'?'Rp '+v.value.toLocaleString():v.value+'%'} </p><p class="text-[9px]">Min: Rp ${v.min.toLocaleString()} | Exp: ${v.exp||'Tidak ada'} | Untuk: ${v.userId==='all'?'Semua':(users[v.userId]?.nama||v.userId)}</p><p class="text-[9px] text-green-700">Dipakai: ${v.usedCount}x | User: ${(v.usedBy||[]).join(', ')||'-'}</p></div><button onclick="hapusVoucher('${v.id}')" class="text-red-600 text-[10px]">Hapus</button></div></div>`).join('')||'<p class="text-[10px]">Belum ada voucher</p>';}
+function hapusVoucher(id){if(!confirm('Hapus voucher?')) return; delete vouchers[id]; localStorage.setItem('vouchV9', JSON.stringify(vouchers)); try{if(window.db) window.remove(window.ref(window.db,'vouchers-V9/'+id));}catch(e){} renderVoucher();}
+let appliedVoucher=null;
+function applyVoucher(){const code=document.getElementById('voucherInput').value.trim().toUpperCase(); const msg=document.getElementById('voucherMsg'); const found=Object.values(vouchers).find(v=>v.code===code); if(!found){msg.textContent='Kode tidak ada'; appliedVoucher=null; updateCart(); return;} if(found.exp && new Date(found.exp) < new Date()){msg.textContent='Voucher kadaluarsa'; return;} if(found.userId!=='all' && cur && found.userId!==cur.id && cur.role!=='admin_manajer'){msg.textContent='Voucher bukan untuk akun ini'; return;} const sub=Object.entries(cart).reduce((s,[id,q])=>s+(produk[id]?.harga||0)*q,0); if(sub < found.min){msg.textContent='Min belanja Rp '+found.min.toLocaleString(); return;} appliedVoucher=found; msg.textContent='✅ Voucher '+found.code+' terpakai!'; updateCart();}
+function getDiscount(sub){if(!appliedVoucher) return 0; if(appliedVoucher.type==='nominal') return Math.min(appliedVoucher.value, sub); return Math.floor(sub * appliedVoucher.value / 100);}
+
+// EVENTS
+let tempEventFoto=null;
+document.getElementById('evFoto')?.addEventListener('change', function(e){
+ const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=ev=>{
+  const img=new Image(); img.onload=()=>{
+   const c=document.createElement('canvas'); let w=img.width,h=img.height; if(w>800){h=h*(800/w);w=800;} c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); tempEventFoto=c.toDataURL('image/jpeg',0.7); document.getElementById('evPrevImg').src=tempEventFoto; document.getElementById('evPrevBox').classList.remove('hidden');
+  }; img.src=ev.target.result;
+ }; r.readAsDataURL(file);
+});
+function openEventAdmin(){document.getElementById('eventAdmin').style.display='flex'; renderEvent();}
+function saveEvent(){const text=document.getElementById('evText').value.trim(); const active=document.getElementById('evActive').checked; if(!text && !tempEventFoto) return alert('Isi tulisan atau foto'); const id=Date.now().toString(); events[id]={id,text,foto:tempEventFoto,active,createdAt:Date.now()}; localStorage.setItem('eventsV9', JSON.stringify(events)); try{if(window.db) window.set(window.ref(window.db,'events-V9/'+id), events[id]);}catch(e){} document.getElementById('evText').value=''; tempEventFoto=null; document.getElementById('evPrevBox').classList.add('hidden'); renderEvent(); showPopupIfAny();}
+function renderEvent(){const el=document.getElementById('listEvent'); el.innerHTML=Object.values(events).map(ev=>`<div class="border rounded-xl p-3"><p class="text-[11px] font-bold">${ev.active?'🟢 Aktif':'⚪ Nonaktif'} - ${new Date(ev.createdAt).toLocaleString()}</p><p class="text-[10px] mt-1">${ev.text||''}</p>${ev.foto?`<img src="${ev.foto}" class="w-full h-24 object-contain mt-2 border rounded">`:''}<div class="flex gap-1 mt-2"><button onclick="toggleEvent('${ev.id}')" class="bg-slate-100 px-2 py-1 rounded-full text-[9px]">${ev.active?'Nonaktifkan':'Aktifkan'}</button><button onclick="hapusEvent('${ev.id}')" class="bg-red-50 text-red-600 px-2 py-1 rounded-full text-[9px]">Hapus</button></div></div>`).join('')||'<p class="text-[10px]">Belum ada event</p>';}
+function toggleEvent(id){events[id].active=!events[id].active; localStorage.setItem('eventsV9', JSON.stringify(events)); try{if(window.db) window.update(window.ref(window.db,'events-V9/'+id), {active:events[id].active});}catch(e){} renderEvent();}
+function hapusEvent(id){if(!confirm('Hapus event?')) return; delete events[id]; localStorage.setItem('eventsV9', JSON.stringify(events)); try{if(window.db) window.remove(window.ref(window.db,'events-V9/'+id));}catch(e){} renderEvent();}
+function showPopupIfAny(){const active=Object.values(events).find(e=>e.active); if(!active) return; const box=document.getElementById('popupContent'); box.innerHTML=`<div class="text-center"><h3 class="font-black text-[14px] text-[#BE1E2D]">📢 Info Gerai KDKMP</h3><p class="text-[11px] mt-2 whitespace-pre-wrap">${active.text||''}</p>${active.foto?`<img src="${active.foto}" class="w-full mt-3 rounded-xl border">`:''}</div>`; document.getElementById('popupEvent').style.display='flex';}
+function closePopupEvent(){document.getElementById('popupEvent').style.display='none'; localStorage.setItem('eventClosed_'+Object.values(events).find(e=>e.active)?.id, '1');}
+
+// CHECKOUT
 function openDetail(id){detailId=id; const p=produk[id]; if(!p) return; document.getElementById('dNama').textContent=p.nama; document.getElementById('dFoto').src=p.foto||'https://via.placeholder.com/300x200?text=No+Foto'; document.getElementById('dKat').textContent=p.kat; document.getElementById('dHarga').textContent='Rp '+Number(p.harga).toLocaleString('id-ID'); document.getElementById('dStok').textContent='Stok: '+p.stok; document.getElementById('dDesk').textContent=p.desk||''; document.getElementById('detail').style.display='flex';}
 function addCartFromDetail(){if(!detailId) return; addCart(detailId); document.getElementById('detail').style.display='none';}
-function addCart(id){cart[id]=(cart[id]||0)+1; if(cart[id]>produk[id].stok) cart[id]=produk[id].stok; updateCart();}
-function updateCart(){document.getElementById('cartCount').textContent=Object.values(cart).reduce((a,b)=>a+b,0); const list=document.getElementById('cartList'); let total=0; list.innerHTML=Object.entries(cart).map(([id,q])=>{const p=produk[id]; if(!p) return ''; const sub=p.harga*q; total+=sub; return `<div class="flex gap-2 items-center border-b py-2"><img src="${p.foto||''}" class="w-10 h-10 object-cover rounded border"><div class="flex-1"><p class="font-bold text-[11px]">${p.nama}</p><p class="text-[10px]">x ${q} = Rp ${sub.toLocaleString()}</p></div><button onclick="delete cart['${id}']; updateCart()" class="text-red-600 text-[10px]">X</button></div>`;}).join('')||'<p class="text-[10px] text-slate-500">Kosong</p>'; document.getElementById('cartTotal').textContent='Rp '+total.toLocaleString('id-ID');}
-function openCart(){document.getElementById('cart').style.display='flex'; updateCart();}
-function checkoutWA(){const all=Object.entries(cart).map(([id,q])=>`${produk[id].nama} x ${q}`).join(', '); if(!all) return alert('Kosong'); window.open('https://wa.me/6281234567890?text='+encodeURIComponent('Pesan: '+all),'_blank');}
-
+function addCart(id){cart[id]=(cart[id]||0)+1; if(cart[id]>produk[id].stok) cart[id]=produk[id].stok; updateCart(); if(view!=='belanja') switchView('belanja');}
+function updateCart(){
+ document.getElementById('cartCount').textContent=Object.values(cart).reduce((a,b)=>a+b,0);
+ const list=document.getElementById('cartList'); let sub=0;
+ list.innerHTML=Object.entries(cart).map(([id,q])=>{const p=produk[id]; if(!p) return ''; const s=p.harga*q; sub+=s; return `<div class="flex gap-2 items-center border-b py-2"><img src="${p.foto||''}" class="w-10 h-10 object-cover rounded border"><div class="flex-1"><p class="font-bold text-[11px]">${p.nama}</p><p class="text-[10px]">x ${q} = Rp ${s.toLocaleString()}</p></div><button onclick="delete cart['${id}']; updateCart()" class="text-red-600 text-[10px]">X</button></div>`;}).join('')||'<p class="text-[10px] text-slate-500">Kosong - tambah produk dari toko dulu, bisa tanpa login</p>';
+ document.getElementById('cartSub').textContent='Rp '+sub.toLocaleString('id-ID');
+ const disc=getDiscount(sub); document.getElementById('cartDiskon').textContent='Rp '+disc.toLocaleString('id-ID');
+ const ongkir=document.querySelector('input[name="ambil"]:checked')?.value==='diantar'? (currentLoc?5000:8000) : 0;
+ document.getElementById('cartOngkir').textContent='Rp '+ongkir.toLocaleString('id-ID');
+ const total=sub-disc+ongkir; document.getElementById('cartTotal').textContent='Rp '+total.toLocaleString('id-ID');
+}
+function toggleAntar(){updateCart(); document.getElementById('antarBox').style.display=document.querySelector('input[name="ambil"]:checked').value==='diantar'?'block':'none';}
+function shareLok(){if(!navigator.geolocation) return alert('Geolocation tidak support'); navigator.geolocation.getCurrentPosition(pos=>{currentLoc={lat:pos.coords.latitude,lng:pos.coords.longitude}; document.getElementById('lokResult').textContent='📍 Lokasi: '+currentLoc.lat.toFixed(5)+','+currentLoc.lng.toFixed(5)+' - https://maps.google.com/?q='+currentLoc.lat+','+currentLoc.lng; updateCart();}, err=>alert('Gagal sharelok: '+err.message));}
+function openCart(){document.getElementById('cart').style.display='flex'; updateCart(); renderPay();}
+function doCheckout(){
+ if(Object.keys(cart).length===0) return alert('Keranjang kosong');
+ if(!cur){alert('Silakan login atau daftar dulu untuk checkout'); closeAll(); openAuth(); return;}
+ const ambil=document.querySelector('input[name="ambil"]:checked').value;
+ const note=document.getElementById('note').value.trim();
+ const payId=document.getElementById('paySelect').value;
+ const sub=Object.entries(cart).reduce((s,[id,q])=>s+(produk[id]?.harga||0)*q,0);
+ const disc=getDiscount(sub); const ongkir=ambil==='diantar'?(currentLoc?5000:8000):0; const total=sub-disc+ongkir;
+ const order={id:Date.now().toString(), userId:cur.id, userNama:cur.nama, kontak:cur.kontak, alamat:cur.alamat, cart, sub,disc,ongkir,total, ambil, lokasi:currentLoc, note, payId, payName:payments[payId]?.name||'Belum pilih', status:'baru', createdAt:Date.now(), voucher:appliedVoucher?.code||null};
+ try{if(window.db) window.set(window.ref(window.db,'orders-V9/'+order.id), order);}catch(e){}
+ // tandai voucher sudah dipakai
+ if(appliedVoucher){appliedVoucher.usedCount=(appliedVoucher.usedCount||0)+1; appliedVoucher.usedBy=appliedVoucher.usedBy||[]; if(!appliedVoucher.usedBy.includes(cur.nama)) appliedVoucher.usedBy.push(cur.nama); localStorage.setItem('vouchV9', JSON.stringify(vouchers)); try{if(window.db) window.update(window.ref(window.db,'vouchers-V9/'+appliedVoucher.id), {usedCount:appliedVoucher.usedCount, usedBy:appliedVoucher.usedBy});}catch(e){}}
+ // potong stok
+ Object.entries(cart).forEach(([id,q])=>{if(produk[id]){produk[id].stok=Math.max(0, produk[id].stok-q); try{if(window.db) window.update(window.ref(window.db,'produk-katalog-V9/'+id), {stok:produk[id].stok});}catch(e){}}});
+ localStorage.setItem('prodV9', JSON.stringify(produk));
+ cart={}; appliedVoucher=null; document.getElementById('voucherInput').value=''; document.getElementById('note').value=''; currentLoc=null; document.getElementById('lokResult').textContent=''; updateCart(); render();
+ alert('✅ Pesanan dibuat! Total Rp '+total.toLocaleString()+' - Metode: '+(payments[payId]?.name||'')+' - '+ambil+(ambil==='diantar'?' - Cek admin untuk pengantaran':' - Ambil di gerai'));
+ document.getElementById('cart').style.display='none';
+}
+function closeAll(){document.querySelectorAll('[id="auth"],[id="cart"],[id="detail"]').forEach(el=>el.style.display='none');}
 function render(){
  const q=(document.getElementById('q').value||'').toLowerCase(); const kat=document.getElementById('kat').value;
- const list=Object.entries(produk).filter(([id,p])=>{ if(kat && p.kat!==kat) return false; if(q && !p.nama.toLowerCase().includes(q)) return false; return true;});
- document.getElementById('gridToko').innerHTML=list.map(([id,p])=>`<div class="bg-white rounded-xl overflow-hidden border shadow-sm"><div class="h-[110px] bg-slate-100 flex items-center justify-center relative">${p.foto?`<img src="${p.foto}" class="w-full h-full object-cover">`:`<span class="text-[20px]">📦</span>`}<span class="absolute bottom-1 right-1 bg-[#BE1E2D] text-white text-[8px] px-2 py-0.5 rounded-full">Stok ${p.stok}</span></div><div class="p-2"><p class="font-bold text-[10px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[11px]">Rp ${Number(p.harga).toLocaleString('id-ID')}</p>${cur?.role==='admin_manajer' || cur?.role==='admin_karyawan'?`<div class="flex gap-1 mt-1"><button onclick="openAdd('${id}')" class="flex-1 bg-blue-600 text-white py-1 rounded-full text-[8px] font-bold">✏️ Edit</button><button onclick="hapusProd('${id}')" class="flex-1 bg-red-600 text-white py-1 rounded-full text-[8px] font-bold">🗑️ Hapus</button></div><div class="flex gap-1 mt-1"><button onclick="ubahStok('${id}',-1)" class="flex-1 bg-red-100 text-red-700 py-1 rounded-full text-[8px]">-1</button><button onclick="ubahStok('${id}',1)" class="flex-1 bg-green-600 text-white py-1 rounded-full text-[8px]">+1</button></div>`:''}</div></div>`).join('')||'<div class="col-span-2 bg-white p-6 rounded-xl text-center col-span-full"><p>📦</p><p class="text-[11px] mt-2 font-bold">Belum ada produk</p></div>';
- document.getElementById('gridBelanja').innerHTML=list.map(([id,p])=>`<div onclick="openDetail('${id}')" class="bg-white rounded-2xl overflow-hidden shadow border cursor-pointer"><div class="h-[150px] bg-slate-50 flex items-center justify-center relative">${p.foto?`<img src="${p.foto}" class="w-full h-full object-cover">`:`<span class="text-[36px]">🛒</span>`}<span class="absolute top-2 left-2 bg-white/90 px-2 py-0.5 rounded-full text-[8px] font-bold">${p.kat}</span></div><div class="p-3"><p class="font-bold text-[11px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[12px] mt-1">Rp ${Number(p.harga).toLocaleString('id-ID')}</p><p class="text-[9px] bg-slate-100 inline px-2 py-0.5 rounded-full mt-1">Stok ${p.stok}</p><button class="w-full mt-2 bg-[#BE1E2D] text-white py-2 rounded-full text-[9px] font-bold">Lihat & Beli</button></div></div>`).join('')||'<div class="col-span-full bg-white p-8 rounded-2xl text-center"><p class="text-[30px]">🛒</p><p class="font-bold text-[11px] mt-2">Katalog kosong</p></div>';
+ const list=Object.entries(produk).filter(([id,p])=>{ if(kat&&p.kat!==kat) return false; if(q&&!p.nama.toLowerCase().includes(q)) return false; return true;});
+ document.getElementById('gridToko').innerHTML=list.map(([id,p])=>`<div class="bg-white rounded-xl overflow-hidden border shadow-sm"><div class="h-[110px] bg-slate-100 flex items-center justify-center relative">${p.foto?`<img src="${p.foto}" class="w-full h-full object-cover">`:`<span>📦</span>`}<span class="absolute bottom-1 right-1 bg-[#BE1E2D] text-white text-[8px] px-2 py-0.5 rounded-full">Stok ${p.stok}</span></div><div class="p-2"><p class="font-bold text-[10px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[11px]">Rp ${Number(p.harga).toLocaleString('id-ID')}</p>${cur?.role==='admin_manajer'||cur?.role==='admin_karyawan'?`<div class="flex gap-1 mt-1"><button onclick="openAdd('${id}')" class="flex-1 bg-blue-600 text-white py-1 rounded-full text-[8px]">Edit</button><button onclick="hapusProd('${id}')" class="flex-1 bg-red-600 text-white py-1 rounded-full text-[8px]">Hapus</button></div><div class="flex gap-1 mt-1"><button onclick="ubahStok('${id}',-1)" class="flex-1 bg-red-100 py-1 rounded-full text-[8px]">-1</button><button onclick="ubahStok('${id}',1)" class="flex-1 bg-green-600 text-white py-1 rounded-full text-[8px]">+1</button></div>`:''}<button onclick="openDetail('${id}')" class="w-full mt-1 bg-slate-100 py-1 rounded-full text-[8px]">Lihat</button></div></div>`).join('')||'<div class="col-span-2 bg-white p-6 rounded-xl text-center col-span-full"><p>📦 Belum ada produk</p></div>';
+ document.getElementById('gridBelanja').innerHTML=list.map(([id,p])=>`<div class="bg-white rounded-2xl overflow-hidden shadow border cursor-pointer"><div class="h-[140px] bg-slate-50 flex items-center justify-center relative" onclick="openDetail('${id}')">${p.foto?`<img src="${p.foto}" class="w-full h-full object-cover">`:`<span class="text-[32px]">🛒</span>`}<span class="absolute top-2 left-2 bg-white/90 px-2 py-0.5 rounded-full text-[8px] font-bold">${p.kat}</span></div><div class="p-3"><p class="font-bold text-[11px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[12px] mt-1">Rp ${Number(p.harga).toLocaleString('id-ID')}</p><div class="flex gap-1 mt-2"><button onclick="openDetail('${id}')" class="flex-1 bg-slate-100 py-2 rounded-full text-[9px]">Lihat</button><button onclick="addCart('${id}')" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded-full text-[9px] font-bold">+ Keranjang</button></div></div></div>`).join('')||'<div class="col-span-full bg-white p-8 rounded-2xl text-center"><p>🛒 Katalog kosong</p></div>';
 }
+function ubahStok(id,d){produk[id].stok=Math.max(0,(produk[id].stok||0)+d); localStorage.setItem('prodV9', JSON.stringify(produk)); try{if(window.db) window.update(window.ref(window.db,'produk-katalog-V9/'+id), {stok:produk[id].stok});}catch(e){} render();}
+function hapusProd(id){if(!confirm('Hapus produk?')) return; delete produk[id]; localStorage.setItem('prodV9', JSON.stringify(produk)); try{if(window.db) window.remove(window.ref(window.db,'produk-katalog-V9/'+id));}catch(e){} render();}
+
 if(cur){document.getElementById('btnMasuk').style.display='none'; document.getElementById('btnKeluar').style.display='block'; afterLogin();}
-render(); renderPengguna();
-setTimeout(()=>{try{if(window.db){window.onValue(window.ref(window.db,'produk-katalog-V8'), s=>{const v=s.val()||{}; if(Object.keys(v).length>0){ if(Object.keys(v).length>=Object.keys(produk).length){localStorage.setItem('prodV8', JSON.stringify(v)); produk=v; render();}}}); window.onValue(window.ref(window.db,'users-katalog-V8'), s=>{const v=s.val()||{}; if(Object.keys(v).length>0){ if(Object.keys(v).length>=Object.keys(users).length){localStorage.setItem('usersV8', JSON.stringify(v)); users=v; ensureManajer(); renderPengguna();}}});}}catch(e){}},1000);
+render();
+setTimeout(()=>{try{if(window.db){
+ window.onValue(window.ref(window.db,'produk-katalog-V9'), s=>{const v=s.val()||{}; if(Object.keys(v).length>=0){localStorage.setItem('prodV9', JSON.stringify(v)); produk=v; render();}});
+ window.onValue(window.ref(window.db,'users-katalog-V9'), s=>{const v=s.val()||{}; if(Object.keys(v).length>0){localStorage.setItem('usersV9', JSON.stringify(v)); users=v; ensureManajer(); renderPengguna();}});
+ window.onValue(window.ref(window.db,'payments-V9'), s=>{const v=s.val()||{}; localStorage.setItem('paysV9', JSON.stringify(v)); payments=v; renderPay();});
+ window.onValue(window.ref(window.db,'vouchers-V9'), s=>{const v=s.val()||{}; localStorage.setItem('vouchV9', JSON.stringify(v)); vouchers=v; renderVoucher();});
+ window.onValue(window.ref(window.db,'events-V9'), s=>{const v=s.val()||{}; localStorage.setItem('eventsV9', JSON.stringify(v)); events=v; renderEvent(); if(!localStorage.getItem('eventClosed_'+Object.values(v).find(e=>e.active)?.id)) showPopupIfAny();});
+}}catch(e){}},1200);
+setTimeout(()=>{if(!localStorage.getItem('eventClosed_'+Object.values(events).find(e=>e.active)?.id)) showPopupIfAny();},2000);
 </script>
 </body>
 </html>
