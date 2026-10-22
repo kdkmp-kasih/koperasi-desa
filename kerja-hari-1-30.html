@@ -2,123 +2,87 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>V38 FULL + NAV PERKOTAK 1-31</title>
+<title>V40 NAV RESPONSIVE</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-<style>html{scroll-behavior:smooth}</style>
+<style>
+html{scroll-behavior:smooth}
+/* HP: 2-3 baris, kotak besar. Laptop: 1 baris */
+#navHari{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+}
+#navHari button{
+  width:32px;
+  height:32px;
+  font-size:12px;
+  border-radius:8px;
+}
+@media(min-width:1024px){
+  #navHari{
+    flex-wrap:nowrap;
+    gap:3px;
+  }
+  #navHari button{
+    width:28px;
+    height:28px;
+    font-size:10px;
+    border-radius:6px;
+  }
+}
+</style>
 </head>
 <body class="bg-[#fef2f2]">
 <div class="bg-[#BE1E2D] text-white sticky top-0 z-50 shadow-lg">
-<div class="max-w-5xl mx-auto p-3">
-<div class="flex justify-between items-center">
-<div><h1 class="font-bold text-[12px]">🇮🇩 KDKMP KASIH V38 FULL - NAV 1-31 PERKOTAK + PENJELASAN</h1><p id="tgl" class="text-[9px] text-yellow-200"></p></div>
-<div class="text-right"><div class="w-28 h-2.5 bg-white/30 rounded-full"><div id="bar" class="h-2.5 bg-white rounded-full" style="width:0%"></div></div><p id="txt" class="text-[9px] font-bold mt-1">0%</p></div>
+<div class="max-w-6xl mx-auto p-2">
+
+<div class="flex justify-between items-center gap-2">
+<div class="flex-1 min-w-0">
+<h1 class="font-bold text-[11px] md:text-[12px] truncate">🇮🇩 KDKMP KASIH V40 - NAV RESPONSIVE</h1>
+<p id="tgl" class="text-[8px] text-yellow-200 truncate"></p>
 </div>
-<div class="mt-2 bg-white/15 border border-white/30 rounded-xl p-2.5 flex flex-wrap gap-2 items-center">
-<label class="text-[10px] font-bold">📅 Hari 1:</label>
-<input id="startDateInput" type="date" class="text-black rounded-lg px-2 py-1 text-[11px]" onchange="setStartDate(this.value)">
-<button onclick="setStartDateToday()" class="bg-white text-[#BE1E2D] px-3 py-1.5 rounded-lg text-[10px] font-bold">Hari Ini = Hari 1</button>
+<div class="flex items-center gap-2 shrink-0">
+<div class="text-right hidden sm:block">
+<div class="w-20 h-2 bg-white/30 rounded-full"><div id="bar" class="h-2 bg-white rounded-full" style="width:0%"></div></div>
+<p id="txt" class="text-[8px] font-bold">0%</p>
 </div>
-<!-- NAV PERKOTAK 1-31 FULL -->
-<div class="mt-3 bg-white rounded-xl p-3 shadow">
-<p class="text-[11px] font-bold text-[#BE1E2D] mb-2">📍 NAVIGASI HARI 1-31 (PERKOTAK) - KLIK LANGSUNG LONCAT KE LIST:</p>
-<div id="navHari" class="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-16 gap-1.5"></div>
-<p class="text-[8px] text-slate-600 mt-2">🔴 = Hari Ini (Berkedip) | 🟢 = Selesai | ⬜ = Belum | Klik kotak = scroll ke Hari tersebut</p>
-</div>
-<div class="flex gap-2 mt-3">
-<button id="tab1" onclick="switchTab(1)" class="px-4 py-2 rounded-lg text-[11px] font-bold bg-white text-[#BE1E2D] shadow">TAB 1: LIST 1-31</button>
-<button id="tab2" onclick="switchTab(2)" class="px-4 py-2 rounded-lg text-[11px] font-bold bg-black/20 text-white">TAB 2: TUNGGAKAN <span id="badgeTunggakan" class="hidden bg-yellow-300 text-black px-1.5 py-0.5 rounded-full text-[9px]">0</span></button>
-<button id="tab3" onclick="switchTab(3)" class="px-4 py-2 rounded-lg text-[11px] font-bold bg-black/20 text-white">TAB 3: TTD + CAP</button>
+<div class="flex gap-1">
+<button id="tab1" onclick="switchTab(1)" class="px-3 py-1.5 rounded-md text-[9px] font-bold bg-white text-[#BE1E2D]">1-31</button>
+<button id="tab2" onclick="switchTab(2)" class="px-3 py-1.5 rounded-md text-[9px] font-bold bg-black/20 text-white">TUNG<span id="badgeTunggakan" class="hidden bg-yellow-300 text-black px-1 rounded-full text-[7px] ml-1">0</span></button>
+<button id="tab3" onclick="switchTab(3)" class="px-3 py-1.5 rounded-md text-[9px] font-bold bg-black/20 text-white">TTD</button>
 </div>
 </div>
 </div>
 
-<div id="explainModal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-end md:items-center justify-center p-3">
-<div class="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl">
-<div class="sticky top-0 bg-[#BE1E2D] text-white p-4 rounded-t-2xl flex justify-between items-center">
-<div><p class="font-bold text-[12px]" id="modalTitle"></p><p class="text-[9px] opacity-80" id="modalSub"></p></div>
-<button onclick="closeExplain()" class="bg-white/20 w-8 h-8 rounded-full">✕</button>
+<!-- NAV RESPONSIVE -->
+<div class="mt-2 bg-white rounded-xl p-2.5 shadow">
+<div class="flex justify-between items-center mb-2">
+<p class="text-[10px] font-bold text-[#BE1E2D]">📍 NAV 1-31 (HP: besar 2 baris, Laptop: 1 baris) - Klik loncat:</p>
+<div class="flex items-center gap-2">
+<div class="sm:hidden w-16 h-1.5 bg-white/50 rounded-full border"><div id="barMobile" class="h-1.5 bg-[#BE1E2D] rounded-full" style="width:0%"></div></div>
+<span class="text-[8px] text-slate-500">🔴 HariIni</span>
 </div>
-<div class="p-4 space-y-3 text-[11px] leading-relaxed" id="modalContent"></div>
-<div class="p-3 border-t flex gap-2"><button onclick="closeExplain()" class="flex-1 bg-slate-100 border px-4 py-2.5 rounded-xl text-[11px] font-bold">Tutup</button><button onclick="copyExplain()" class="flex-1 bg-[#BE1E2D] text-white px-4 py-2.5 rounded-xl text-[11px] font-bold">📋 Copy</button></div>
+</div>
+<div id="navHari"></div>
+</div>
+
 </div>
 </div>
 
-<div class="max-w-5xl mx-auto p-3 space-y-3">
-<div id="content1"><div id="container1" class="grid gap-3"></div></div>
-<div id="content2" class="hidden"><div id="container2" class="grid gap-3"></div><div class="mt-4 bg-white border-2 border-[#BE1E2D] rounded-xl p-4"><p class="font-bold text-[13px] text-[#BE1E2D]">📊 ANALISIS & RANGKUMAN TUNGGAKAN</p><div id="analisisContent" class="mt-3 text-[11px]"></div></div></div>
-<div id="content3" class="hidden space-y-3"><div class="bg-white border-2 border-[#BE1E2D] p-4 rounded-xl"><p class="font-bold text-[13px] text-[#BE1E2D]">TTD + CAP + NAMA (Lengkap kayak V35)</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3"><div class="border-2 border-orange-300 p-3 rounded-xl bg-orange-50"><p class="font-bold text-[11px]">BLOK KADES</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Kades</p><input id="namaKades" placeholder="Nama Kades" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdKades')"><img id="prevKades" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needKades" checked onchange="saveNeed()"> Tampilkan</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap Kades</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKades')"><img id="prevCapKades" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needCapKades" checked onchange="saveNeed()"> Tampilkan</label></div></div></div><div class="border-2 border-[#BE1E2D]/30 p-3 rounded-xl bg-red-50"><p class="font-bold text-[11px]">BLOK MANAJER</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">TTD Manajer</p><input id="namaManajer" placeholder="Nama Manajer" class="w-full border rounded p-1 text-[10px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'ttdManajer')"><img id="prevManajer" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needManajer" checked onchange="saveNeed()"> Tampilkan</label></div><div class="bg-white p-2 rounded border"><p class="text-[10px] font-bold">Cap KDKMP</p><input type="file" accept="image/*" class="text-[8px] w-full mt-1" onchange="saveImg(this,'capKoperasi')"><img id="prevCap" class="w-full h-16 object-contain mt-1 border hidden"><label class="text-[9px] flex gap-1 mt-1"><input type="checkbox" id="needCap" checked onchange="saveNeed()"> Tampilkan</label></div></div></div></div></div></div>
-<div class="bg-white p-3 rounded-xl border-2 border-slate-200">
-<p class="font-bold text-[11px] text-[#BE1E2D]">⚙️ SETTING FOOTER & CATATAN:</p>
-<div class="flex gap-2 mt-2"><label class="text-[10px] flex gap-1"><input type="checkbox" id="needFooter" checked onchange="saveFooterSetting()"> Footer</label><textarea id="footerText" class="flex-1 border rounded-lg p-2 text-[11px] h-12" oninput="saveFooterSetting()">KDKMP Kasih V38 | {tanggal} | Hari ke-{hari}</textarea></div>
-<div class="flex gap-2 mt-2 text-[10px]"><label><input type="checkbox" id="includeCatatan" checked onchange="saveFooterSetting()"> Catatan</label><label><input type="checkbox" id="includeAnalisisInPrint" checked onchange="saveFooterSetting()"> Analisis</label><div id="footerPreview" class="bg-slate-50 border p-1 rounded text-[9px] flex-1">Preview</div></div>
+<div id="explainModal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-3">
+<div class="bg-white rounded-xl max-w-md w-full"><div class="bg-[#BE1E2D] text-white p-3 flex justify-between"><div><p id="modalTitle" class="font-bold text-[12px]"></p><p id="modalSub" class="text-[9px]"></p></div><button onclick="closeExplain()" class="bg-white/20 w-6 h-6 rounded-full">X</button></div><div id="modalContent" class="p-3 space-y-2 text-[11px]"></div><div class="p-2 border-t flex gap-2"><button onclick="closeExplain()" class="flex-1 bg-slate-100 py-2 rounded">Tutup</button><button onclick="copyExplain()" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded">Copy</button></div></div>
 </div>
-<div class="bg-white p-4 rounded-xl border-2 border-[#BE1E2D]/20">
-<div class="grid grid-cols-2 gap-2">
-<button onclick="exportPDF(false)" class="bg-[#BE1E2D] text-white px-3 py-3 rounded-xl text-[11px] font-bold">📄 PDF SEMUA + PENJELASAN</button>
-<button onclick="exportPDF(true)" class="bg-amber-600 text-white px-3 py-3 rounded-xl text-[11px] font-bold">⚠️ PDF TUNGGAKAN</button>
-<button onclick="exportWord(false)" class="bg-blue-700 text-white px-3 py-3 rounded-xl text-[11px] font-bold">📝 WORD SEMUA</button>
-<button onclick="exportWord(true)" class="bg-slate-700 text-white px-3 py-3 rounded-xl text-[11px] font-bold">📝 WORD TUNGGAKAN</button>
+
+<div class="max-w-6xl mx-auto p-2 space-y-2">
+<div id="content1"><div id="container1" class="grid gap-2"></div></div>
+<div id="content2" class="hidden"><div id="container2" class="grid gap-2"></div></div>
+<div id="content3" class="hidden"><div class="bg-white border rounded p-3"><p class="font-bold text-[11px]">TTD + CAP</p><div class="grid grid-cols-2 gap-2 mt-2"><div class="border p-2 rounded"><p class="text-[9px] font-bold">Kades</p><input id="namaKades" placeholder="Nama" class="w-full border rounded p-1 text-[9px] mt-1" oninput="localStorage.setItem('namaKades',this.value)"></div><div class="border p-2 rounded"><p class="text-[9px] font-bold">Manajer</p><input id="namaManajer" placeholder="Nama" class="w-full border rounded p-1 text-[9px] mt-1" oninput="localStorage.setItem('namaManajer',this.value)"></div></div></div></div>
 </div>
-</div>
-</div>
+
 <script>
-const { jsPDF } = window.jspdf;
 let currentExplainText="";
-const EXPLANATIONS = {
-"Melaporkan keberadaan kepada Kepala Desa": {maksud:"Lapor ke Kades kalau kamu sudah resmi mulai tugas sebagai Manajer KDKMP Kasih.", tujuan:"Biar Kades mengakui, mendukung, kasih akses data desa & grup WA perangkat desa.", cara:"1. Bawa SK & KTP\n2. Datang ke Balai Desa jam kerja\n3. Sampaikan: Saya manajer KDKMP Kasih mulai hari ini\n4. Minta buku tamu ditandatangani & foto\n5. Catat no HP Kades"},
-"Periksa kantor koperasi": {maksud:"Cek fisik gerai/kantor.", tujuan:"Tau kondisi layak atau perlu renovasi.", cara:"Foto 4 sisi, cek atap bocor, listrik, kunci."},
-"Test login SIMKOPDES": {maksud:"Coba masuk aplikasi SIMKOPDES Kemenkop.", tujuan:"Pastikan akun manajer aktif. Semua laporan wajib via sini.", cara:"Buka simkopdes.kemenkop.go.id, login pakai NIK, jika error hubungi Pendamping."},
-"Susun BAST Aset": {maksud:"Buat Berita Acara Serah Terima Aset.", tujuan:"Legalitas serah terima Desa ke Koperasi.", cara:"Template: Pada hari ini telah diserahkan... Daftar aset... TTD Kades, Ketua, Manajer."},
-"Tentukan Quick Win": {maksud:"Pilih 1-2 program cepat hasil.", tujuan:"Biar warga langsung merasakan manfaat.", cara:"Pilih yang paling dibutuhkan: Sembako Murah."},
-"Jelaskan SHU": {maksud:"Sisa Hasil Usaha = keuntungan koperasi dibagi ke anggota.", tujuan:"Motivasi jadi anggota.", cara:"Rumus: SHU dibagi berdasarkan belanja & simpanan."},
-"Susun Rencana Bulan 2": {maksud:"Buat plan 30 hari ke depan.", tujuan:"Ada arah.", cara:"Tentukan: Bulan 2 fokus Simpan Pinjam & Pupuk."},
-"Finalisasi Laporan Resmi": {maksud:"Laporan 30 hari final.", tujuan:"Disahkan.", cara:"Print, jilid, TTD Manajer, Ketua, Kades."}
-};
-function switchTab(n){document.getElementById('content1').classList.toggle('hidden',n!==1); document.getElementById('content2').classList.toggle('hidden',n!==2); document.getElementById('content3').classList.toggle('hidden',n!==3); ['tab1','tab2','tab3'].forEach((id,i)=>{document.getElementById(id).className=(i+1===n?'px-4 py-2 rounded-lg text-[11px] font-bold bg-white text-[#BE1E2D] shadow':'px-4 py-2 rounded-lg text-[11px] font-bold bg-black/20 text-white');});}
-function scrollToHari(d){
-  switchTab(1);
-  setTimeout(()=>{
-    const el=document.getElementById('hari-'+d);
-    if(el){
-      const y=el.getBoundingClientRect().top + window.pageYOffset - 220;
-      window.scrollTo({top:y, behavior:'smooth'});
-      el.classList.add('ring-4','ring-yellow-400','scale-[1.01]');
-      setTimeout(()=>el.classList.remove('ring-4','ring-yellow-400','scale-[1.01]'),1500);
-    }
-  },150);
-}
-function getStoredStart(){return localStorage.getItem('kdkmp_startDate');}
-function getStartDateObj(){const s=getStoredStart(); if(s){const d=new Date(s); d.setHours(0,0,0,0); return d;} const n=new Date(); n.setHours(0,0,0,0); return n;}
-function getHariIni(){const start=getStartDateObj(); const now=new Date(); now.setHours(0,0,0,0); return Math.max(1, Math.floor((now-start)/86400000)+1);}
-function setStartDate(val){ if(!val) return; const d = new Date(val); d.setHours(0,0,0,0); localStorage.setItem('kdkmp_startDate', d.toISOString()); render(); loadStartInput(); }
-function setStartDateToday(){ const n=new Date(); n.setHours(0,0,0,0); localStorage.setItem('kdkmp_startDate', n.toISOString()); render(); loadStartInput(); }
-function loadStartInput(){ const s=getStoredStart(); const el=document.getElementById('startDateInput'); if(s){ const d=new Date(s); const yyyy=d.getFullYear(); const mm=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); el.value=`${yyyy}-${mm}-${dd}`; } else { el.value=''; } }
-function saveNeed(){['Manajer','Kades','Cap','CapKades'].forEach(k=>{const el=document.getElementById('need'+k); if(el) localStorage.setItem('need'+k,el.checked);});}
-function loadNeed(){['Manajer','Kades','Cap','CapKades'].forEach(k=>{const v=localStorage.getItem('need'+k); const el=document.getElementById('need'+k); if(el){ if(v!==null) el.checked=v==='true'; else el.checked=true;}});}
-function saveNames(){['Manajer','Kades'].forEach(k=>{const el=document.getElementById('nama'+k); if(el) localStorage.setItem('nama'+k,el.value);});}
-function loadNames(){['Manajer','Kades'].forEach(k=>{const v=localStorage.getItem('nama'+k); const el=document.getElementById('nama'+k); if(v!==null&&el) el.value=v; else if(k==='Kades'&&el){el.value='Supriyadi';}});}
-function saveImg(input,key){const f=input.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>{localStorage.setItem(key,e.target.result); loadImgs();}; r.readAsDataURL(f);}
-function loadImgs(){const map={'ttdManajer':'prevManajer','ttdKades':'prevKades','capKoperasi':'prevCap','capKades':'prevCapKades'}; Object.entries(map).forEach(([k,el])=>{const d=localStorage.getItem(k); const e=document.getElementById(el); if(d&&e){e.src=d; e.classList.remove('hidden');}});}
-function getFooterSetting(){ const active = localStorage.getItem('custom_footer_active'); const text = localStorage.getItem('custom_footer_text'); return {active: active===null? true : active==='true', text: text || `KDKMP Kasih V38 | {tanggal} | Hari ke-{hari}`}; }
-function saveFooterSetting(){ localStorage.setItem('custom_footer_active', document.getElementById('needFooter').checked ? 'true' : 'false'); localStorage.setItem('custom_footer_text', document.getElementById('footerText').value); updateFooterPreview(); }
-function loadFooterSetting(){ const s = getFooterSetting(); const el1=document.getElementById('needFooter'); if(el1) el1.checked=s.active; const el2=document.getElementById('footerText'); if(el2) el2.value=s.text; updateFooterPreview(); }
-function buildFooterText(){ const s = getFooterSetting(); if(!s.active) return null; let txt = s.text.trim(); const now = new Date().toLocaleString('id-ID'); const hariIni=getHariIni(); return txt.replace(/{tanggal}/g, now).replace(/{hari}/g, hariIni); }
-function updateFooterPreview(){ const txt = buildFooterText(); const el=document.getElementById('footerPreview'); if(el) el.textContent= txt? 'Preview: '+txt : 'Preview: (disembunyikan)'; }
-loadNeed(); loadNames(); loadImgs(); loadStartInput(); loadFooterSetting();
-function showExplain(day, idx){
-  const task=baseDays.find(x=>x.d===day).tasks[idx];
-  const exp=EXPLANATIONS[task] || {maksud:"Tugas lapangan Hari "+day+" sesuai SOP KDKMP.", tujuan:"Untuk mencapai target 30 hari KDKMP Kasih.", cara:"1. Siapkan alat/bahan.\n2. Kerjakan sesuai SOP.\n3. Dokumentasikan foto.\n4. Catat di buku & SIMKOPDES.\n5. Laporkan ke Pengurus/Kades."};
-  document.getElementById('modalTitle').textContent=task;
-  document.getElementById('modalSub').textContent="Hari "+day;
-  document.getElementById('modalContent').innerHTML="<div class='bg-blue-50 border-l-4 border-blue-500 p-3 rounded'><p class='font-bold text-[11px] text-blue-700'>📌 MAKSUDNYA APA?</p><p class='mt-1'>"+exp.maksud+"</p></div><div class='bg-green-50 border-l-4 border-green-500 p-3 rounded'><p class='font-bold text-[11px] text-green-700'>🎯 BUAT APA?</p><p class='mt-1'>"+exp.tujuan+"</p></div><div class='bg-amber-50 border-l-4 border-amber-500 p-3 rounded'><p class='font-bold text-[11px] text-amber-700'>🛠️ CARA MEMBUATNYA:</p><p class='mt-1 whitespace-pre-line'>"+exp.cara+"</p></div>";
-  currentExplainText="TUGAS: "+task+"\nMAKSUD: "+exp.maksud+"\nTUJUAN: "+exp.tujuan+"\nCARA: "+exp.cara;
-  document.getElementById('explainModal').classList.remove('hidden');
-}
-function closeExplain(){document.getElementById('explainModal').classList.add('hidden');}
-function copyExplain(){navigator.clipboard.writeText(currentExplainText).then(()=>alert('Dicopy!'));}
-function isChecked(d,i){const keys=['chk_'+d+'_'+i,'v28_'+d+'_'+i]; for(let k of keys){if(localStorage.getItem(k)==='1') return true;} return false;}
 const baseDays=[
 {d:1,t:"Laporan Diri Tingkat Desa",m:"DESA",tasks:["Melaporkan keberadaan kepada Kepala Desa","Melaporkan kepada Lurah","Serah terima penugasan kepada Pengurus","Perkenalkan diri sebagai Manajer","Catat kontak Kades","Melaporkan kepada Babinsa","Catat kontak babinsa","Catat kontak ketua pengurus"]},
 {d:2,t:"Silaturahmi",m:"DESA",tasks:["Silaturahmi Ketua BPD","Silaturahmi Anggota BPD","Silaturahmi Tokoh Masyarakat","Silaturahmi Ketua RT","Silaturahmi Ketua RW","Sampaikan visi inklusif","Sampaikan visi kolaboratif","Sampaikan visi transparan","Catat aspirasi"]},
@@ -152,82 +116,86 @@ const baseDays=[
 {d:30,t:"Rencana Bulan 2",m:"RUMAH",tasks:["Susun Rencana Bulan 2","Fokus unit usaha baru","Rencana kemitraan","Rencana permodalan","Finalisasi Laporan Resmi","Finalisasi Master Plan","Export untuk Kades","Export untuk Korwil","Export untuk Dinas"]},
 {d:31,t:"Evaluasi Akhir Bulan",m:"DESA",tasks:["Evaluasi total 30 hari","Laporan akhir ke Kades","Rencana Bulan 2","Tutup buku bulan 1"]}
 ];
+const EXPLANATIONS={"Melaporkan keberadaan kepada Kepala Desa":{maksud:"Lapor resmi mulai tugas",tujuan:"Agar Kades mendukung",cara:"Bawa SK, datang ke balai, foto buku tamu"}};
+function getStart(){const s=localStorage.getItem('kdkmp_startDate'); if(s) return new Date(s); const n=new Date(); n.setHours(0,0,0,0); return n;}
+function getHariIni(){const s=getStart(); const now=new Date(); now.setHours(0,0,0,0); return Math.max(1,Math.floor((now-s)/86400000)+1);}
+function isChecked(d,i){return localStorage.getItem('chk_'+d+'_'+i)==='1' || localStorage.getItem('v28_'+d+'_'+i)==='1';}
+function switchTab(n){document.getElementById('content1').classList.toggle('hidden',n!==1); document.getElementById('content2').classList.toggle('hidden',n!==2); document.getElementById('content3').classList.toggle('hidden',n!==3); ['tab1','tab2','tab3'].forEach((id,i)=>{const el=document.getElementById(id); el.className=(i+1===n?'bg-white text-[#BE1E2D] shadow':'bg-black/20 text-white')+' px-3 py-1.5 rounded-md text-[9px] font-bold';});}
+function scrollToHari(d){
+  switchTab(1);
+  setTimeout(()=>{
+    const el=document.getElementById('hari-'+d);
+    if(el){
+      const y=el.getBoundingClientRect().top + window.pageYOffset - 160;
+      window.scrollTo({top:y, behavior:'smooth'});
+      el.classList.add('ring-4','ring-yellow-400');
+      setTimeout(()=>el.classList.remove('ring-4','ring-yellow-400'),1500);
+    }
+  },100);
+}
+function showExplain(d,i){
+  const t=baseDays.find(x=>x.d===d).tasks[i];
+  const e=EXPLANATIONS[t]||{maksud:"Tugas Hari "+d,tujuan:"Target 30 hari",cara:"Kerjakan sesuai SOP"};
+  document.getElementById('modalTitle').textContent=t;
+  document.getElementById('modalSub').textContent="Hari "+d;
+  document.getElementById('modalContent').innerHTML="<div class='bg-blue-50 border-l-4 border-blue-500 p-2 rounded'><b>MAKSUD:</b> "+e.maksud+"</div><div class='bg-green-50 border-l-4 border-green-500 p-2 rounded'><b>TUJUAN:</b> "+e.tujuan+"</div><div class='bg-amber-50 border-l-4 border-amber-500 p-2 rounded'><b>CARA:</b> "+e.cara+"</div>";
+  currentExplainText=t;
+  document.getElementById('explainModal').classList.remove('hidden');
+}
+function closeExplain(){document.getElementById('explainModal').classList.add('hidden');}
+function copyExplain(){navigator.clipboard.writeText(currentExplainText).then(()=>alert('Dicopy'));}
 function render(){
-  const start=getStartDateObj(); const hariIni=getHariIni();
-  document.getElementById('tgl').textContent="Start: "+start.toLocaleDateString('id-ID')+" | Hari ke-"+hariIni+" | Klik kotak 1-31 di header untuk loncat";
+  const start=getStart(); const hariIni=getHariIni();
+  document.getElementById('tgl').textContent="Start: "+start.toLocaleDateString('id-ID')+" | Hari ke-"+hariIni;
   let total=0,done=0; baseDays.forEach(d=>{total+=d.tasks.length; d.tasks.forEach((_,i)=>{if(isChecked(d.d,i)) done++;});});
   const persen=total?Math.round(done/total*100):0;
   document.getElementById('bar').style.width=persen+"%";
-  document.getElementById('txt').textContent=persen+"% ("+done+"/"+total+")";
+  document.getElementById('txt').textContent=persen+"%";
+  const barM=document.getElementById('barMobile'); if(barM) barM.style.width=persen+"%";
+  
   const nav=document.getElementById('navHari'); nav.innerHTML="";
   for(let i=1;i<=31;i++){
-    const dayObj=baseDays.find(d=>d.d===i);
-    const allDone=dayObj?dayObj.tasks.every((_,idx)=>isChecked(i,idx)):false;
+    const allDone=baseDays.find(d=>d.d===i)?.tasks.every((_,idx)=>isChecked(i,idx));
     const isToday=i===hariIni;
     const btn=document.createElement('button');
     btn.textContent=i;
-    btn.className="w-full py-2.5 rounded-lg text-[11px] font-bold border shadow-sm transition hover:scale-105 "+(isToday?"bg-[#BE1E2D] text-white ring-2 ring-yellow-300 animate-pulse":allDone?"bg-green-500 text-white":"bg-white text-slate-800 hover:bg-slate-50");
+    btn.className="font-bold border shadow-sm flex items-center justify-center shrink-0 transition "+(isToday?"bg-[#BE1E2D] text-white ring-2 ring-yellow-300 animate-pulse":allDone?"bg-green-500 text-white":"bg-white text-slate-700 hover:bg-slate-50");
     btn.onclick=()=>scrollToHari(i);
     nav.appendChild(btn);
   }
+
   const c1=document.getElementById('container1'); c1.innerHTML="";
   baseDays.forEach(day=>{
     const div=document.createElement('div'); div.id="hari-"+day.d;
-    div.className="bg-white p-3 rounded-xl border shadow-sm "+(day.d===hariIni?"ring-2 ring-[#BE1E2D]":"");
-    let html="<div class='flex justify-between mb-2'><p class='font-bold text-[13px]'>"+(day.d===hariIni?"👉 ":"")+"HARI "+day.d+": "+day.t+"</p><span class='text-[9px] px-2 py-0.5 rounded bg-slate-100'>"+day.m+"</span></div><div class='border rounded overflow-hidden'>";
+    div.className="bg-white p-2.5 rounded-xl border "+(day.d===hariIni?"ring-2 ring-[#BE1E2D]":"");
+    let html="<div class='flex justify-between mb-1.5'><p class='font-bold text-[11px]'>"+(day.d===hariIni?"👉 ":"")+"HARI "+day.d+": "+day.t+"</p><span class='text-[8px] px-1.5 py-0.5 rounded bg-slate-100'>"+day.m+"</span></div><div class='border rounded overflow-hidden'>";
     day.tasks.forEach((t,i)=>{
       const chk=isChecked(day.d,i);
-      html+="<div class='flex items-center gap-2 py-2.5 px-2 border-b "+(chk?"bg-green-50":"")+"'><input type='checkbox' data-day='"+day.d+"' data-idx='"+i+"' "+(chk?"checked":"")+" class='w-5 h-5 accent-[#BE1E2D] shrink-0'><span class='flex-1 text-[11px] "+(chk?"line-through text-slate-400":"")+"'>"+t+"</span><button onclick='showExplain("+day.d+","+i+")' class='bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded-full text-[9px] font-bold shrink-0'>❓</button></div>";
+      html+="<div class='flex items-center gap-1.5 py-2 px-2 border-b "+(chk?"bg-green-50":"")+"'><input type='checkbox' data-day='"+day.d+"' data-idx='"+i+"' "+(chk?"checked":"")+" class='w-4 h-4 accent-[#BE1E2D]'><span class='flex-1 text-[10px] "+(chk?"line-through text-slate-400":"")+"'>"+t+"</span><button onclick='showExplain("+day.d+","+i+")' class='bg-blue-50 text-blue-600 border px-1.5 py-0.5 rounded-full text-[8px] font-bold'>❓</button></div>";
     });
     html+="</div>";
     div.innerHTML=html;
     c1.appendChild(div);
   });
+
   const c2=document.getElementById('container2'); c2.innerHTML="";
   let tung=0; baseDays.forEach(d=>{if(d.d<hariIni) d.tasks.forEach((_,i)=>{if(!isChecked(d.d,i)) tung++;});});
   const badge=document.getElementById('badgeTunggakan'); badge.textContent=tung; if(tung>0) badge.classList.remove('hidden'); else badge.classList.add('hidden');
-  if(tung===0) c2.innerHTML="<div class='bg-white border p-6 rounded-xl text-center'><p class='text-[14px] font-bold text-green-600'>✅ Tidak ada tunggakan!</p></div>";
-  else baseDays.filter(d=>d.d<hariIni).forEach(day=>{
-    let has=false; let html="";
-    day.tasks.forEach((t,i)=>{if(!isChecked(day.d,i)){has=true; html+="<div class='flex gap-2 py-2 px-2 border-b'><span class='flex-1 text-[11px]'>"+t+"</span><button onclick='scrollToHari("+day.d+")' class='bg-[#BE1E2D] text-white px-2 py-1 rounded text-[9px]'>Ke Hari "+day.d+"</button></div>";}});
-    if(has){const div=document.createElement('div'); div.className="bg-white p-3 rounded-xl border-l-4 border-[#BE1E2D] shadow-sm"; div.innerHTML="<p class='font-bold text-[12px] text-[#BE1E2D]'>HARI "+day.d+": "+day.t+" (TUNGGAK)</p><div class='border rounded-lg mt-2 overflow-hidden'>"+html+"</div>"; c2.appendChild(div);}
-  });
-  document.getElementById('analisisContent').innerHTML="Tunggakan: <b class='text-[#BE1E2D]'>"+tung+"</b> tugas | Selesai: <b class='text-green-600'>"+done+"/"+total+" ("+persen+"%)</b> | <span class='text-[9px]'>Klik kotak Hari di header untuk loncat</span>";
+  if(tung>0){
+    baseDays.filter(d=>d.d<hariIni).forEach(day=>{
+      let html=""; let has=false;
+      day.tasks.forEach((t,i)=>{if(!isChecked(day.d,i)){has=true; html+="<div class='flex gap-2 py-2 px-2 border-b'><span class='flex-1 text-[10px]'>"+t+"</span><button onclick='scrollToHari("+day.d+")' class='bg-[#BE1E2D] text-white px-2 py-1 rounded text-[8px]'>Ke "+day.d+"</button></div>";}});
+      if(has){const div=document.createElement('div'); div.className="bg-white p-2.5 rounded border-l-4 border-[#BE1E2D]"; div.innerHTML="<p class='font-bold text-[10px] text-[#BE1E2D]'>HARI "+day.d+": "+day.t+"</p><div class='border rounded mt-1'>"+html+"</div>"; c2.appendChild(div);}
+    });
+  }
+
   document.querySelectorAll('#container1 input[type=checkbox]').forEach(cb=>{
     cb.addEventListener('change',e=>{
-      const d=e.target.dataset.day; const i=e.target.dataset.idx;
-      localStorage.setItem('chk_'+d+'_'+i, e.target.checked?'1':'0');
-      localStorage.setItem('v28_'+d+'_'+i, e.target.checked?'1':'0');
+      localStorage.setItem('chk_'+e.target.dataset.day+'_'+e.target.dataset.idx, e.target.checked?'1':'0');
+      localStorage.setItem('v28_'+e.target.dataset.day+'_'+e.target.dataset.idx, e.target.checked?'1':'0');
       render();
     });
   });
-}
-function exportPDF(onlyT){
-  const doc=new jsPDF('l','mm','a4');
-  doc.setFillColor(190,30,45); doc.rect(0,0,297,20,'F'); doc.setTextColor(255,255,255); doc.setFontSize(12); doc.text("KDKMP KASIH V38 FULL - NAV 1-31 + PENJELASAN",10,12);
-  const rows=[]; baseDays.forEach(day=>{
-    const isOver=day.d<getHariIni();
-    day.tasks.forEach((t,i)=>{
-      const chk=isChecked(day.d,i);
-      if(onlyT && (chk || !isOver)) return;
-      const exp=EXPLANATIONS[t]; const pen=exp?exp.maksud+" | "+exp.tujuan:"";
-      rows.push([ "Hari "+day.d, day.t, t+" | "+pen, chk?"SELESAI":"BELUM"]);
-    });
-  });
-  doc.autoTable({startY:25, head:[['HARI','JUDUL','KEGIATAN + PENJELASAN','STATUS']], body:rows, styles:{fontSize:6}});
-  doc.save((onlyT?"tunggakan":"lengkap")+"-V38.pdf");
-}
-function exportWord(){
-  let html="<html><head><meta charset='UTF-8'></head><body><h1>V38 FULL</h1><table border='1'><tr><th>HARI</th><th>KEGIATAN</th><th>PENJELASAN</th><th>STATUS</th></tr>";
-  baseDays.forEach(day=>{
-    day.tasks.forEach((t,i)=>{
-      const exp=EXPLANATIONS[t]||{maksud:"-",tujuan:"-",cara:"-"};
-      const chk=isChecked(day.d,i);
-      html+="<tr><td>Hari "+day.d+"</td><td>"+t+"</td><td>"+exp.maksud+"<br>"+exp.tujuan+"<br>"+exp.cara+"</td><td>"+(chk?"SELESAI":"BELUM")+"</td></tr>";
-    });
-  });
-  html+="</table></body></html>";
-  const blob=new Blob([html],{type:'application/msword'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download="V38-FULL.doc"; a.click();
 }
 render();
 </script>
