@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>V49 - DESA KASIH KEC KERTANEGARA PURBALINGGA 53354</title>
+<title>V50 - DESA KASIH + UPLOAD FOTO KEGIATAN BUKTI</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -13,7 +13,8 @@ html{scroll-behavior:smooth}
 @media(min-width:1024px){#navHari{flex-wrap:nowrap;gap:3px} #navHari button{width:28px;height:28px;font-size:10px;border-radius:6px}}
 .task-row{display:flex;align-items:center;gap:6px;padding:8px 6px;border-bottom:1px solid #e5e7eb}
 .task-right{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end}
-.ttd-center{max-width:720px;margin-left:auto;margin-right:auto}
+.ttd-center{max-width:720px;margin:0 auto}
+.foto-thumb{width:48px;height:36px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
 </style>
 </head>
 <body class="bg-[#fef2f2]">
@@ -21,13 +22,12 @@ html{scroll-behavior:smooth}
 <div class="max-w-6xl mx-auto p-2">
 <div class="flex justify-between items-center gap-2">
 <div class="flex-1 min-w-0">
-<h1 class="font-bold text-[11px] truncate">🇮🇩 KDKMP V49 - DESA KASIH - KERTANEGARA 53354</h1>
+<h1 class="font-bold text-[11px] truncate">🇮🇩 KDKMP V50 - KASIH + FOTO BUKTI KEGIATAN</h1>
 <div class="flex flex-wrap items-center gap-2 mt-1">
 <p id="tgl" class="text-[8px] text-yellow-200"></p>
 <div class="flex items-center gap-1 bg-white/20 rounded px-2 py-1">
 <label class="text-[8px] font-bold">📅 Mulai:</label>
 <input type="date" id="startDateInput" value="2026-10-01" onchange="setStartDate(this.value)" class="text-[9px] text-black rounded px-1 py-0.5">
-<button onclick="setStartDate('2026-10-01')" class="bg-yellow-300 text-black px-1.5 py-0.5 rounded text-[7px] font-bold">1 Okt 2026</button>
 </div>
 </div>
 </div>
@@ -42,10 +42,7 @@ html{scroll-behavior:smooth}
 </div>
 </div>
 <div class="mt-2 bg-white rounded-lg p-2 shadow">
-<div class="flex justify-between">
-<p class="text-[9px] font-bold text-[#BE1E2D]">📍 NAV 1-31 - DESA KASIH - KERTANEGARA:</p>
-<p id="navInfo" class="text-[7px] text-slate-500"></p>
-</div>
+<p class="text-[9px] font-bold text-[#BE1E2D]">📍 NAV 1-31 - DESA KASIH - FOTO BUKTI:</p>
 <div id="navHari" class="mt-1"></div>
 </div>
 </div>
@@ -55,7 +52,7 @@ html{scroll-behavior:smooth}
 <div class="flex items-center justify-center min-h-screen p-2">
 <div class="bg-white rounded-xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl">
 <div class="bg-[#BE1E2D] text-white p-3 flex justify-between items-center rounded-t-xl">
-<div><p class="font-bold text-[12px]">👁️ PREVIEW - DESA KASIH - KERTANEGARA 53354</p><p id="previewSub" class="text-[8px] opacity-80"></p></div>
+<div><p class="font-bold text-[12px]">👁️ PREVIEW LAPORAN + FOTO BUKTI</p><p id="previewSub" class="text-[8px] opacity-80"></p></div>
 <button onclick="closePreview()" class="bg-white/20 w-8 h-8 rounded-full font-bold">X</button>
 </div>
 <div id="previewContent" class="flex-1 overflow-auto p-0 bg-slate-100"></div>
@@ -67,65 +64,81 @@ html{scroll-behavior:smooth}
 </div>
 </div>
 
+<div id="fotoModal" class="fixed inset-0 bg-black/80 z-[1000] hidden flex items-center justify-center p-3">
+<div class="bg-white rounded-xl max-w-md w-full">
+<div class="bg-[#BE1E2D] text-white p-3 flex justify-between rounded-t-xl">
+<p class="font-bold text-[11px]">📷 Upload Foto Bukti Kegiatan</p>
+<button onclick="closeFotoModal()" class="bg-white/20 w-6 h-6 rounded-full">X</button>
+</div>
+<div class="p-3 space-y-3">
+<p id="fotoTaskName" class="font-bold text-[11px] bg-slate-100 p-2 rounded"></p>
+<input type="file" id="fotoInput" accept="image/*" capture="environment" class="w-full border-2 border-dashed rounded-lg p-3 text-[10px]">
+<input type="text" id="fotoCaption" placeholder="Keterangan foto: contoh 'Foto serah terima di balai desa Kasih'" class="w-full border rounded p-2 text-[10px]">
+<div id="fotoPreviewBox" class="hidden"><img id="fotoPreviewImg" class="w-full h-32 object-contain border rounded bg-slate-50"><p id="fotoSizeInfo" class="text-[8px] text-slate-500 mt-1"></p></div>
+<div class="flex gap-2">
+<button onclick="closeFotoModal()" class="flex-1 bg-slate-200 py-2 rounded text-[10px] font-bold">Batal</button>
+<button onclick="saveFoto()" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded text-[10px] font-bold">💾 Simpan Foto</button>
+</div>
+</div>
+</div>
+</div>
+
 <div id="explainModal" class="fixed inset-0 bg-black/60 z-[900] hidden flex items-center justify-center p-3">
 <div class="bg-white rounded-xl max-w-lg w-full"><div class="bg-[#BE1E2D] text-white p-3 flex justify-between rounded-t-xl"><div><p id="modalTitle" class="font-bold text-[12px]"></p><p id="modalSub" class="text-[9px]"></p></div><button onclick="closeExplain()" class="bg-white/20 w-6 h-6 rounded-full">X</button></div><div id="modalContent" class="p-3 space-y-2 text-[11px]"></div><div class="p-2 border-t flex gap-2"><button onclick="closeExplain()" class="flex-1 bg-slate-100 py-2 rounded">Tutup</button><button onclick="copyExplain()" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded">Copy</button></div></div>
 </div>
 
 <div class="max-w-6xl mx-auto p-2 space-y-3">
 <div id="content1"><div id="container1" class="grid gap-3"></div></div>
-<div id="content2" class="hidden"><div id="container2" class="grid gap-3"></div><div id="analisisBox" class="mt-3 bg-white border-2 border-amber-300 rounded-xl p-3"><p class="font-bold text-[11px] text-amber-700">📊 Analisis Tunggakan</p><div id="analisisContent" class="text-[10px] mt-2"></div></div></div>
+<div id="content2" class="hidden"><div id="container2" class="grid gap-3"></div></div>
 <div id="content3" class="hidden space-y-3">
 <div class="bg-white border-2 border-[#BE1E2D] rounded-xl p-4">
-<p class="font-bold text-[12px] text-[#BE1E2D]">✍️ TTD - DESA KASIH - KEC. KERTANEGARA - PURBALINGGA 53354 - POSISI TENGAH</p>
-<p class="text-[8px] text-slate-600 mt-1">2 TTD: Kades & Manajer tengah | 3 TTD: Kades, Ketua, Manajer tengah | 4 TTD: Atas Kades & Pengawas, Bawah Ketua & Manajer → tengah 70%</p>
+<p class="font-bold text-[12px] text-[#BE1E2D]">✍️ TTD - DESA KASIH - KEC. KERTANEGARA - PURBALINGGA 53354</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3">
-<div class="border-2 border-orange-300 bg-orange-50 p-2 rounded-xl"><p class="font-bold text-[10px]">1️⃣ KADES DESA KASIH</p><div class="grid grid-cols-2 gap-2 mt-1"><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">TTD Kades Kasih</p><input id="namaKades" placeholder="Nama Kades Desa Kasih" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdKades')"><img id="prevKades" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needKades" checked onchange="saveNeed()"> Tampil</label></div><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">Cap Kades</p><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'capKades')"><img id="prevCapKades" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needCapKades" checked onchange="saveNeed()"> Tampil</label></div></div></div>
-<div class="border-2 border-blue-300 bg-blue-50 p-2 rounded-xl"><p class="font-bold text-[10px]">2️⃣ KETUA KOPERASI DESA KASIH</p><div class="grid grid-cols-2 gap-2 mt-1"><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">TTD Ketua</p><input id="namaKetua" placeholder="Nama Ketua KDKMP Kasih" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdKetua')"><img id="prevKetua" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needKetua" checked onchange="saveNeed()"> Tampil</label></div><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">Cap Ketua</p><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'capKetua')"><img id="prevCapKetua" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needCapKetua" checked onchange="saveNeed()"> Tampil</label></div></div></div>
-<div class="border-2 border-green-300 bg-green-50 p-2 rounded-xl"><p class="font-bold text-[10px]">3️⃣ PENGAWAS KDKMP KASIH</p><div class="grid grid-cols-2 gap-2 mt-1"><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">TTD Pengawas</p><input id="namaPengawas" placeholder="Nama Pengawas" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdPengawas')"><img id="prevPengawas" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needPengawas" checked onchange="saveNeed()"> Tampil</label></div><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">Cap Pengawas</p><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'capPengawas')"><img id="prevCapPengawas" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needCapPengawas" checked onchange="saveNeed()"> Tampil</label></div></div></div>
-<div class="border-2 border-red-200 bg-red-50 p-2 rounded-xl"><p class="font-bold text-[10px]">4️⃣ MANAJER KDKMP KASIH</p><div class="grid grid-cols-2 gap-2 mt-1"><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">TTD Manajer</p><input id="namaManajer" placeholder="Nama Manajer KDKMP Kasih" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdManajer')"><img id="prevManajer" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needManajer" checked onchange="saveNeed()"> Tampil</label></div><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">Cap Koperasi Kasih</p><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'capKoperasi')"><img id="prevCap" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needCap" checked onchange="saveNeed()"> Tampil</label></div></div></div>
+<div class="border-2 border-orange-300 bg-orange-50 p-2 rounded-xl"><p class="font-bold text-[10px]">1️⃣ KADES DESA KASIH</p><div class="grid grid-cols-2 gap-2 mt-1"><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">TTD Kades</p><input id="namaKades" placeholder="Nama Kades" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdKades')"><img id="prevKades" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needKades" checked onchange="saveNeed()"> Tampil</label></div><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">Cap Kades</p><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'capKades')"><img id="prevCapKades" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needCapKades" checked onchange="saveNeed()"> Tampil</label></div></div></div>
+<div class="border-2 border-blue-300 bg-blue-50 p-2 rounded-xl"><p class="font-bold text-[10px]">2️⃣ KETUA KDKMP KASIH</p><div class="grid grid-cols-2 gap-2 mt-1"><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">TTD Ketua</p><input id="namaKetua" placeholder="Nama Ketua" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdKetua')"><img id="prevKetua" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needKetua" checked onchange="saveNeed()"> Tampil</label></div><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">Cap Ketua</p><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'capKetua')"><img id="prevCapKetua" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needCapKetua" checked onchange="saveNeed()"> Tampil</label></div></div></div>
+<div class="border-2 border-green-300 bg-green-50 p-2 rounded-xl"><p class="font-bold text-[10px]">3️⃣ PENGAWAS</p><div class="grid grid-cols-2 gap-2 mt-1"><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">TTD Pengawas</p><input id="namaPengawas" placeholder="Nama Pengawas" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdPengawas')"><img id="prevPengawas" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needPengawas" checked onchange="saveNeed()"> Tampil</label></div><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">Cap Pengawas</p><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'capPengawas')"><img id="prevCapPengawas" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needCapPengawas" checked onchange="saveNeed()"> Tampil</label></div></div></div>
+<div class="border-2 border-red-200 bg-red-50 p-2 rounded-xl"><p class="font-bold text-[10px]">4️⃣ MANAJER</p><div class="grid grid-cols-2 gap-2 mt-1"><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">TTD Manajer</p><input id="namaManajer" placeholder="Nama Manajer" class="w-full border rounded p-1 text-[8px] mt-1" oninput="saveNames()"><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'ttdManajer')"><img id="prevManajer" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needManajer" checked onchange="saveNeed()"> Tampil</label></div><div class="bg-white p-2 rounded border"><p class="text-[8px] font-bold">Cap Koperasi</p><input type="file" accept="image/*" class="text-[7px] w-full mt-1" onchange="saveImg(this,'capKoperasi')"><img id="prevCap" class="hidden w-full h-10 object-contain border"><label class="text-[7px]"><input type="checkbox" id="needCap" checked onchange="saveNeed()"> Tampil</label></div></div></div>
 </div>
-<div class="mt-4 border-2 border-dashed border-slate-300 rounded-xl p-3 bg-slate-50">
-<p class="font-bold text-[10px] text-center">👁️ PREVIEW POSISI TTD TENGAH (2/3/4)</p>
-<div id="previewTTDPos" class="mt-2"></div>
-</div>
+<div class="mt-3 border-2 border-dashed p-2 rounded-xl bg-slate-50"><p class="font-bold text-[10px] text-center">👁️ PREVIEW TTD TENGAH</p><div id="previewTTDPos" class="mt-2"></div></div>
 </div>
 <div class="bg-white border-2 border-slate-300 rounded-xl p-3">
-<p class="font-bold text-[11px] text-[#BE1E2D]">⚙️ FOOTER - ALAMAT LENGKAP DESA KASIH</p>
+<p class="font-bold text-[11px] text-[#BE1E2D]">⚙️ FOOTER + FOTO BUKTI SETTING</p>
 <div class="mt-2 space-y-2">
-<div class="flex gap-2 items-start"><label class="flex items-center gap-1 text-[10px] font-bold shrink-0"><input type="checkbox" id="needFooter" checked onchange="saveFooter()"> Footer ON</label><textarea id="footerText" class="flex-1 border rounded p-2 text-[10px] h-12" oninput="saveFooter()">KDKMP Desa Kasih - Kec. Kertanegara - Kab. Purbalingga 53354 | {tanggal} | Hari ke-{hari} | Mulai {mulai}</textarea></div>
-<div class="flex flex-wrap gap-3 text-[10px]"><label><input type="checkbox" id="includeCatatan" checked onchange="saveFooter()"> Catatan</label><label><input type="checkbox" id="catatanBelow" checked onchange="saveFooter()"> Di bawah list</label><label><input type="checkbox" id="catatanSeparateSheet" onchange="saveFooter()"> Pisah lembar</label><label><input type="checkbox" id="includeAnalisis" checked onchange="saveFooter()"> Analisis</label></div>
+<div class="flex gap-2 items-start"><label class="flex items-center gap-1 text-[10px] font-bold shrink-0"><input type="checkbox" id="needFooter" checked onchange="saveFooter()"> Footer ON</label><textarea id="footerText" class="flex-1 border rounded p-2 text-[10px] h-12" oninput="saveFooter()">KDKMP Desa Kasih - Kec. Kertanegara - Kab. Purbalingga 53354 | {tanggal} | Hari ke-{hari}</textarea></div>
+<div class="flex flex-wrap gap-3 text-[10px]"><label><input type="checkbox" id="includeCatatan" checked onchange="saveFooter()"> Catatan</label><label><input type="checkbox" id="catatanBelow" checked onchange="saveFooter()"> Di bawah list</label><label><input type="checkbox" id="includeFoto" checked onchange="saveFooter()"> Foto bukti ikut cetak</label><label><input type="checkbox" id="includeAnalisis" checked onchange="saveFooter()"> Analisis</label></div>
 <div id="footerPreview" class="text-[9px] bg-yellow-50 border p-2 rounded"></div>
 </div>
 </div>
 </div>
 
 <div id="downloadSection" class="bg-white border-2 border-[#BE1E2D]/30 rounded-xl p-4 shadow">
-<p class="font-bold text-[12px] text-[#BE1E2D]">📥 CETAK & DOWNLOAD - DESA KASIH - KERTANEGARA 53354</p>
+<p class="font-bold text-[12px] text-[#BE1E2D]">📥 CETAK + PREVIEW - DESA KASIH + FOTO BUKTI RAPI</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
 <div class="border rounded-xl p-3 bg-red-50">
-<p class="font-bold text-[11px] text-[#BE1E2D]">📄 PDF - Desa Kasih</p>
+<p class="font-bold text-[11px] text-[#BE1E2D]">📄 PDF + Foto</p>
 <div class="grid grid-cols-2 gap-2 mt-2">
-<button onclick="previewPDF(false)" class="bg-white border-2 border-[#BE1E2D] text-[#BE1E2D] py-2.5 rounded-lg text-[9px] font-bold">👁️ Preview PDF Semua</button>
-<button onclick="exportPDF(false)" class="bg-[#BE1E2D] text-white py-2.5 rounded-lg text-[10px] font-bold">📄 PDF Semua</button>
-<button onclick="previewPDF(true)" class="bg-white border-2 border-amber-600 text-amber-700 py-2.5 rounded-lg text-[9px] font-bold">👁️ Preview Tung</button>
-<button onclick="exportPDF(true)" class="bg-amber-600 text-white py-2.5 rounded-lg text-[10px] font-bold">⚠️ PDF Tung</button>
+<button onclick="previewPDF(false)" class="bg-white border-2 border-[#BE1E2D] text-[#BE1E2D] py-2.5 rounded-lg text-[9px] font-bold">👁️ Preview PDF + Foto</button>
+<button onclick="exportPDF(false)" class="bg-[#BE1E2D] text-white py-2.5 rounded-lg text-[10px] font-bold">📄 PDF Semua + Foto</button>
+<button onclick="previewPDF(true)" class="bg-white border-2 border-amber-600 text-amber-700 py-2.5 rounded-lg text-[9px] font-bold">👁️ Preview Tung + Foto</button>
+<button onclick="exportPDF(true)" class="bg-amber-600 text-white py-2.5 rounded-lg text-[10px] font-bold">⚠️ PDF Tung + Foto</button>
 </div>
 </div>
 <div class="border rounded-xl p-3 bg-blue-50">
-<p class="font-bold text-[11px] text-blue-700">📝 WORD - Desa Kasih (Editable)</p>
+<p class="font-bold text-[11px] text-blue-700">📝 WORD + Foto (Editable)</p>
 <div class="grid grid-cols-2 gap-2 mt-2">
-<button onclick="previewWord(false)" class="bg-white border-2 border-blue-700 text-blue-700 py-2.5 rounded-lg text-[9px] font-bold">👁️ Preview Word</button>
-<button onclick="exportWord(false)" class="bg-blue-700 text-white py-2.5 rounded-lg text-[10px] font-bold">📝 Word Semua</button>
-<button onclick="previewWord(true)" class="bg-white border-2 border-slate-700 text-slate-700 py-2.5 rounded-lg text-[9px] font-bold">👁️ Preview Tung</button>
-<button onclick="exportWord(true)" class="bg-slate-700 text-white py-2.5 rounded-lg text-[10px] font-bold">📝 Word Tung</button>
+<button onclick="previewWord(false)" class="bg-white border-2 border-blue-700 text-blue-700 py-2.5 rounded-lg text-[9px] font-bold">👁️ Preview Word + Foto</button>
+<button onclick="exportWord(false)" class="bg-blue-700 text-white py-2.5 rounded-lg text-[10px] font-bold">📝 Word + Foto</button>
+<button onclick="previewWord(true)" class="bg-white border-2 border-slate-700 text-slate-700 py-2.5 rounded-lg text-[9px] font-bold">👁️ Preview Tung + Foto</button>
+<button onclick="exportWord(true)" class="bg-slate-700 text-white py-2.5 rounded-lg text-[10px] font-bold">📝 Word Tung + Foto</button>
 </div>
 </div>
 </div>
+<p class="text-[8px] text-slate-500 mt-2">💡 Foto otomatis dikompres max 800px, di PDF/Word jadi 2 kolom rapi dengan keterangan, ukuran cetak pas gak pecah</p>
 </div>
 </div>
 
 <script>
-let currentExplainText="";
+let currentExplainText=""; let currentFotoTarget={day:null, idx:null};
 const EXPLANATIONS={"Melaporkan keberadaan kepada Kepala Desa":{maksud:"Lapor resmi",tujuan:"Agar Kades dukung",cara:"Bawa SK"}};
 const baseDays=[
 {d:1,t:"Laporan Diri Tingkat Desa",m:"DESA",tasks:["Melaporkan keberadaan kepada Kepala Desa","Melaporkan kepada Lurah","Serah terima penugasan kepada Pengurus","Perkenalkan diri sebagai Manajer","Catat kontak Kades","Melaporkan kepada Babinsa","Catat kontak babinsa","Catat kontak ketua pengurus"]},
@@ -167,22 +180,23 @@ function getCatatan(d){return localStorage.getItem('catatan_'+d)||'';}
 function isCatatanActive(d){return localStorage.getItem('catatan_active_'+d)!=='false';}
 function getCustom(d){return JSON.parse(localStorage.getItem('custom_'+d)||'[]');}
 function isChecked(d,i){return localStorage.getItem('chk_'+d+'_'+i)==='1';}
+function getFoto(d,i){return JSON.parse(localStorage.getItem('foto_'+d+'_'+i)||'null');}
 function getStart(){const s=localStorage.getItem('kdkmp_startDate'); if(s){const d=new Date(s); d.setHours(0,0,0,0); return d;} const def=new Date('2026-10-01T00:00:00'); def.setHours(0,0,0,0); localStorage.setItem('kdkmp_startDate',def.toISOString()); return def;}
 function setStartDate(val){if(!val) return; const d=new Date(val); d.setHours(0,0,0,0); localStorage.setItem('kdkmp_startDate',d.toISOString()); render();}
 function getHariIni(){const s=getStart(); const now=new Date(); now.setHours(0,0,0,0); return Math.max(1,Math.min(31,Math.floor((now-s)/86400000)+1));}
 function getTanggalForHari(h){const s=getStart(); const d=new Date(s); d.setDate(s.getDate()+(h-1)); return d;}
 function formatTanggalIndo(date){return date.toLocaleDateString('id-ID',{weekday:'long', day:'numeric', month:'long', year:'numeric'});}
 function switchTab(n){document.getElementById('content1').classList.toggle('hidden',n!==1); document.getElementById('content2').classList.toggle('hidden',n!==2); document.getElementById('content3').classList.toggle('hidden',n!==3); ['tab1','tab2','tab3'].forEach((id,i)=>{document.getElementById(id).className=(i+1===n?'bg-white text-[#BE1E2D] shadow':'bg-black/20 text-white')+' px-2 py-1.5 rounded text-[8px] font-bold';});}
-function scrollToHari(d){switchTab(1); setTimeout(()=>{const el=document.getElementById('hari-'+d); if(el){const y=el.getBoundingClientRect().top+window.pageYOffset-160; window.scrollTo({top:y,behavior:'smooth'}); el.classList.add('ring-4','ring-yellow-400'); setTimeout(()=>el.classList.remove('ring-4','ring-yellow-400'),1500);}},100);}
+function scrollToHari(d){switchTab(1); setTimeout(()=>{const el=document.getElementById('hari-'+d); if(el){const y=el.getBoundingClientRect().top+window.pageYOffset-160; window.scrollTo({top:y,behavior:'smooth'});}},100);}
 function saveNeed(){['Manajer','Kades','Cap','CapKades','Ketua','CapKetua','Pengawas','CapPengawas'].forEach(k=>{const el=document.getElementById('need'+k); if(el) localStorage.setItem('need'+k,el.checked);}); renderTTDPreview();}
 function loadNeed(){['Manajer','Kades','Cap','CapKades','Ketua','CapKetua','Pengawas','CapPengawas'].forEach(k=>{const v=localStorage.getItem('need'+k); const el=document.getElementById('need'+k); if(el){if(v!==null) el.checked=v==='true';}});}
 function saveNames(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const el=document.getElementById('nama'+k); if(el) localStorage.setItem('nama'+k,el.value);}); renderTTDPreview();}
 function loadNames(){['Manajer','Kades','Ketua','Pengawas'].forEach(k=>{const v=localStorage.getItem('nama'+k); const el=document.getElementById('nama'+k); if(v&&el) el.value=v;});}
 function saveImg(input,key){const f=input.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>{localStorage.setItem(key,e.target.result); loadImgs(); renderTTDPreview();}; r.readAsDataURL(f);}
 function loadImgs(){const map={'ttdManajer':'prevManajer','ttdKades':'prevKades','capKoperasi':'prevCap','capKades':'prevCapKades','ttdKetua':'prevKetua','capKetua':'prevCapKetua','ttdPengawas':'prevPengawas','capPengawas':'prevCapPengawas'}; Object.entries(map).forEach(([k,el])=>{const d=localStorage.getItem(k); const e=document.getElementById(el); if(d&&e){e.src=d; e.classList.remove('hidden');}});}
-function saveFooter(){localStorage.setItem('custom_footer_active',document.getElementById('needFooter').checked); localStorage.setItem('custom_footer_text',document.getElementById('footerText').value); localStorage.setItem('includeCatatan',document.getElementById('includeCatatan').checked); localStorage.setItem('catatanBelow',document.getElementById('catatanBelow').checked); localStorage.setItem('includeAnalisis',document.getElementById('includeAnalisis').checked); localStorage.setItem('catatanSeparateSheet',document.getElementById('catatanSeparateSheet').checked); updateFooterPreview();}
-function loadFooter(){const act=localStorage.getItem('custom_footer_active'); const txt=localStorage.getItem('custom_footer_text'); if(act!==null) document.getElementById('needFooter').checked=act==='true'; if(txt){document.getElementById('footerText').value=txt;} else {document.getElementById('footerText').value="KDKMP Desa Kasih - Kec. Kertanegara - Kab. Purbalingga 53354 | {tanggal} | Hari ke-{hari} | Mulai {mulai}";} const incC=localStorage.getItem('includeCatatan'); if(incC!==null) document.getElementById('includeCatatan').checked=incC==='true'; const below=localStorage.getItem('catatanBelow'); if(below!==null) document.getElementById('catatanBelow').checked=below==='true'; else document.getElementById('catatanBelow').checked=true; const incA=localStorage.getItem('includeAnalisis'); if(incA!==null) document.getElementById('includeAnalisis').checked=incA==='true'; const sep=localStorage.getItem('catatanSeparateSheet'); if(sep!==null) document.getElementById('catatanSeparateSheet').checked=sep==='true'; updateFooterPreview();}
-function updateFooterPreview(){let txt=document.getElementById('footerText').value.replace(/{tanggal}/g,new Date().toLocaleDateString('id-ID')).replace(/{hari}/g,getHariIni()).replace(/{mulai}/g,getStart().toLocaleDateString('id-ID')); const active=document.getElementById('needFooter').checked; document.getElementById('footerPreview').innerHTML="Preview: <b>"+(active?txt:"OFF")+"</b>";}
+function saveFooter(){localStorage.setItem('custom_footer_active',document.getElementById('needFooter').checked); localStorage.setItem('custom_footer_text',document.getElementById('footerText').value); localStorage.setItem('includeCatatan',document.getElementById('includeCatatan').checked); localStorage.setItem('catatanBelow',document.getElementById('catatanBelow').checked); localStorage.setItem('includeFoto',document.getElementById('includeFoto').checked); localStorage.setItem('includeAnalisis',document.getElementById('includeAnalisis').checked); updateFooterPreview();}
+function loadFooter(){const act=localStorage.getItem('custom_footer_active'); const txt=localStorage.getItem('custom_footer_text'); if(act!==null) document.getElementById('needFooter').checked=act==='true'; if(txt) document.getElementById('footerText').value=txt; else document.getElementById('footerText').value="KDKMP Desa Kasih - Kec. Kertanegara - Kab. Purbalingga 53354 | {tanggal} | Hari ke-{hari}"; const incC=localStorage.getItem('includeCatatan'); if(incC!==null) document.getElementById('includeCatatan').checked=incC==='true'; const below=localStorage.getItem('catatanBelow'); if(below!==null) document.getElementById('catatanBelow').checked=below==='true'; else document.getElementById('catatanBelow').checked=true; const incF=localStorage.getItem('includeFoto'); if(incF!==null) document.getElementById('includeFoto').checked=incF==='true'; else document.getElementById('includeFoto').checked=true; const incA=localStorage.getItem('includeAnalisis'); if(incA!==null) document.getElementById('includeAnalisis').checked=incA==='true'; updateFooterPreview();}
+function updateFooterPreview(){let txt=document.getElementById('footerText').value.replace(/{tanggal}/g,new Date().toLocaleDateString('id-ID')).replace(/{hari}/g,getHariIni()).replace(/{mulai}/g,getStart().toLocaleDateString('id-ID')); const active=document.getElementById('needFooter').checked; document.getElementById('footerPreview').innerHTML="Preview: <b>"+(active?txt:"OFF")+"</b> | Foto: "+(document.getElementById('includeFoto').checked?"ON":"OFF");}
 function editTask(d,i){const cur=getEdited()[d+'_'+i]||baseDays.find(x=>x.d===d).tasks[i]; const baru=prompt('Edit:',cur); if(!baru||!baru.trim()) return; const ed=getEdited(); ed[d+'_'+i]=baru.trim(); localStorage.setItem('edited_tasks',JSON.stringify(ed)); render();}
 function deleteTask(d,i){if(!confirm('Hapus?')) return; const del=getDeleted(); del.push(d+'_'+i); localStorage.setItem('deleted_tasks',JSON.stringify(del)); render();}
 function setAda(d,i,val){if(getAda(d,i)===val){localStorage.removeItem('ada_'+d+'_'+i);} else {localStorage.setItem('ada_'+d+'_'+i,val);} render();}
@@ -190,157 +204,141 @@ function addCustomTask(d){const inp=document.getElementById('addInput-'+d); cons
 function deleteCustom(d,idx){const cur=getCustom(d); cur.splice(idx,1); localStorage.setItem('custom_'+d,JSON.stringify(cur)); render();}
 function toggleCatatan(d){localStorage.setItem('catatan_active_'+d, isCatatanActive(d)?'false':'true'); render();}
 function saveCatatan(d){localStorage.setItem('catatan_'+d,document.getElementById('catatan-'+d).value);}
-function showExplain(d,i){const task=getEdited()[d+'_'+i]||baseDays.find(x=>x.d===d).tasks[i]; const exp=EXPLANATIONS[task]||{maksud:"Tugas Hari "+d,tujuan:"Target",cara:"Kerjakan SOP"}; document.getElementById('modalTitle').textContent=task; document.getElementById('modalSub').textContent="Hari "+d; document.getElementById('modalContent').innerHTML="<div class='bg-blue-50 border-l-4 border-blue-500 p-2 rounded'><b>MAKSUD:</b> "+exp.maksud+"</div>"; currentExplainText=task; document.getElementById('explainModal').classList.remove('hidden');}
+
+// FOTO BUKTI FUNCTIONS - KOMPRES OTOMATIS
+function openFotoModal(d,i){
+  currentFotoTarget={day:d, idx:i};
+  const task=getEdited()[d+'_'+i]||baseDays.find(x=>x.d===d).tasks[i];
+  document.getElementById('fotoTaskName').textContent="Hari "+d+" - "+task;
+  const existing=getFoto(d,i);
+  if(existing){
+    document.getElementById('fotoCaption').value=existing.caption||"";
+    document.getElementById('fotoPreviewImg').src=existing.data;
+    document.getElementById('fotoPreviewBox').classList.remove('hidden');
+    document.getElementById('fotoSizeInfo').textContent="Foto sudah ada - ganti jika perlu";
+  } else {
+    document.getElementById('fotoCaption').value="";
+    document.getElementById('fotoPreviewBox').classList.add('hidden');
+  }
+  document.getElementById('fotoModal').classList.remove('hidden');
+}
+function closeFotoModal(){document.getElementById('fotoModal').classList.add('hidden'); document.getElementById('fotoInput').value="";}
+
+document.getElementById('fotoInput').addEventListener('change',function(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement('canvas');
+      const maxW=800;
+      let w=img.width, h=img.height;
+      if(w>maxW){ h=h*(maxW/w); w=maxW; }
+      canvas.width=w; canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      const compressed=canvas.toDataURL('image/jpeg',0.7);
+      document.getElementById('fotoPreviewImg').src=compressed;
+      document.getElementById('fotoPreviewBox').classList.remove('hidden');
+      const origKB=Math.round(file.size/1024); const compKB=Math.round(compressed.length*0.75/1024);
+      document.getElementById('fotoSizeInfo').textContent="Asli: "+origKB+"KB → Kompres: "+compKB+"KB (800px, rapi untuk cetak)";
+      document.getElementById('fotoPreviewImg').dataset.compressed=compressed;
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function saveFoto(){
+  const caption=document.getElementById('fotoCaption').value.trim();
+  const imgEl=document.getElementById('fotoPreviewImg');
+  const data=imgEl.dataset.compressed||imgEl.src;
+  if(!data || data.includes('container')){alert('Pilih foto dulu'); return;}
+  const obj={data:data, caption:caption||"Dokumentasi kegiatan Desa Kasih", date:new Date().toISOString()};
+  localStorage.setItem('foto_'+currentFotoTarget.day+'_'+currentFotoTarget.idx, JSON.stringify(obj));
+  closeFotoModal();
+  render();
+}
+function deleteFoto(d,i){if(!confirm('Hapus foto bukti ini?')) return; localStorage.removeItem('foto_'+d+'_'+i); render();}
+function showExplain(d,i){const task=getEdited()[d+'_'+i]||baseDays.find(x=>x.d===d).tasks[i]; document.getElementById('modalTitle').textContent=task; document.getElementById('modalSub').textContent="Hari "+d; document.getElementById('modalContent').innerHTML="<div class='bg-blue-50 border-l-4 border-blue-500 p-2 rounded'><b>Tugas:</b> "+task+"</div>"; currentExplainText=task; document.getElementById('explainModal').classList.remove('hidden');}
 function closeExplain(){document.getElementById('explainModal').classList.add('hidden');}
 function copyExplain(){navigator.clipboard.writeText(currentExplainText).then(()=>alert('Dicopy'));}
 function openPreview(){document.getElementById('previewModal').classList.remove('hidden');}
 function closePreview(){document.getElementById('previewModal').classList.add('hidden');}
-function getTTDData(){return [{id:'Kades', label:'KEPALA DESA KASIH', short:'Kades', nama:localStorage.getItem('namaKades')||'Kepala Desa Kasih', ttd:localStorage.getItem('ttdKades'), cap:localStorage.getItem('capKades'), need:localStorage.getItem('needKades')!=='false', needCap:localStorage.getItem('needCapKades')!=='false'}, {id:'Ketua', label:'KETUA KDKMP KASIH', short:'Ketua', nama:localStorage.getItem('namaKetua')||'Ketua', ttd:localStorage.getItem('ttdKetua'), cap:localStorage.getItem('capKetua'), need:localStorage.getItem('needKetua')!=='false', needCap:localStorage.getItem('needCapKetua')!=='false'}, {id:'Pengawas', label:'PENGAWAS KDKMP KASIH', short:'Pengawas', nama:localStorage.getItem('namaPengawas')||'Pengawas', ttd:localStorage.getItem('ttdPengawas'), cap:localStorage.getItem('capPengawas'), need:localStorage.getItem('needPengawas')!=='false', needCap:localStorage.getItem('needCapPengawas')!=='false'}, {id:'Manajer', label:'MANAJER KDKMP KASIH', short:'Manajer', nama:localStorage.getItem('namaManajer')||'Manajer', ttd:localStorage.getItem('ttdManajer'), cap:localStorage.getItem('capKoperasi'), need:localStorage.getItem('needManajer')!=='false', needCap:localStorage.getItem('needCap')!=='false'}].filter(x=>x.need);}
+function getTTDData(){return [{id:'Kades', label:'KEPALA DESA KASIH', nama:localStorage.getItem('namaKades')||'Kepala Desa Kasih', ttd:localStorage.getItem('ttdKades'), need:localStorage.getItem('needKades')!=='false'}, {id:'Ketua', label:'KETUA KDKMP KASIH', nama:localStorage.getItem('namaKetua')||'Ketua', ttd:localStorage.getItem('ttdKetua'), need:localStorage.getItem('needKetua')!=='false'}, {id:'Pengawas', label:'PENGAWAS', nama:localStorage.getItem('namaPengawas')||'Pengawas', ttd:localStorage.getItem('ttdPengawas'), need:localStorage.getItem('needPengawas')!=='false'}, {id:'Manajer', label:'MANAJER KDKMP KASIH', nama:localStorage.getItem('namaManajer')||'Manajer', ttd:localStorage.getItem('ttdManajer'), need:localStorage.getItem('needManajer')!=='false'}].filter(x=>x.need);}
 function renderTTDPreview(){
-  const data=getTTDData();
-  const container=document.getElementById('previewTTDPos');
-  if(!container) return;
+  const data=getTTDData(); const c=document.getElementById('previewTTDPos'); if(!c) return;
   let html="<div class='ttd-center'>";
-  if(data.length===0){html+="<p class='text-[9px] text-center text-slate-400'>Tidak ada TTD aktif</p>";}
-  else if(data.length===2){
-    html+="<p class='text-[8px] text-center font-bold text-slate-600 mb-2'>Layout 2 TTD: Tengah - Kades & Manajer / Ketua & Manajer</p><div class='flex justify-center gap-6'><div class='flex gap-6 w-full max-w-[520px] justify-center'>";
-    data.slice(0,2).forEach(b=>{html+="<div class='flex-1 border-2 bg-white rounded-xl p-3 text-center'><p class='font-black text-[9px] text-[#BE1E2D]'>"+b.label+"</p><div class='h-16 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-12'>":"<span class='text-[7px]'>TTD</span>")+"</div><p class='font-bold text-[10px] mt-1'>"+b.nama+"</p></div>";});
-    html+="</div></div>";
-  } else if(data.length===3){
-    html+="<p class='text-[8px] text-center font-bold text-slate-600 mb-2'>Layout 3 TTD: Kades, Ketua, Manajer - Tengah</p><div class='flex justify-center'><div class='grid grid-cols-3 gap-4 w-full max-w-[640px]'>";
-    let ordered=[]; const kades=data.find(x=>x.id==='Kades'); const ketua=data.find(x=>x.id==='Ketua'); const manajer=data.find(x=>x.id==='Manajer'); const pengawas=data.find(x=>x.id==='Pengawas');
-    if(kades) ordered.push(kades); if(ketua) ordered.push(ketua); if(manajer) ordered.push(manajer); if(ordered.length<3 && pengawas) ordered.push(pengawas);
-    ordered.slice(0,3).forEach(b=>{html+="<div class='border-2 bg-white rounded-xl p-2 text-center'><p class='font-black text-[8px] text-[#BE1E2D]'>"+b.label+"</p><div class='h-14 border-2 border-dashed mt-1 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-10'>":"<span class='text-[7px]'>TTD</span>")+"</div><p class='font-bold text-[9px] mt-1'>"+b.nama+"</p></div>";});
-    html+="</div></div>";
-  } else {
-    html+="<p class='text-[8px] text-center font-bold text-slate-600 mb-2'>Layout 4 TTD: Atas Kades+Pengawas, Bawah Ketua+Manajer - Tengah</p><div class='flex flex-col items-center gap-3'><div class='grid grid-cols-2 gap-4 w-full max-w-[520px]'>";
-    const kades=data.find(x=>x.id==='Kades'); const pengawas=data.find(x=>x.id==='Pengawas');
-    [kades, pengawas].forEach(b=>{ if(!b) return; html+="<div class='border-2 bg-white rounded-xl p-2 text-center'><p class='font-black text-[8px] text-[#BE1E2D]'>"+b.label+"</p><div class='h-14 border-2 border-dashed mt-1 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-10'>":"<span class='text-[7px]'>TTD</span>")+"</div><p class='font-bold text-[9px] mt-1'>"+b.nama+"</p></div>"; });
-    html+="</div><div class='grid grid-cols-2 gap-4 w-full max-w-[520px]'>";
-    const ketua=data.find(x=>x.id==='Ketua'); const manajer=data.find(x=>x.id==='Manajer');
-    [ketua, manajer].forEach(b=>{ if(!b) return; html+="<div class='border-2 bg-white rounded-xl p-2 text-center'><p class='font-black text-[8px] text-[#BE1E2D]'>"+b.label+"</p><div class='h-14 border-2 border-dashed mt-1 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-10'>":"<span class='text-[7px]'>TTD</span>")+"</div><p class='font-bold text-[9px] mt-1'>"+b.nama+"</p></div>"; });
-    html+="</div></div>";
-  }
-  html+="</div>"; container.innerHTML=html;
+  if(data.length===2){html+="<div class='flex justify-center gap-6'><div class='flex gap-6 w-full max-w-[520px] justify-center'>"; data.slice(0,2).forEach(b=>{html+="<div class='flex-1 border-2 bg-white rounded-xl p-3 text-center'><p class='font-black text-[9px] text-[#BE1E2D]'>"+b.label+"</p><div class='h-16 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-12'>":"TTD")+"</div><p class='font-bold text-[10px] mt-1'>"+b.nama+"</p></div>";}); html+="</div></div>";}
+  else if(data.length===3){html+="<div class='flex justify-center'><div class='grid grid-cols-3 gap-4 w-full max-w-[640px]'>"; data.slice(0,3).forEach(b=>{html+="<div class='border-2 bg-white rounded-xl p-2 text-center'><p class='font-black text-[8px] text-[#BE1E2D]'>"+b.label+"</p><div class='h-14 border-2 border-dashed mt-1 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-10'>":"TTD")+"</div><p class='font-bold text-[9px] mt-1'>"+b.nama+"</p></div>";}); html+="</div></div>";}
+  else {html+="<div class='flex flex-col items-center gap-3'><div class='grid grid-cols-2 gap-4 w-full max-w-[520px]'>"; const kades=data.find(x=>x.id==='Kades'); const pengawas=data.find(x=>x.id==='Pengawas'); [kades,pengawas].forEach(b=>{ if(!b) return; html+="<div class='border-2 bg-white rounded-xl p-2 text-center'><p class='font-black text-[8px] text-[#BE1E2D]'>"+b.label+"</p><div class='h-14 border-2 border-dashed mt-1 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-10'>":"TTD")+"</div><p class='font-bold text-[9px] mt-1'>"+b.nama+"</p></div>";}); html+="</div><div class='grid grid-cols-2 gap-4 w-full max-w-[520px]'>"; const ketua=data.find(x=>x.id==='Ketua'); const manajer=data.find(x=>x.id==='Manajer'); [ketua,manajer].forEach(b=>{ if(!b) return; html+="<div class='border-2 bg-white rounded-xl p-2 text-center'><p class='font-black text-[8px] text-[#BE1E2D]'>"+b.label+"</p><div class='h-14 border-2 border-dashed mt-1 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-10'>":"TTD")+"</div><p class='font-bold text-[9px] mt-1'>"+b.nama+"</p></div>";}); html+="</div></div>";}
+  html+="</div>"; c.innerHTML=html;
 }
 function buildBeautifulReportHTML(onlyT){
-  const start=getStart();
-  const footerActive=document.getElementById('needFooter').checked;
-  const footerText=document.getElementById('footerText').value.replace(/{tanggal}/g,new Date().toLocaleDateString('id-ID')).replace(/{hari}/g,getHariIni()).replace(/{mulai}/g,start.toLocaleDateString('id-ID'));
-  const includeCatatan=document.getElementById('includeCatatan').checked;
-  const catatanBelow=document.getElementById('catatanBelow').checked;
-  const catatanSeparate=document.getElementById('catatanSeparateSheet').checked;
-  const includeAnalisis=document.getElementById('includeAnalisis').checked;
-  let done=0,total=0; baseDays.forEach(d=>{d.tasks.forEach((_,i)=>{if(!getDeleted().includes(d.d+'_'+i)){total++; if(isChecked(d.d,i)) done++;}});});
-  const persen=total?Math.round(done/total*100):0;
-  const ttdData=getTTDData();
-  let html="<div class='bg-white text-black p-4 md:p-6 font-sans'>";
-  html+="<div class='border-4 border-[#BE1E2D] rounded-xl overflow-hidden'>";
-  html+="<div class='bg-[#BE1E2D] text-white p-4'><p class='font-black text-[15px] leading-tight'>KOPERASI DESA MERAH PUTIH - KDKMP DESA KASIH</p><p class='text-[11px] font-bold'>Desa Kasih - Kec. Kertanegara - Kab. Purbalingga 53354</p><p class='text-[9px] mt-1 bg-white/20 inline-block px-2 py-0.5 rounded'>"+(onlyT?"LAPORAN TUNGGAKAN":"LAPORAN LENGKAP 30 HARI")+" | Mulai: "+formatTanggalIndo(start)+" | Progress: "+persen+"%</p></div>";
+  const start=getStart(); const footerActive=document.getElementById('needFooter').checked; const footerText=document.getElementById('footerText').value.replace(/{tanggal}/g,new Date().toLocaleDateString('id-ID')).replace(/{hari}/g,getHariIni()).replace(/{mulai}/g,start.toLocaleDateString('id-ID')); const includeCatatan=document.getElementById('includeCatatan').checked; const catatanBelow=document.getElementById('catatanBelow').checked; const includeFoto=document.getElementById('includeFoto').checked; let done=0,total=0; baseDays.forEach(d=>{d.tasks.forEach((_,i)=>{if(!getDeleted().includes(d.d+'_'+i)){total++; if(isChecked(d.d,i)) done++;}});}); const persen=total?Math.round(done/total*100):0; const ttdData=getTTDData();
+  let html="<div class='bg-white text-black p-4 md:p-6 font-sans'><div class='border-4 border-[#BE1E2D] rounded-xl overflow-hidden'><div class='bg-[#BE1E2D] text-white p-4'><p class='font-black text-[15px]'>KDKMP DESA KASIH - KEC. KERTANEGARA - PURBALINGGA 53354</p><p class='text-[10px]'>Desa Kasih - Kec. Kertanegara - Kab. Purbalingga 53354 | Progress "+persen+"% | "+formatTanggalIndo(start)+" - "+getTanggalForHari(31).toLocaleDateString('id-ID')+"</p></div>";
   baseDays.forEach(day=>{
     if(onlyT && day.d>=getHariIni()) return;
-    const tgl=getTanggalForHari(day.d);
-    let tasksHTML=[]; let hasTasks=false;
+    const tgl=getTanggalForHari(day.d); let tasksHTML=[]; let hasTasks=false; let fotoHTML="";
+    let fotoCount=0;
     day.tasks.forEach((orig,i)=>{
       if(getDeleted().includes(day.d+'_'+i)) return;
-      const chk=isChecked(day.d,i);
-      if(onlyT && chk) return;
-      hasTasks=true;
-      const name=getEdited()[day.d+'_'+i]||orig;
-      const ada=getAda(day.d,i);
-      tasksHTML.push("<tr class='"+(chk?"bg-green-50":"")+"'><td class='border p-1.5 text-[9px] w-8 text-center'>"+(chk?"✓":"")+"</td><td class='border p-1.5 text-[10px]'>"+name+"</td><td class='border p-1.5 text-[8px] text-center w-14'>"+(ada||"-")+"</td><td class='border p-1.5 text-[8px] w-14 text-center'>"+(chk?"SELESAI":"BELUM")+"</td></tr>");
+      const chk=isChecked(day.d,i); if(onlyT && chk) return; hasTasks=true;
+      const name=getEdited()[day.d+'_'+i]||orig; const ada=getAda(day.d,i); const foto=getFoto(day.d,i);
+      tasksHTML.push("<tr class='"+(chk?"bg-green-50":"")+"'><td class='border p-1.5 text-[9px] w-8 text-center'>"+(chk?"✓":"")+"</td><td class='border p-1.5 text-[10px]'>"+name+(foto?"<br><span class='text-[7px] bg-blue-100 px-1 rounded'>📷 Ada foto bukti</span>":"")+"</td><td class='border p-1.5 text-[8px] text-center'>"+(ada||"-")+"</td><td class='border p-1.5 text-[8px] text-center'>"+(chk?"SELESAI":"BELUM")+"</td></tr>");
+      if(foto && includeFoto){ fotoCount++; if(fotoCount<=4){ fotoHTML+="<div class='border rounded-lg overflow-hidden bg-white'><img src='"+foto.data+"' class='w-full h-24 object-cover'><div class='p-1.5'><p class='font-bold text-[8px]'>"+name.substring(0,40)+"</p><p class='text-[7px] text-slate-600 mt-0.5'>"+(foto.caption||"Dokumentasi")+"</p><p class='text-[6px] text-slate-400'>"+new Date(foto.date).toLocaleDateString('id-ID')+"</p></div></div>"; } }
     });
     if(!hasTasks) return;
-    html+="<div class='p-3 border-b-2 border-slate-100'><div class='flex justify-between'><div><p class='font-black text-[13px] text-[#BE1E2D]'>HARI "+day.d+": "+day.t+"</p><p class='text-[9px] text-slate-600'>📅 "+formatTanggalIndo(tgl)+" | "+day.m+" | Desa Kasih, Kertanegara</p></div><span class='text-[8px] bg-slate-100 px-2 py-1 rounded-full h-fit'>"+tasksHTML.length+" tugas</span></div><table class='w-full border-collapse mt-2'><thead><tr class='bg-slate-800 text-white'><th class='border p-1.5 text-[8px] w-8'>✓</th><th class='border p-1.5 text-[9px] text-left'>KEGIATAN</th><th class='border p-1.5 text-[8px] w-14'>ADA/TIDAK</th><th class='border p-1.5 text-[8px] w-14'>STATUS</th></tr></thead><tbody>"+tasksHTML.join("")+"</tbody></table>";
-    if(includeCatatan && getCatatan(day.d) && catatanBelow){
-      html+="<div class='mt-2 bg-yellow-50 border-l-4 border-yellow-400 p-2 rounded-r'><p class='font-bold text-[9px] text-yellow-800'>📝 CATATAN HARI "+day.d+" ("+tgl.toLocaleDateString('id-ID')+"):</p><p class='text-[10px] mt-1'>"+getCatatan(day.d)+"</p></div>";
-    }
+    html+="<div class='p-3 border-b-2 border-slate-100'><p class='font-black text-[13px] text-[#BE1E2D]'>HARI "+day.d+": "+day.t+"</p><p class='text-[9px] text-slate-600'>📅 "+formatTanggalIndo(tgl)+" | Desa Kasih - Kertanegara 53354</p><table class='w-full border-collapse mt-2'><thead><tr class='bg-slate-800 text-white'><th class='border p-1.5 text-[8px] w-8'>✓</th><th class='border p-1.5 text-[9px] text-left'>KEGIATAN + FOTO BUKTI</th><th class='border p-1.5 text-[8px] w-14'>ADA</th><th class='border p-1.5 text-[8px] w-14'>STATUS</th></tr></thead><tbody>"+tasksHTML.join("")+"</tbody></table>";
+    if(fotoHTML && includeFoto){ html+="<div class='mt-3'><p class='font-bold text-[9px] text-blue-700 mb-1'>📷 DOKUMENTASI FOTO BUKTI HARI "+day.d+" (Rapi 2 kolom):</p><div class='grid grid-cols-2 gap-2'>"+fotoHTML+"</div></div>"; }
+    if(includeCatatan && getCatatan(day.d) && catatanBelow){ html+="<div class='mt-2 bg-yellow-50 border-l-4 border-yellow-400 p-2 rounded-r'><p class='font-bold text-[9px] text-yellow-800'>📝 CATATAN:</p><p class='text-[10px] mt-1'>"+getCatatan(day.d)+"</p></div>"; }
     html+="</div>";
   });
-  if(includeCatatan && catatanSeparate){
-    let hasAny=false; let catHTML="";
-    baseDays.forEach(d=>{if(getCatatan(d.d)){hasAny=true; catHTML+="<div class='border-b py-1'><p class='font-bold text-[10px]'>Hari "+d.d+" - "+getTanggalForHari(d.d).toLocaleDateString('id-ID')+": "+d.t+"</p><p class='text-[9px]'>"+getCatatan(d.d)+"</p></div>";}});
-    if(hasAny){ html+="<div class='p-3 bg-amber-50 border-t-4 border-amber-500'><p class='font-black text-[12px] text-amber-800'>📄 LEMBAR TERPISAH - KUMPULAN CATATAN DESA KASIH</p><div class='mt-2'>"+catHTML+"</div></div>"; }
-  }
-  if(includeAnalisis){
-    html+="<div class='p-3 bg-slate-50 border-t'><p class='font-bold text-[11px]'>📊 ANALISIS:</p><p class='text-[9px] mt-1'>Total: "+total+" | Selesai: "+done+" ("+persen+"%) | Tunggakan: "+(total-done)+" | Desa Kasih - Kertanegara 53354</p></div>";
-  }
-  html+="<div class='p-6 bg-white border-t-4 border-[#BE1E2D]'><p class='font-black text-[14px] text-[#BE1E2D] text-center mb-1'>PENGESAHAN - DESA KASIH - KEC. KERTANEGARA - PURBALINGGA 53354</p><p class='text-[8px] text-center text-slate-500 mb-4'>Desa Kasih, Kec. Kertanegara, Kab. Purbalingga 53354, "+new Date().toLocaleDateString('id-ID')+"</p>";
-  if(ttdData.length===2){
-    html+="<div class='ttd-center'><div class='flex justify-center gap-8'><div class='grid grid-cols-2 gap-8 w-full max-w-[560px]'>";
-    ttdData.slice(0,2).forEach(b=>{html+="<div class='text-center'><p class='font-bold text-[10px]'>"+b.label+"</p><div class='flex justify-center gap-1 mt-1'>"+(b.cap && b.needCap?"<img src='"+b.cap+"' class='w-10 h-10 object-contain border'>":"")+"</div><div class='h-20 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-16'>":"TTD")+"</div><p class='font-black text-[11px] mt-2'>"+b.nama+"</p></div>";});
-    html+="</div></div></div>";
-  } else if(ttdData.length===3){
-    html+="<div class='ttd-center'><div class='flex justify-center'><div class='grid grid-cols-3 gap-6 w-full max-w-[680px]'>";
-    let ordered3=[]; const kades=ttdData.find(x=>x.id==='Kades'); const ketua=ttdData.find(x=>x.id==='Ketua'); const manajer=ttdData.find(x=>x.id==='Manajer'); const pengawas=ttdData.find(x=>x.id==='Pengawas');
-    if(kades) ordered3.push(kades); if(ketua) ordered3.push(ketua); if(manajer) ordered3.push(manajer); if(ordered3.length<3 && pengawas) ordered3.push(pengawas);
-    ordered3.slice(0,3).forEach(b=>{html+="<div class='text-center'><p class='font-bold text-[9px]'>"+b.label+"</p><div class='h-20 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-16'>":"TTD")+"</div><p class='font-black text-[10px] mt-2'>"+b.nama+"</p></div>";});
-    html+="</div></div></div>";
-  } else {
-    html+="<div class='ttd-center flex flex-col items-center gap-6'>";
-    const kades=ttdData.find(x=>x.id==='Kades'); const pengawas=ttdData.find(x=>x.id==='Pengawas'); const ketua=ttdData.find(x=>x.id==='Ketua'); const manajer=ttdData.find(x=>x.id==='Manajer');
-    html+="<div class='grid grid-cols-2 gap-8 w-full max-w-[560px]'>";
-    [kades, pengawas].forEach(b=>{ if(!b) return; html+="<div class='text-center'><p class='font-bold text-[9px]'>"+b.label+"</p><div class='h-20 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-16'>":"TTD")+"</div><p class='font-black text-[10px] mt-2'>"+b.nama+"</p></div>"; });
-    html+="</div><div class='grid grid-cols-2 gap-8 w-full max-w-[560px]'>";
-    [ketua, manajer].forEach(b=>{ if(!b) return; html+="<div class='text-center'><p class='font-bold text-[9px]'>"+b.label+"</p><div class='h-20 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-16'>":"TTD")+"</div><p class='font-black text-[10px] mt-2'>"+b.nama+"</p></div>"; });
-    html+="</div></div>";
-  }
-  if(footerActive){html+="<div class='mt-6 border-t pt-2 text-center'><p class='text-[8px] text-slate-500'>"+footerText+"</p></div>";}
-  html+="</div></div></div>"; return html;
+  html+="<div class='p-6 bg-white border-t-4 border-[#BE1E2D]'><p class='font-black text-[14px] text-[#BE1E2D] text-center mb-1'>PENGESAHAN - DESA KASIH 53354</p><p class='text-[8px] text-center text-slate-500 mb-4'>Desa Kasih, Kec. Kertanegara, Kab. Purbalingga 53354, "+new Date().toLocaleDateString('id-ID')+"</p><div class='ttd-center'>";
+  if(ttdData.length===2){ html+="<div class='flex justify-center gap-8'><div class='grid grid-cols-2 gap-8 w-full max-w-[560px]'>"; ttdData.slice(0,2).forEach(b=>{html+="<div class='text-center'><p class='font-bold text-[10px]'>"+b.label+"</p><div class='h-20 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-16'>":"TTD")+"</div><p class='font-black text-[11px] mt-2'>"+b.nama+"</p></div>";}); html+="</div></div>";}
+  else if(ttdData.length===3){ html+="<div class='flex justify-center'><div class='grid grid-cols-3 gap-6 w-full max-w-[680px]'>"; ttdData.slice(0,3).forEach(b=>{html+="<div class='text-center'><p class='font-bold text-[9px]'>"+b.label+"</p><div class='h-20 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-16'>":"TTD")+"</div><p class='font-black text-[10px] mt-2'>"+b.nama+"</p></div>";}); html+="</div></div>";}
+  else { html+="<div class='flex flex-col items-center gap-6'><div class='grid grid-cols-2 gap-8 w-full max-w-[560px]'>"; const kades=ttdData.find(x=>x.id==='Kades'); const pengawas=ttdData.find(x=>x.id==='Pengawas'); [kades,pengawas].forEach(b=>{ if(!b) return; html+="<div class='text-center'><p class='font-bold text-[9px]'>"+b.label+"</p><div class='h-20 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-16'>":"TTD")+"</div><p class='font-black text-[10px] mt-2'>"+b.nama+"</p></div>";}); html+="</div><div class='grid grid-cols-2 gap-8 w-full max-w-[560px]'>"; const ketua=ttdData.find(x=>x.id==='Ketua'); const manajer=ttdData.find(x=>x.id==='Manajer'); [ketua,manajer].forEach(b=>{ if(!b) return; html+="<div class='text-center'><p class='font-bold text-[9px]'>"+b.label+"</p><div class='h-20 border-2 border-dashed mt-2 bg-slate-50 flex items-center justify-center'>"+(b.ttd?"<img src='"+b.ttd+"' class='max-h-16'>":"TTD")+"</div><p class='font-black text-[10px] mt-2'>"+b.nama+"</p></div>";}); html+="</div></div>";}
+  html+="</div>"; if(footerActive){html+="<div class='mt-6 border-t pt-2 text-center'><p class='text-[8px] text-slate-500'>"+footerText+"</p></div>";} html+="</div></div></div>"; return html;
 }
-function previewPDF(onlyT){
-  const html=buildBeautifulReportHTML(onlyT);
-  document.getElementById('previewSub').textContent=(onlyT?"TUNGGAKAN":"SEMUA")+" | Desa Kasih - Kec. Kertanegara - Kab. Purbalingga 53354";
-  document.getElementById('previewContent').innerHTML=html;
-  openPreview();
-}
+function previewPDF(onlyT){const html=buildBeautifulReportHTML(onlyT); document.getElementById('previewSub').textContent=(onlyT?"TUNGGAKAN + FOTO":"SEMUA + FOTO")+" | Desa Kasih 53354"; document.getElementById('previewContent').innerHTML=html; openPreview();}
 function previewWord(onlyT){previewPDF(onlyT);}
 function render(){
-  const start=getStart();
-  const hariIni=getHariIni();
-  const inputEl=document.getElementById('startDateInput');
-  if(inputEl){const iso=start.toISOString().split('T')[0]; if(inputEl.value!==iso) inputEl.value=iso;}
-  document.getElementById('tgl').textContent="Mulai: "+formatTanggalIndo(start)+" | Hari ke-"+hariIni+" = "+formatTanggalIndo(getTanggalForHari(hariIni))+" | DESA KASIH - KERTANEGARA 53354";
-  document.getElementById('navInfo').textContent="Desa Kasih - Kertanegara - Purbalingga 53354 | Hari 1 = "+start.toLocaleDateString('id-ID');
-  let total=0,done=0; baseDays.forEach(d=>{const del=getDeleted(); d.tasks.forEach((_,i)=>{if(!del.includes(d.d+'_'+i)){total++; if(isChecked(d.d,i)) done++;}}); getCustom(d.d).forEach((_,i)=>{total++; if(isChecked(d.d,'c_'+i)) done++;});});
-  const persen=total?Math.round(done/total*100):0; document.getElementById('bar').style.width=persen+"%"; document.getElementById('txt').textContent=persen+"%";
+  const start=getStart(); const hariIni=getHariIni();
+  const inputEl=document.getElementById('startDateInput'); if(inputEl){const iso=start.toISOString().split('T')[0]; if(inputEl.value!==iso) inputEl.value=iso;}
+  document.getElementById('tgl').textContent="Mulai: "+formatTanggalIndo(start)+" | Hari ke-"+hariIni+" | DESA KASIH - FOTO BUKTI";
+  let total=0,done=0, fotoTotal=0; baseDays.forEach(d=>{const del=getDeleted(); d.tasks.forEach((_,i)=>{if(!del.includes(d.d+'_'+i)){total++; if(isChecked(d.d,i)) done++; if(getFoto(d.d,i)) fotoTotal++;}});});
+  const persen=total?Math.round(done/total*100):0; document.getElementById('bar').style.width=persen+"%"; document.getElementById('txt').textContent=persen+"% ("+fotoTotal+" foto)";
   const nav=document.getElementById('navHari'); nav.innerHTML="";
-  for(let i=1;i<=31;i++){let allDone=true; baseDays.find(x=>x.d===i)?.tasks.forEach((_,idx)=>{if(!getDeleted().includes(i+'_'+idx)&&!isChecked(i,idx)) allDone=false;}); getCustom(i).forEach((_,idx)=>{if(!isChecked(i,'c_'+idx)) allDone=false;}); const isToday=i===hariIni; const btn=document.createElement('button'); btn.title="Hari "+i+" = "+getTanggalForHari(i).toLocaleDateString('id-ID'); btn.textContent=i; btn.className="font-bold border shadow-sm flex items-center justify-center shrink-0 "+(isToday?"bg-[#BE1E2D] text-white ring-2 ring-yellow-300":allDone?"bg-green-500 text-white":"bg-white text-slate-700"); btn.onclick=()=>scrollToHari(i); nav.appendChild(btn);}
+  for(let i=1;i<=31;i++){let allDone=true; let hasFoto=false; baseDays.find(x=>x.d===i)?.tasks.forEach((_,idx)=>{if(!getDeleted().includes(i+'_'+idx)&&!isChecked(i,idx)) allDone=false; if(getFoto(i,idx)) hasFoto=true;}); const isToday=i===hariIni; const btn=document.createElement('button'); btn.innerHTML=i+(hasFoto?"<span class='text-[6px]'>📷</span>":""); btn.title="Hari "+i; btn.className="font-bold border shadow-sm flex flex-col items-center justify-center shrink-0 leading-none "+(isToday?"bg-[#BE1E2D] text-white ring-2 ring-yellow-300":allDone?"bg-green-500 text-white":"bg-white text-slate-700"); btn.onclick=()=>scrollToHari(i); nav.appendChild(btn);}
   const c1=document.getElementById('container1'); c1.innerHTML=""; const editedMap=getEdited(); const deletedList=getDeleted();
   baseDays.forEach(day=>{
     const tgl=getTanggalForHari(day.d);
     const div=document.createElement('div'); div.id="hari-"+day.d; div.className="bg-white p-3 rounded-xl border shadow-sm "+(day.d===hariIni?"ring-2 ring-[#BE1E2D]":"");
-    let html="<div class='flex justify-between mb-2'><div><p class='font-bold text-[12px]'>"+(day.d===hariIni?"👉 ":"")+"HARI "+day.d+": "+day.t+"</p><p class='text-[8px] text-slate-500'>📅 "+formatTanggalIndo(tgl)+" ("+tgl.toLocaleDateString('id-ID')+") - Desa Kasih</p></div><span class='text-[8px] px-2 py-0.5 rounded bg-slate-100 h-fit'>"+day.m+"</span></div><div class='border rounded-lg overflow-hidden'>";
+    let html="<div class='flex justify-between mb-2'><div><p class='font-bold text-[12px]'>"+(day.d===hariIni?"👉 ":"")+"HARI "+day.d+": "+day.t+"</p><p class='text-[8px] text-slate-500'>📅 "+formatTanggalIndo(tgl)+" - Desa Kasih</p></div><span class='text-[8px] px-2 py-0.5 rounded bg-slate-100 h-fit'>"+day.m+"</span></div><div class='border rounded-lg overflow-hidden'>";
     day.tasks.forEach((orig,i)=>{
       if(deletedList.includes(day.d+'_'+i)) return;
-      const taskName=editedMap[day.d+'_'+i]||orig; const chk=isChecked(day.d,i); const ada=getAda(day.d,i);
-      html+="<div class='task-row "+(chk?"bg-green-50":"")+"'><input type='checkbox' data-day='"+day.d+"' data-idx='"+i+"' "+(chk?"checked":"")+" class='w-5 h-5 accent-[#BE1E2D] shrink-0'><span class='flex-1 text-[11px] min-w-0 "+(chk?"line-through text-slate-400":"")+"'>"+taskName+"</span><div class='task-right shrink-0'><button onclick=\"setAda("+day.d+","+i+",'ADA')\" class='px-1.5 py-1 rounded text-[8px] font-bold border "+(ada==='ADA'?"bg-green-600 text-white":"bg-white text-green-700")+"'>ADA</button><button onclick=\"setAda("+day.d+","+i+",'TIDAK')\" class='px-1.5 py-1 rounded text-[8px] font-bold border "+(ada==='TIDAK'?"bg-red-600 text-white":"bg-white text-red-700")+"'>TIDAK</button><button onclick=\"setAda("+day.d+","+i+",'BELUM')\" class='px-1.5 py-1 rounded text-[8px] font-bold border "+(ada==='BELUM'?"bg-amber-500 text-white":"bg-white text-amber-700")+"'>BELUM</button><button onclick='editTask("+day.d+","+i+")' class='px-1.5 py-1 rounded text-[8px] font-bold bg-yellow-50 border'>✏️</button><button onclick='deleteTask("+day.d+","+i+")' class='px-1.5 py-1 rounded text-[8px] font-bold bg-red-50 border'>🗑️</button><button onclick='showExplain("+day.d+","+i+")' class='px-1.5 py-1 rounded-full text-[8px] font-bold bg-blue-50 border'>❓</button></div></div>";
+      const taskName=editedMap[day.d+'_'+i]||orig; const chk=isChecked(day.d,i); const ada=getAda(day.d,i); const foto=getFoto(day.d,i);
+      html+="<div class='task-row "+(chk?"bg-green-50":"")+" "+(foto?"border-l-4 border-blue-400":"")+"'><input type='checkbox' data-day='"+day.d+"' data-idx='"+i+"' "+(chk?"checked":"")+" class='w-5 h-5 accent-[#BE1E2D] shrink-0'><span class='flex-1 text-[11px] min-w-0 "+(chk?"line-through text-slate-400":"")+"'>"+taskName+(foto?"<br><span class='text-[8px] bg-blue-100 text-blue-700 px-1 rounded'>📷 "+(foto.caption?foto.caption.substring(0,30):"Ada foto")+"</span>":"")+"</span><div class='task-right shrink-0'>";
+      if(foto){ html+="<img src='"+foto.data+"' class='foto-thumb'><button onclick='openFotoModal("+day.d+","+i+")' class='px-1.5 py-1 rounded text-[8px] font-bold bg-blue-600 text-white'>✏️Foto</button><button onclick='deleteFoto("+day.d+","+i+")' class='px-1 py-1 rounded text-[8px] bg-red-100 border'>🗑️</button>"; } else { html+="<button onclick='openFotoModal("+day.d+","+i+")' class='px-1.5 py-1 rounded text-[8px] font-bold bg-white border border-blue-300 text-blue-700'>📷 Foto</button>"; }
+      html+="<button onclick=\"setAda("+day.d+","+i+",'ADA')\" class='px-1.5 py-1 rounded text-[8px] font-bold border "+(ada==='ADA'?"bg-green-600 text-white":"bg-white text-green-700")+"'>ADA</button><button onclick=\"setAda("+day.d+","+i+",'TIDAK')\" class='px-1.5 py-1 rounded text-[8px] font-bold border "+(ada==='TIDAK'?"bg-red-600 text-white":"bg-white text-red-700")+"'>TIDAK</button><button onclick='editTask("+day.d+","+i+")' class='px-1.5 py-1 rounded text-[8px] font-bold bg-yellow-50 border'>✏️</button><button onclick='deleteTask("+day.d+","+i+")' class='px-1.5 py-1 rounded text-[8px] font-bold bg-red-50 border'>🗑️</button></div></div>";
     });
-    getCustom(day.d).forEach((ct,ci)=>{const chk=isChecked(day.d,'c_'+ci); html+="<div class='task-row bg-purple-50'><input type='checkbox' data-day='"+day.d+"' data-idx='c_"+ci+"' "+(chk?"checked":"")+" class='w-5 h-5 accent-purple-600'><span class='flex-1 text-[11px] "+(chk?"line-through":"")+"'>"+ct+"</span><div class='task-right'><button onclick='deleteCustom("+day.d+","+ci+")' class='px-1.5 py-1 rounded text-[8px] bg-red-100 border'>🗑️</button></div></div>";});
     html+="</div><div class='mt-2 flex gap-1'><input id='addInput-"+day.d+"' placeholder='Tambah kotak...' class='flex-1 border rounded-lg px-2 py-1.5 text-[10px]'><button onclick='addCustomTask("+day.d+")' class='bg-[#BE1E2D] text-white px-3 py-1.5 rounded-lg text-[10px] font-bold'>+ Kotak</button></div>";
     const catActive=isCatatanActive(day.d);
-    html+="<div class='mt-2 border rounded-lg overflow-hidden "+(catActive?"border-blue-300":"")+"'><div class='flex justify-between items-center px-2 py-1 bg-slate-50'><p class='text-[9px] font-bold'>📝 Catatan Hari "+day.d+" - Desa Kasih</p><label class='flex items-center gap-1 text-[9px]'><input type='checkbox' "+(catActive?"checked":"")+" onchange='toggleCatatan("+day.d+")' class='w-3 h-3'> <span class='"+(catActive?"text-blue-600 font-bold":"text-slate-500")+"'>"+(catActive?"ON":"OFF")+"</span></label></div>"+(catActive?"<textarea id='catatan-"+day.d+"' oninput='saveCatatan("+day.d+")' placeholder='Catatan Desa Kasih...' class='w-full p-2 text-[10px] h-16'>"+getCatatan(day.d)+"</textarea>":"<p class='text-[8px] text-slate-400 p-2 italic'>Nonaktif</p>")+"</div>";
+    html+="<div class='mt-2 border rounded-lg overflow-hidden "+(catActive?"border-blue-300":"")+"'><div class='flex justify-between items-center px-2 py-1 bg-slate-50'><p class='text-[9px] font-bold'>📝 Catatan Hari "+day.d+"</p><label class='flex items-center gap-1 text-[9px]'><input type='checkbox' "+(catActive?"checked":"")+" onchange='toggleCatatan("+day.d+")' class='w-3 h-3'> <span class='"+(catActive?"text-blue-600 font-bold":"text-slate-500")+"'>"+(catActive?"ON":"OFF")+"</span></label></div>"+(catActive?"<textarea id='catatan-"+day.d+"' oninput='saveCatatan("+day.d+")' placeholder='Catatan...' class='w-full p-2 text-[10px] h-16'>"+getCatatan(day.d)+"</textarea>":"<p class='text-[8px] text-slate-400 p-2 italic'>Nonaktif</p>")+"</div>";
     div.innerHTML=html; c1.appendChild(div);
   });
   const c2=document.getElementById('container2'); c2.innerHTML="";
   let tung=0; baseDays.forEach(d=>{const del=getDeleted(); d.tasks.forEach((_,i)=>{if(!del.includes(d.d+'_'+i) && d.d<getHariIni() && !isChecked(d.d,i)) tung++;});});
   document.getElementById('badgeTunggakan').textContent=tung; document.getElementById('badgeTunggakan').classList.toggle('hidden',tung===0);
-  if(tung===0){c2.innerHTML="<div class='bg-white border-2 border-green-300 rounded-xl p-6 text-center'><p class='text-[30px]'>✅</p><p class='font-bold text-[12px] text-green-700 mt-2'>Tidak ada tunggakan Desa Kasih!</p></div>";}
-  else {
-    baseDays.filter(d=>d.d<getHariIni()).forEach(day=>{
-      let html=""; let has=false;
-      day.tasks.forEach((_,i)=>{if(getDeleted().includes(day.d+'_'+i)) return; if(!isChecked(day.d,i)){has=true; const name=getEdited()[day.d+'_'+i]||day.tasks[i]; html+="<div class='flex gap-2 py-2 px-2 border-b bg-red-50/50'><span class='flex-1 text-[11px]'>"+name+"</span><button onclick='scrollToHari("+day.d+")' class='bg-[#BE1E2D] text-white px-2 py-1 rounded text-[8px] shrink-0'>Ke Hari "+day.d+"</button></div>";}});
-      if(has){const tgl=getTanggalForHari(day.d); const div=document.createElement('div'); div.className="bg-white p-3 rounded-xl border-l-4 border-[#BE1E2D] shadow-sm"; div.innerHTML="<div class='flex justify-between'><p class='font-bold text-[11px] text-[#BE1E2D]'>HARI "+day.d+": "+day.t+"</p><p class='text-[8px] text-slate-500'>"+tgl.toLocaleDateString('id-ID')+" - Desa Kasih</p></div><div class='border rounded-lg mt-2 overflow-hidden'>"+html+"</div>"+(getCatatan(day.d)?"<div class='mt-2 bg-yellow-50 border p-2 rounded'><p class='text-[8px] font-bold'>📝 Catatan:</p><p class='text-[9px]'>"+getCatatan(day.d)+"</p></div>":""); c2.appendChild(div);}
-    });
-  }
-  document.getElementById('analisisContent').innerHTML="Tunggakan Desa Kasih: <b class='text-[#BE1E2D] text-[14px]'>"+tung+"</b> tugas | Kec. Kertanegara - Purbalingga 53354";
+  if(tung===0){c2.innerHTML="<div class='bg-white border-2 border-green-300 rounded-xl p-6 text-center'><p class='text-[30px]'>✅</p><p class='font-bold text-[12px] text-green-700 mt-2'>Tidak ada tunggakan!</p></div>";}
+  else {baseDays.filter(d=>d.d<getHariIni()).forEach(day=>{let html=""; let has=false; day.tasks.forEach((_,i)=>{if(getDeleted().includes(day.d+'_'+i)) return; if(!isChecked(day.d,i)){has=true; const name=getEdited()[day.d+'_'+i]||day.tasks[i]; const foto=getFoto(day.d,i); html+="<div class='flex gap-2 py-2 px-2 border-b bg-red-50/50'><span class='flex-1 text-[11px]'>"+name+(foto?" 📷":"")+"</span><button onclick='scrollToHari("+day.d+")' class='bg-[#BE1E2D] text-white px-2 py-1 rounded text-[8px]'>Ke Hari "+day.d+"</button></div>";}}); if(has){const tgl=getTanggalForHari(day.d); const div=document.createElement('div'); div.className="bg-white p-3 rounded-xl border-l-4 border-[#BE1E2D] shadow-sm"; div.innerHTML="<p class='font-bold text-[11px] text-[#BE1E2D]'>HARI "+day.d+": "+day.t+" - "+tgl.toLocaleDateString('id-ID')+"</p><div class='border rounded-lg mt-2'>"+html+"</div>"; c2.appendChild(div);}});}
   document.querySelectorAll('#container1 input[type=checkbox]').forEach(cb=>{if(!cb.dataset.day) return; cb.addEventListener('change',e=>{localStorage.setItem('chk_'+e.target.dataset.day+'_'+e.target.dataset.idx,e.target.checked?'1':'0'); render();});});
   renderTTDPreview();
 }
 function exportPDF(onlyT){
   const doc=new jsPDF('l','mm','a4');
   const start=getStart();
-  doc.setFillColor(190,30,45); doc.rect(0,0,297,12,'F'); doc.setTextColor(255,255,255); doc.setFontSize(9); doc.text("KDKMP DESA KASIH - KEC. KERTANEGARA - PURBALINGGA 53354 - Mulai "+start.toLocaleDateString('id-ID'),10,8);
+  doc.setFillColor(190,30,45); doc.rect(0,0,297,12,'F'); doc.setTextColor(255,255,255); doc.setFontSize(9); doc.text("KDKMP DESA KASIH - KERTANEGARA 53354 + FOTO BUKTI - "+(onlyT?"TUNGGAKAN":"SEMUA"),10,8);
   const rows=[];
   baseDays.forEach(day=>{
     const tgl=getTanggalForHari(day.d);
@@ -348,52 +346,33 @@ function exportPDF(onlyT){
       if(getDeleted().includes(day.d+'_'+i)) return;
       const chk=isChecked(day.d,i);
       if(onlyT && (chk || day.d>=getHariIni())) return;
-      rows.push([ "Hari "+day.d+" ("+tgl.toLocaleDateString('id-ID')+")", day.t, getEdited()[day.d+'_'+i]||orig, getAda(day.d,i)||"-", chk?"SELESAI":"BELUM", getCatatan(day.d).substring(0,30)]);
+      const foto=getFoto(day.d,i);
+      rows.push([ "Hari "+day.d+" ("+tgl.toLocaleDateString('id-ID')+")", getEdited()[day.d+'_'+i]||orig, getAda(day.d,i)||"-", chk?"SELESAI":"BELUM", foto?(foto.caption||"Ada foto"):"-", getCatatan(day.d).substring(0,20)]);
     });
-    if(document.getElementById('includeCatatan').checked && document.getElementById('catatanBelow').checked && getCatatan(day.d)){
-      if(!onlyT || day.d<getHariIni()){
-        rows.push(["", "", "📝 CATATAN HARI "+day.d+" ("+getTanggalForHari(day.d).toLocaleDateString('id-ID')+"): "+getCatatan(day.d), "", "", ""]);
-      }
-    }
   });
-  doc.autoTable({startY:14, head:[['HARI + TANGGAL','JUDUL','KEGIATAN','ADA/TIDAK','STATUS','CATATAN']], body:rows, styles:{fontSize:6}, theme:'grid'});
+  doc.autoTable({startY:14, head:[['HARI','KEGIATAN','ADA','STATUS','FOTO','CATATAN']], body:rows, styles:{fontSize:6}, theme:'grid'});
   let finalY=doc.lastAutoTable.finalY+8;
-  doc.setTextColor(0,0,0); doc.setFontSize(11); doc.text("PENGESAHAN - DESA KASIH - KEC. KERTANEGARA - KAB. PURBALINGGA 53354 - TTD TENGAH",10,finalY); finalY+=4;
+  // Foto tidak bisa langsung di jspdf autotable, jadi tulis info
+  doc.setTextColor(0,0,0); doc.setFontSize(8);
+  doc.text("Catatan: Foto bukti ada "+document.querySelectorAll('[id^=foto_]').length+" foto, lihat di WORD untuk foto lengkap (PDF foto terbatas). Untuk bukti lengkap gunakan WORD.",10,finalY);
+  finalY+=6;
+  doc.setFontSize(10); doc.text("PENGESAHAN - DESA KASIH - KERTANEGARA 53354",10,finalY);
+  finalY+=10;
   const ttdData=getTTDData();
-  if(ttdData.length===2){
-    doc.setFontSize(9);
-    doc.text(ttdData[0].label+" - "+ttdData[0].nama, 60, finalY+10);
-    doc.rect(60, finalY+12, 40, 18);
-    doc.text(ttdData[1].label+" - "+ttdData[1].nama, 180, finalY+10);
-    doc.rect(180, finalY+12, 40, 18);
-  } else if(ttdData.length===3){
-    let x=30;
-    ttdData.slice(0,3).forEach(b=>{
-      doc.text(b.label, x, finalY+10);
-      doc.text(b.nama, x, finalY+14);
-      doc.rect(x, finalY+16, 35, 15);
-      x+=70;
-    });
-  } else if(ttdData.length>=4){
-    const kades=ttdData.find(x=>x.id==='Kades'); const pengawas=ttdData.find(x=>x.id==='Pengawas'); const ketua=ttdData.find(x=>x.id==='Ketua'); const manajer=ttdData.find(x=>x.id==='Manajer');
-    if(kades){doc.text(kades.label+" - "+kades.nama, 60, finalY+10); doc.rect(60, finalY+12, 40, 15);}
-    if(pengawas){doc.text(pengawas.label+" - "+pengawas.nama, 180, finalY+10); doc.rect(180, finalY+12, 40, 15);}
-    finalY+=30;
-    if(ketua){doc.text(ketua.label+" - "+ketua.nama, 60, finalY+10); doc.rect(60, finalY+12, 40, 15);}
-    if(manajer){doc.text(manajer.label+" - "+manajer.nama, 180, finalY+10); doc.rect(180, finalY+12, 40, 15);}
-  }
-  const footerText=document.getElementById('footerText').value.replace(/{tanggal}/g,new Date().toLocaleDateString('id-ID')).replace(/{hari}/g,getHariIni()).replace(/{mulai}/g,start.toLocaleDateString('id-ID'));
-  if(document.getElementById('needFooter').checked){
-    doc.setFontSize(7); doc.text(footerText,10,finalY+35);
-  }
-  doc.save((onlyT?"tunggakan":"lengkap")+"-V49-DESA-KASIH-KERTANEGARA-53354.pdf");
+  let x=60;
+  ttdData.forEach(b=>{
+    doc.text(b.label+" - "+b.nama, x, finalY);
+    doc.rect(x, finalY+2, 35, 15);
+    x+=50;
+  });
+  doc.save((onlyT?"tunggakan":"lengkap")+"-V50-KASIH-FOTO-BUKTI.pdf");
 }
 function exportWord(onlyT){
   const html=buildBeautifulReportHTML(onlyT);
-  const fullHtml="<html><head><meta charset='UTF-8'></head><body>"+html+"</body></html>";
+  const fullHtml="<html><head><meta charset='UTF-8'><style>img{max-width:100%} .grid{display:block}</style></head><body>"+html+"</body></html>";
   const blob=new Blob([fullHtml],{type:'application/msword'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download=(onlyT?"tunggakan":"lengkap")+"-V49-DESA-KASIH-53354.doc"; a.click();
+  const a=document.createElement('a'); a.href=url; a.download=(onlyT?"tunggakan":"lengkap")+"-V50-KASIH-FOTO-BUKTI.doc"; a.click();
 }
 loadNeed(); loadNames(); loadImgs(); loadFooter();
 if(!localStorage.getItem('kdkmp_startDate')){setStartDate('2026-10-01');}
