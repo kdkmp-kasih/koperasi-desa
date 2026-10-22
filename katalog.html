@@ -2,72 +2,87 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GERAI KDKMP KASIH - V6 FOTO & BELANJA - 7000764</title>
+<title>GERAI KDKMP - V7 FIX SIMPAN - 7000764</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#fff5f5]">
 <div class="bg-[#BE1E2D] text-white p-3 sticky top-0 z-20">
 <div class="max-w-6xl mx-auto flex justify-between items-center">
-<b class="text-[13px]">GERAI KDKMP KASIH 53354</b>
-<div class="flex gap-2 items-center">
+<b class="text-[12px]">GERAI KDKMP KASIH 53354 - V7 FIX</b>
+<div class="flex gap-1 items-center">
 <span id="badge" class="hidden bg-white text-[#BE1E2D] px-2 py-1 rounded-full text-[8px] font-black"></span>
-<button onclick="switchView('belanja')" id="btnBelanja" class="bg-white text-[#BE1E2D] px-3 py-1.5 rounded-full text-[10px] font-bold">🛒 Belanja</button>
-<button onclick="switchView('toko')" id="btnToko" class="bg-black/20 px-3 py-1.5 rounded-full text-[10px] font-bold">🏪 Toko</button>
-<button onclick="document.getElementById('auth').style.display='flex'" class="bg-white text-[#BE1E2D] px-3 py-1.5 rounded-full text-[10px] font-bold">Masuk</button>
-<button id="out" onclick="logout()" class="hidden bg-black/30 px-2 py-1.5 rounded-full text-[10px]">Keluar</button>
+<button onclick="switchView('belanja')" id="bBelanja" class="bg-white text-[#BE1E2D] px-2 py-1.5 rounded-full text-[9px] font-bold">🛒 Belanja</button>
+<button onclick="switchView('toko')" id="bToko" class="bg-black/20 px-2 py-1.5 rounded-full text-[9px] font-bold">🏪 Toko</button>
+<button id="btnPengguna" onclick="openPengguna()" class="hidden bg-amber-300 text-black px-2 py-1.5 rounded-full text-[9px] font-bold">👥 Pengguna</button>
+<button id="btnMasuk" onclick="openAuth()" class="bg-white text-[#BE1E2D] px-3 py-1.5 rounded-full text-[10px] font-bold">Masuk</button>
+<button id="btnKeluar" onclick="logout()" style="display:none" class="bg-black/40 px-3 py-1.5 rounded-full text-[10px] font-bold">Keluar</button>
 </div>
 </div>
 <div class="max-w-6xl mx-auto mt-2 flex gap-2">
 <input id="q" oninput="render()" placeholder="Cari beras, minyak, gula..." class="flex-1 rounded-full px-4 py-2 text-[12px] text-black">
-<select id="kat" onchange="render()" class="rounded-full px-3 py-2 text-[11px] text-black"><option value="">Semua</option><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Lainnya</option></select>
-<button id="addBtn" onclick="openAdd()" class="hidden bg-white text-[#BE1E2D] px-4 py-2 rounded-full text-[11px] font-bold">+ Produk + Foto</button>
-<button id="cartBtn" onclick="openCart()" class="bg-white text-[#BE1E2D] px-3 py-2 rounded-full text-[11px] font-bold">Keranjang <span id="cartCount">0</span></button>
+<select id="kat" onchange="render()" class="rounded-full px-3 py-2 text-[10px] text-black"><option value="">Semua</option><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Lainnya</option></select>
+<button id="addBtn" onclick="openAdd()" style="display:none" class="bg-white text-[#BE1E2D] px-3 py-2 rounded-full text-[10px] font-bold">+ Produk + Foto</button>
+<button onclick="openCart()" class="bg-white text-[#BE1E2D] px-3 py-2 rounded-full text-[10px] font-bold">Keranjang <span id="cartCount">0</span></button>
 </div>
 </div>
 
 <div class="max-w-6xl mx-auto p-3">
-<div id="viewToko"><h2 class="font-black text-[12px] text-[#BE1E2D] mb-2">🏪 Mode Toko (Admin kelola stok & foto)</h2><div id="gridToko" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
-<div id="viewBelanja" class="hidden"><h2 class="font-black text-[14px] text-[#BE1E2D] mb-3">🛒 Halaman Belanja - Klik produk untuk detail foto</h2><div id="gridBelanja" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div></div>
+<div id="viewToko"><div id="gridToko" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
+<div id="viewBelanja" class="hidden"><div id="gridBelanja" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
 </div>
 
 <!-- AUTH -->
 <div id="auth" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99999;align-items:center;justify-content:center;padding:16px">
-<div class="bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b id="tAuth" class="text-[#BE1E2D]">Masuk</b><button onclick="document.getElementById('auth').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
-<div class="mt-4 space-y-3"><input id="aNama" placeholder="Nama Lengkap" style="display:none" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="aEmail" placeholder="Email / username" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="aPass" type="password" placeholder="Password min 4" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="aKode" placeholder="Kode Admin KASIH53354" style="display:none" class="w-full border-2 border-amber-300 bg-amber-50 rounded-full px-4 py-3 text-[11px]"><p id="aMsg" class="text-red-600 text-[11px] text-center"></p><button onclick="doAuth()" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">PROSES</button><button onclick="switchMode()" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold"><span id="aSw">Belum punya? Daftar</span></button></div></div>
+<div class="bg-white rounded-2xl w-full max-w-sm p-5">
+<div class="flex justify-between"><b id="tAuth" class="text-[#BE1E2D]">Masuk</b><button onclick="closeAuth()" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
+<div class="mt-4 space-y-3">
+<input id="aNama" placeholder="Nama Lengkap" style="display:none" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
+<input id="aEmail" placeholder="Email / username" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
+<input id="aPass" type="password" placeholder="Password min 4" class="w-full border-2 rounded-full px-4 py-3 text-[13px]">
+<input id="aKode" placeholder="Kode Admin KASIH53354" style="display:none" class="w-full border-2 border-amber-300 bg-amber-50 rounded-full px-4 py-3 text-[11px]">
+<p id="aMsg" class="text-red-600 text-[11px] text-center"></p>
+<button onclick="doAuth()" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">PROSES</button>
+<button onclick="switchMode()" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold"><span id="aSw">Belum punya? Daftar</span></button>
+</div>
+</div>
 </div>
 
-<!-- ADD / EDIT MODAL + FOTO -->
+<!-- ADD/EDIT + FOTO -->
 <div id="add" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99998;align-items:center;justify-content:center;padding:16px">
 <div class="bg-white rounded-2xl w-full max-w-md p-5 max-h-[90vh] overflow-auto">
-<div class="flex justify-between"><b id="addTitle" class="text-[13px]">Tambah Produk + Foto</b><button onclick="closeAdd()" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div>
+<div class="flex justify-between"><b id="addTitle">Tambah Produk</b><button onclick="closeAdd()" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div>
 <div class="mt-3 space-y-2">
 <input id="pNama" placeholder="Nama ex: Beras 5kg" class="w-full border rounded-xl px-3 py-2 text-[11px]">
 <div class="grid grid-cols-2 gap-2"><input id="pHarga" type="number" placeholder="Harga" class="border rounded-xl px-3 py-2 text-[11px]"><input id="pStok" type="number" placeholder="Stok" class="border rounded-xl px-3 py-2 text-[11px]"></div>
 <select id="pKat" class="w-full border rounded-xl px-3 py-2 text-[11px]"><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Lainnya</option></select>
-<textarea id="pDesk" placeholder="Deskripsi produk" class="w-full border rounded-xl px-3 py-2 text-[11px] h-14"></textarea>
-<div class="border-2 border-dashed rounded-xl p-3 text-center">
+<textarea id="pDesk" placeholder="Deskripsi" class="w-full border rounded-xl px-3 py-2 text-[11px] h-12"></textarea>
+<div class="border-2 border-dashed rounded-xl p-2 text-center">
 <input type="file" id="pFoto" accept="image/*" class="w-full text-[10px]">
-<p class="text-[8px] text-slate-500 mt-1">Foto dari galeri HP, auto kompres ringan biar realtime cepat</p>
-<div id="previewBox" class="hidden mt-2"><img id="previewImg" class="w-full h-32 object-contain border rounded bg-slate-50"><p id="previewName" class="text-[8px] mt-1"></p></div>
+<div id="prevBox" class="hidden mt-2"><img id="prevImg" class="w-full h-32 object-contain border rounded"><button onclick="hapusFoto()" class="text-[9px] text-red-600 mt-1">Hapus Foto</button></div>
 </div>
-<button onclick="saveProd()" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 Simpan Produk + Foto</button>
+<button onclick="saveProd()" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 SIMPAN - PASTI KESIMPAN</button>
+<p id="saveMsg" class="text-[10px] text-center text-green-600"></p>
 </div>
 </div>
 </div>
 
-<!-- DETAIL PRODUK / BELANJA -->
-<div id="detail" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99997;align-items:center;justify-content:center;padding:16px">
-<div class="bg-white rounded-2xl w-full max-w-md p-4">
-<div class="flex justify-between"><b class="text-[13px]" id="dNama">Detail</b><button onclick="document.getElementById('detail').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
-<img id="dFoto" class="w-full h-56 object-contain bg-slate-50 rounded-xl mt-3 border">
-<div class="mt-3"><p id="dKat" class="text-[9px] bg-red-50 text-[#BE1E2D] inline px-2 py-1 rounded-full font-bold"></p><p id="dHarga" class="font-black text-[#BE1E2D] text-[18px] mt-2"></p><p id="dStok" class="text-[11px]"></p><p id="dDesk" class="text-[11px] text-slate-600 mt-2"></p></div>
-<div class="flex gap-2 mt-4"><button onclick="addCartFromDetail()" class="flex-1 bg-[#BE1E2D] text-white py-3 rounded-full font-bold text-[12px]">+ Keranjang</button><button onclick="document.getElementById('detail').style.display='none'" class="flex-1 bg-slate-100 py-3 rounded-full font-bold text-[12px]">Tutup</button></div>
+<!-- PENGGUNA LIST -->
+<div id="pengguna" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99997;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-md p-5 max-h-[80vh] overflow-auto">
+<div class="flex justify-between"><b>👥 List Pengguna Terdaftar</b><button onclick="document.getElementById('pengguna').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
+<p class="text-[9px] text-slate-500 mt-1">Data tidak hilang kecuali dihapus manual. Password tidak ditampilkan.</p>
+<div id="listPengguna" class="mt-3 space-y-2"></div>
 </div>
+</div>
+
+<!-- DETAIL -->
+<div id="detail" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99996;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-md p-4"><div class="flex justify-between"><b id="dNama">Detail</b><button onclick="document.getElementById('detail').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div><img id="dFoto" class="w-full h-56 object-contain bg-slate-50 rounded-xl mt-3 border"><div class="mt-3"><p id="dKat" class="text-[9px] bg-red-50 text-[#BE1E2D] inline px-2 py-1 rounded-full font-bold"></p><p id="dHarga" class="font-black text-[#BE1E2D] text-[18px] mt-2"></p><p id="dStok" class="text-[11px]"></p><p id="dDesk" class="text-[11px] text-slate-600 mt-2"></p></div><div class="flex gap-2 mt-4"><button onclick="addCartFromDetail()" class="flex-1 bg-[#BE1E2D] text-white py-3 rounded-full font-bold text-[12px]">+ Keranjang</button><button onclick="document.getElementById('detail').style.display='none'" class="flex-1 bg-slate-100 py-3 rounded-full font-bold text-[12px]">Tutup</button></div></div>
 </div>
 
 <!-- CART -->
-<div id="cart" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99996;align-items:center;justify-content:center;padding:16px">
-<div class="bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>🛒 Keranjang</b><button onclick="document.getElementById('cart').style.display='none'" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div><div id="cartList" class="mt-3 space-y-2 max-h-[300px] overflow-auto"></div><div class="border-t mt-3 pt-3 flex justify-between font-black"><span>Total:</span><span id="cartTotal">Rp 0</span></div><button onclick="checkoutWA()" class="w-full mt-3 bg-green-600 text-white py-2.5 rounded-full font-bold text-[11px]">💬 Pesan via WA Gerai</button></div>
+<div id="cart" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99995;align-items:center;justify-content:center;padding:16px">
+<div class="bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>🛒 Keranjang</b><button onclick="document.getElementById('cart').style.display='none'" class="bg-slate-100 w-7 h-7 rounded-full">X</button></div><div id="cartList" class="mt-3 space-y-2 max-h-[300px] overflow-auto"></div><div class="border-t mt-3 pt-3 flex justify-between font-black"><span>Total:</span><span id="cartTotal">Rp 0</span></div><button onclick="checkoutWA()" class="w-full mt-3 bg-green-600 text-white py-2.5 rounded-full font-bold text-[11px]">💬 Pesan WA Gerai</button></div>
 </div>
 
 <script type="module">
@@ -89,71 +104,87 @@ window.db=db; window.ref=ref; window.set=set; window.onValue=onValue; window.upd
 </script>
 
 <script>
-let mode='login', editId=null, detailId=null, cart={};
-let produk=JSON.parse(localStorage.getItem('prodV6')||'{}');
-let users=JSON.parse(localStorage.getItem('usersV6')||'{}');
-let cur=JSON.parse(localStorage.getItem('curV6')||'null');
+let mode='login', editId=null, detailId=null, cart={}, view='toko';
+let produk=JSON.parse(localStorage.getItem('prodV7')||'{}');
+let users=JSON.parse(localStorage.getItem('usersV7')||'{}');
+let cur=JSON.parse(localStorage.getItem('curV7')||'null');
 function hash(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return 'h'+Math.abs(h)+btoa(p).slice(0,4);}
 function switchMode(){mode=mode==='login'?'register':'login'; document.getElementById('tAuth').textContent=mode==='login'?'Masuk':'Daftar'; document.getElementById('aSw').textContent=mode==='login'?'Belum punya? Daftar':'Sudah punya? Masuk'; document.getElementById('aNama').style.display=mode==='login'?'none':'block'; document.getElementById('aKode').style.display=mode==='login'?'none':'block';}
-function switchView(v){document.getElementById('viewToko').classList.toggle('hidden', v!=='toko'); document.getElementById('viewBelanja').classList.toggle('hidden', v!=='belanja'); document.getElementById('btnToko').className=v==='toko'?'bg-white text-[#BE1E2D] px-3 py-1.5 rounded-full text-[10px] font-bold':'bg-black/20 px-3 py-1.5 rounded-full text-[10px] font-bold'; document.getElementById('btnBelanja').className=v==='belanja'?'bg-white text-[#BE1E2D] px-3 py-1.5 rounded-full text-[10px] font-bold':'bg-black/20 px-3 py-1.5 rounded-full text-[10px] font-bold'; render();}
+function switchView(v){view=v; document.getElementById('viewToko').classList.toggle('hidden', v!=='toko'); document.getElementById('viewBelanja').classList.toggle('hidden', v!=='belanja'); document.getElementById('bToko').className=v==='toko'?'bg-white text-[#BE1E2D] px-2 py-1.5 rounded-full text-[9px] font-bold':'bg-black/20 px-2 py-1.5 rounded-full text-[9px] font-bold'; document.getElementById('bBelanja').className=v==='belanja'?'bg-white text-[#BE1E2D] px-2 py-1.5 rounded-full text-[9px] font-bold':'bg-black/20 px-2 py-1.5 rounded-full text-[9px] font-bold'; render();}
+function openAuth(){document.getElementById('auth').style.display='flex';}
+function closeAuth(){document.getElementById('auth').style.display='none';}
 function doAuth(){
  const email=document.getElementById('aEmail').value.trim().toLowerCase(); const pass=document.getElementById('aPass').value.trim(); const nama=document.getElementById('aNama').value.trim(); const kode=document.getElementById('aKode').value.trim(); const msg=document.getElementById('aMsg');
  if(!email||!pass){msg.textContent='Isi email & pass';return;} if(pass.length<4){msg.textContent='Min 4';return;}
- if(mode==='register'){ if(!nama){msg.textContent='Isi nama';return;} if(Object.values(users).find(u=>u.email===email)){msg.textContent='Email sudah ada';return;} let role='pembeli'; if(kode){ if(kode==='KASIH53354') role='admin'; else {msg.textContent='Kode salah';return;} } const id=Date.now().toString(); users[id]={id,email,nama,passHash:hash(pass),role}; localStorage.setItem('usersV6', JSON.stringify(users)); try{ if(window.db) window.set(window.ref(window.db,'users-katalog-V6/'+id), users[id]); }catch(e){} msg.textContent='Sukses daftar '+role+'! Klik Masuk'; mode='login'; switchMode(); } else { const f=Object.values(users).find(u=>u.email===email && u.passHash===hash(pass)); if(!f){msg.textContent='Salah';return;} cur=f; localStorage.setItem('curV6', JSON.stringify(cur)); document.getElementById('auth').style.display='none'; afterLogin(); }
+ if(mode==='register'){ if(!nama){msg.textContent='Isi nama';return;} if(Object.values(users).find(u=>u.email===email)){msg.textContent='Email sudah ada';return;} let role='pembeli'; if(kode){ if(kode==='KASIH53354') role='admin'; else {msg.textContent='Kode salah';return;} } const id=Date.now().toString(); users[id]={id,email,nama,passHash:hash(pass),role,createdAt:new Date().toISOString()}; localStorage.setItem('usersV7', JSON.stringify(users)); try{ if(window.db) window.set(window.ref(window.db,'users-katalog-V7/'+id), users[id]); }catch(e){} msg.textContent='Sukses daftar '+role+'! Sekarang Masuk'; mode='login'; switchMode(); } else { const f=Object.values(users).find(u=>u.email===email && u.passHash===hash(pass)); if(!f){msg.textContent='Salah email/pass';return;} cur=f; localStorage.setItem('curV7', JSON.stringify(cur)); closeAuth(); afterLogin(); }
 }
-function afterLogin(){document.getElementById('badge').classList.remove('hidden'); document.getElementById('badge').textContent=cur.role.toUpperCase(); document.getElementById('out').classList.remove('hidden'); if(cur.role==='admin') document.getElementById('addBtn').classList.remove('hidden'); render();}
-function logout(){localStorage.removeItem('curV6'); location.reload();}
+function afterLogin(){
+ document.getElementById('badge').classList.remove('hidden'); document.getElementById('badge').textContent=cur.role.toUpperCase();
+ document.getElementById('btnMasuk').style.display='none'; document.getElementById('btnKeluar').style.display='block';
+ if(cur.role==='admin'){document.getElementById('addBtn').style.display='block'; document.getElementById('btnPengguna').style.display='block';}
+ render(); renderPengguna();
+}
+function logout(){localStorage.removeItem('curV7'); location.reload();}
+function openPengguna(){document.getElementById('pengguna').style.display='flex'; renderPengguna();}
+function renderPengguna(){
+ const el=document.getElementById('listPengguna');
+ const list=Object.values(users);
+ el.innerHTML=list.map(u=>`<div class="border rounded-xl p-3 flex justify-between items-center"><div><p class="font-bold text-[11px]">${u.nama} <span class="text-[8px] px-2 py-0.5 rounded-full ${u.role==='admin'?'bg-red-100 text-red-700':'bg-slate-100'}">${u.role}</span></p><p class="text-[10px] text-slate-600">${u.email}</p><p class="text-[8px] text-slate-400">${u.createdAt||''}</p></div><button onclick="hapusUser('${u.id}')" class="bg-red-50 text-red-700 px-3 py-1 rounded-full text-[9px] font-bold">Hapus</button></div>`).join('')||'<p class="text-[11px] text-center text-slate-500">Belum ada pengguna</p>';
+}
+function hapusUser(id){if(!confirm('Hapus pengguna ini permanen?')) return; if(cur && cur.id===id) return alert('Tidak bisa hapus akun sendiri yang sedang login'); delete users[id]; localStorage.setItem('usersV7', JSON.stringify(users)); try{ if(window.db) window.remove(window.ref(window.db,'users-katalog-V7/'+id)); }catch(e){} renderPengguna();}
 
-// FOTO UPLOAD + KOMPRES
-let tempFotoData=null;
+// FOTO
+let tempFoto=null;
 document.getElementById('pFoto').addEventListener('change', function(e){
  const file=e.target.files[0]; if(!file) return;
  const r=new FileReader(); r.onload=ev=>{
   const img=new Image(); img.onload=()=>{
    const c=document.createElement('canvas'); let w=img.width, h=img.height; if(w>800){h=h*(800/w); w=800;} c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
-   tempFotoData=c.toDataURL('image/jpeg',0.6);
-   document.getElementById('previewImg').src=tempFotoData; document.getElementById('previewBox').classList.remove('hidden'); document.getElementById('previewName').textContent=file.name+' - dikompres';
+   tempFoto=c.toDataURL('image/jpeg',0.65);
+   document.getElementById('prevImg').src=tempFoto; document.getElementById('prevBox').classList.remove('hidden');
   }; img.src=ev.target.result;
  }; r.readAsDataURL(file);
 });
+function hapusFoto(){tempFoto=null; document.getElementById('prevBox').classList.add('hidden'); document.getElementById('pFoto').value='';}
 
 function openAdd(id=null){
  editId=id; document.getElementById('add').style.display='flex'; document.getElementById('addTitle').textContent=id?'Edit Produk + Foto':'Tambah Produk + Foto';
- if(id && produk[id]){const p=produk[id]; document.getElementById('pNama').value=p.nama; document.getElementById('pHarga').value=p.harga; document.getElementById('pStok').value=p.stok; document.getElementById('pKat').value=p.kat; document.getElementById('pDesk').value=p.desk||''; tempFotoData=p.foto||null; if(p.foto){document.getElementById('previewImg').src=p.foto; document.getElementById('previewBox').classList.remove('hidden');}}
- else {['pNama','pHarga','pStok','pDesk'].forEach(i=>document.getElementById(i).value=''); tempFotoData=null; document.getElementById('previewBox').classList.add('hidden'); document.getElementById('pFoto').value='';}
+ if(id && produk[id]){const p=produk[id]; document.getElementById('pNama').value=p.nama; document.getElementById('pHarga').value=p.harga; document.getElementById('pStok').value=p.stok; document.getElementById('pKat').value=p.kat; document.getElementById('pDesk').value=p.desk||''; tempFoto=p.foto||null; if(p.foto){document.getElementById('prevImg').src=p.foto; document.getElementById('prevBox').classList.remove('hidden');} else {document.getElementById('prevBox').classList.add('hidden');}}
+ else {['pNama','pHarga','pStok','pDesk'].forEach(i=>document.getElementById(i).value=''); tempFoto=null; document.getElementById('prevBox').classList.add('hidden'); document.getElementById('pFoto').value='';}
 }
-function closeAdd(){document.getElementById('add').style.display='none'; editId=null; tempFotoData=null;}
+function closeAdd(){document.getElementById('add').style.display='none'; editId=null; tempFoto=null;}
 
 function saveProd(){
  const nama=document.getElementById('pNama').value.trim(); const harga=parseInt(document.getElementById('pHarga').value)||0; const stok=parseInt(document.getElementById('pStok').value)||0; const kat=document.getElementById('pKat').value; const desk=document.getElementById('pDesk').value.trim();
- if(!nama||!harga) return alert('Isi nama & harga');
+ if(!nama||!harga){document.getElementById('saveMsg').textContent='Isi nama & harga'; return;}
  const id=editId||Date.now().toString();
- const data={nama,harga,stok,kat,desk,foto:tempFotoData||(produk[id]?.foto||null), updatedAt:new Date().toISOString()};
- produk[id]=data; localStorage.setItem('prodV6', JSON.stringify(produk));
- try{ if(window.db) window.set(window.ref(window.db,'produk-katalog-V6/'+id), data); }catch(e){}
- closeAdd(); render();
+ // SIMPAN LOKAL DULU - PASTI KESIMPAN
+ const data={nama,harga,stok,kat,desk,foto:tempFoto!==null?tempFoto:(produk[id]?.foto||null), updatedAt:new Date().toISOString()};
+ produk[id]=data; localStorage.setItem('prodV7', JSON.stringify(produk));
+ document.getElementById('saveMsg').textContent='✅ Tersimpan! Produk: '+nama;
+ // coba sync firebase
+ try{ if(window.db) window.set(window.ref(window.db,'produk-katalog-V7/'+id), data).then(()=>{document.getElementById('saveMsg').textContent='✅ Tersimpan lokal + Firebase!';}).catch(e=>{document.getElementById('saveMsg').textContent='✅ Tersimpan lokal (Firebase belum: '+e.message+')';}); }catch(e){}
+ setTimeout(()=>{closeAdd(); render();},800);
 }
-function ubahStok(id,d){produk[id].stok=(produk[id].stok||0)+d; if(produk[id].stok<0) produk[id].stok=0; localStorage.setItem('prodV6', JSON.stringify(produk)); try{ if(window.db) window.update(window.ref(window.db,'produk-katalog-V6/'+id), {stok:produk[id].stok}); }catch(e){} render();}
-function hapusProd(id){if(!confirm('Hapus produk & foto?')) return; delete produk[id]; localStorage.setItem('prodV6', JSON.stringify(produk)); try{ if(window.db) window.remove(window.ref(window.db,'produk-katalog-V6/'+id)); }catch(e){} render();}
+function ubahStok(id,d){produk[id].stok=(produk[id].stok||0)+d; if(produk[id].stok<0) produk[id].stok=0; localStorage.setItem('prodV7', JSON.stringify(produk)); try{ if(window.db) window.update(window.ref(window.db,'produk-katalog-V7/'+id), {stok:produk[id].stok}); }catch(e){} render();}
+function hapusProd(id){if(!confirm('Hapus produk & foto permanen?')) return; delete produk[id]; localStorage.setItem('prodV7', JSON.stringify(produk)); try{ if(window.db) window.remove(window.ref(window.db,'produk-katalog-V7/'+id)); }catch(e){} render();}
 
-function openDetail(id){detailId=id; const p=produk[id]; if(!p) return; document.getElementById('dNama').textContent=p.nama; document.getElementById('dFoto').src=p.foto||'https://via.placeholder.com/300x200?text=No+Foto'; document.getElementById('dKat').textContent=p.kat; document.getElementById('dHarga').textContent='Rp '+Number(p.harga).toLocaleString('id-ID'); document.getElementById('dStok').textContent='Stok: '+p.stok; document.getElementById('dDesk').textContent=p.desk||'Produk Gerai KDKMP Kasih'; document.getElementById('detail').style.display='flex';}
+function openDetail(id){detailId=id; const p=produk[id]; if(!p) return; document.getElementById('dNama').textContent=p.nama; document.getElementById('dFoto').src=p.foto||'https://via.placeholder.com/300x200?text=No+Foto'; document.getElementById('dKat').textContent=p.kat; document.getElementById('dHarga').textContent='Rp '+Number(p.harga).toLocaleString('id-ID'); document.getElementById('dStok').textContent='Stok: '+p.stok; document.getElementById('dDesk').textContent=p.desk||''; document.getElementById('detail').style.display='flex';}
 function addCartFromDetail(){if(!detailId) return; addCart(detailId); document.getElementById('detail').style.display='none';}
 function addCart(id){cart[id]=(cart[id]||0)+1; if(cart[id]>produk[id].stok) cart[id]=produk[id].stok; updateCart();}
-function updateCart(){document.getElementById('cartCount').textContent=Object.values(cart).reduce((a,b)=>a+b,0); const list=document.getElementById('cartList'); let total=0; list.innerHTML=Object.entries(cart).map(([id,q])=>{const p=produk[id]; if(!p) return ''; const sub=p.harga*q; total+=sub; return `<div class="flex gap-2 items-center border-b py-2"><img src="${p.foto||''}" class="w-10 h-10 object-cover rounded border bg-slate-50"><div class="flex-1"><p class="font-bold text-[11px]">${p.nama}</p><p class="text-[10px]">x ${q} = Rp ${sub.toLocaleString()}</p></div><button onclick="delete cart['${id}']; updateCart()" class="text-red-600 text-[10px]">X</button></div>`;}).join('')||'<p class="text-[10px] text-slate-500">Kosong</p>'; document.getElementById('cartTotal').textContent='Rp '+total.toLocaleString('id-ID');}
+function updateCart(){document.getElementById('cartCount').textContent=Object.values(cart).reduce((a,b)=>a+b,0); const list=document.getElementById('cartList'); let total=0; list.innerHTML=Object.entries(cart).map(([id,q])=>{const p=produk[id]; if(!p) return ''; const sub=p.harga*q; total+=sub; return `<div class="flex gap-2 items-center border-b py-2"><img src="${p.foto||''}" class="w-10 h-10 object-cover rounded border"><div class="flex-1"><p class="font-bold text-[11px]">${p.nama}</p><p class="text-[10px]">x ${q} = Rp ${sub.toLocaleString()}</p></div><button onclick="delete cart['${id}']; updateCart()" class="text-red-600 text-[10px]">X</button></div>`;}).join('')||'<p class="text-[10px] text-slate-500">Kosong</p>'; document.getElementById('cartTotal').textContent='Rp '+total.toLocaleString('id-ID');}
 function openCart(){document.getElementById('cart').style.display='flex'; updateCart();}
 function checkoutWA(){const all=Object.entries(cart).map(([id,q])=>`${produk[id].nama} x ${q}`).join(', '); if(!all) return alert('Kosong'); window.open('https://wa.me/6281234567890?text='+encodeURIComponent('Pesan: '+all),'_blank');}
 
 function render(){
  const q=(document.getElementById('q').value||'').toLowerCase(); const kat=document.getElementById('kat').value;
  const list=Object.entries(produk).filter(([id,p])=>{ if(kat && p.kat!==kat) return false; if(q && !p.nama.toLowerCase().includes(q)) return false; return true;});
- // TOKO VIEW
- document.getElementById('gridToko').innerHTML=list.map(([id,p])=>`<div class="bg-white rounded-xl overflow-hidden border shadow-sm"><div class="h-[110px] bg-slate-100 flex items-center justify-center relative">${p.foto?`<img src="${p.foto}" class="w-full h-full object-cover">`:`<span class="text-[24px]">📦</span>`}<span class="absolute bottom-1 right-1 bg-[#BE1E2D] text-white text-[8px] px-2 py-0.5 rounded-full">Stok ${p.stok}</span></div><div class="p-2"><p class="font-bold text-[10px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[11px]">Rp ${Number(p.harga).toLocaleString('id-ID')}</p>${cur?.role==='admin'?`<div class="flex gap-1 mt-1"><button onclick="openAdd('${id}')" class="flex-1 bg-blue-50 text-blue-700 py-1 rounded-full text-[8px] font-bold">✏️ Edit</button><button onclick="hapusProd('${id}')" class="flex-1 bg-red-50 text-red-700 py-1 rounded-full text-[8px] font-bold">🗑️ Hapus</button></div><div class="flex gap-1 mt-1"><button onclick="ubahStok('${id}',-1)" class="flex-1 bg-red-600 text-white py-1 rounded-full text-[8px]">-1</button><button onclick="ubahStok('${id}',1)" class="flex-1 bg-green-600 text-white py-1 rounded-full text-[8px]">+1</button></div>`:''}</div></div>`).join('')||'<div class="col-span-2 bg-white p-6 rounded-xl text-center col-span-full"><p>📦</p><p class="text-[11px] mt-2 font-bold">Belum ada produk</p><p class="text-[9px] text-slate-500">Admin klik + Produk + Foto</p></div>';
- // BELANJA VIEW - lebih cantik
- document.getElementById('gridBelanja').innerHTML=list.map(([id,p])=>`<div onclick="openDetail('${id}')" class="bg-white rounded-2xl overflow-hidden shadow border hover:shadow-lg transition cursor-pointer"><div class="h-[160px] bg-slate-50 flex items-center justify-center relative">${p.foto?`<img src="${p.foto}" class="w-full h-full object-cover">`:`<span class="text-[40px]">🛒</span>`}<span class="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-0.5 rounded-full text-[8px] font-bold">${p.kat}</span>${p.stok<5?`<span class="absolute top-2 right-2 bg-red-600 text-white px-2 py-0.5 rounded-full text-[7px] font-bold">TIPIS</span>`:''}</div><div class="p-3"><p class="font-bold text-[12px] line-clamp-1">${p.nama}</p><p class="text-[9px] text-slate-500 line-clamp-1 mt-1">${p.desk||'Produk gerai KDKMP'}</p><div class="flex justify-between items-center mt-2"><span class="font-black text-[#BE1E2D] text-[13px]">Rp ${Number(p.harga).toLocaleString('id-ID')}</span><span class="text-[9px] bg-slate-100 px-2 py-1 rounded-full">Stok ${p.stok}</span></div><button class="w-full mt-2 bg-[#BE1E2D] text-white py-2 rounded-full text-[10px] font-bold">👁️ Lihat & Beli</button></div></div>`).join('')||'<div class="col-span-full bg-white p-8 rounded-2xl text-center"><p class="text-[30px]">🛒</p><p class="font-bold text-[12px] mt-2">Katalog kosong</p></div>';
+ document.getElementById('gridToko').innerHTML=list.map(([id,p])=>`<div class="bg-white rounded-xl overflow-hidden border shadow-sm"><div class="h-[110px] bg-slate-100 flex items-center justify-center relative">${p.foto?`<img src="${p.foto}" class="w-full h-full object-cover">`:`<span class="text-[20px]">📦</span>`}<span class="absolute bottom-1 right-1 bg-[#BE1E2D] text-white text-[8px] px-2 py-0.5 rounded-full">Stok ${p.stok}</span></div><div class="p-2"><p class="font-bold text-[10px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[11px]">Rp ${Number(p.harga).toLocaleString('id-ID')}</p>${cur?.role==='admin'?`<div class="flex gap-1 mt-1"><button onclick="openAdd('${id}')" class="flex-1 bg-blue-600 text-white py-1 rounded-full text-[8px] font-bold">✏️ Edit</button><button onclick="hapusProd('${id}')" class="flex-1 bg-red-600 text-white py-1 rounded-full text-[8px] font-bold">🗑️ Hapus</button></div><div class="flex gap-1 mt-1"><button onclick="ubahStok('${id}',-1)" class="flex-1 bg-red-100 text-red-700 py-1 rounded-full text-[8px]">-1</button><button onclick="ubahStok('${id}',1)" class="flex-1 bg-green-600 text-white py-1 rounded-full text-[8px]">+1</button></div>`:''}</div></div>`).join('')||'<div class="col-span-2 bg-white p-6 rounded-xl text-center col-span-full"><p>📦</p><p class="text-[11px] mt-2 font-bold">Belum ada produk - Admin klik + Produk + Foto</p></div>';
+ document.getElementById('gridBelanja').innerHTML=list.map(([id,p])=>`<div onclick="openDetail('${id}')" class="bg-white rounded-2xl overflow-hidden shadow border cursor-pointer"><div class="h-[150px] bg-slate-50 flex items-center justify-center relative">${p.foto?`<img src="${p.foto}" class="w-full h-full object-cover">`:`<span class="text-[36px]">🛒</span>`}<span class="absolute top-2 left-2 bg-white/90 px-2 py-0.5 rounded-full text-[8px] font-bold">${p.kat}</span></div><div class="p-3"><p class="font-bold text-[11px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[12px] mt-1">Rp ${Number(p.harga).toLocaleString('id-ID')}</p><p class="text-[9px] bg-slate-100 inline px-2 py-0.5 rounded-full mt-1">Stok ${p.stok}</p><button class="w-full mt-2 bg-[#BE1E2D] text-white py-2 rounded-full text-[9px] font-bold">Lihat & Beli</button></div></div>`).join('')||'<div class="col-span-full bg-white p-8 rounded-2xl text-center"><p class="text-[30px]">🛒</p><p class="font-bold text-[11px] mt-2">Katalog kosong</p></div>';
 }
-if(cur) afterLogin();
-render();
-setTimeout(()=>{try{if(window.db){window.onValue(window.ref(window.db,'produk-katalog-V6'), s=>{const v=s.val()||{}; if(Object.keys(v).length>0){localStorage.setItem('prodV6', JSON.stringify(v)); produk=v; render();}}); window.onValue(window.ref(window.db,'users-katalog-V6'), s=>{const v=s.val()||{}; if(Object.keys(v).length>0){localStorage.setItem('usersV6', JSON.stringify(v)); users=v;}});}}catch(e){}},1000);
+if(cur){document.getElementById('btnMasuk').style.display='none'; document.getElementById('btnKeluar').style.display='block'; afterLogin();}
+render(); renderPengguna();
+setTimeout(()=>{try{if(window.db){window.onValue(window.ref(window.db,'produk-katalog-V7'), s=>{const v=s.val()||{}; if(Object.keys(v).length>0){ /* jangan timpa kosong */ if(Object.keys(v).length>=Object.keys(produk).length){localStorage.setItem('prodV7', JSON.stringify(v)); produk=v; render();}}}); window.onValue(window.ref(window.db,'users-katalog-V7'), s=>{const v=s.val()||{}; if(Object.keys(v).length>0){ if(Object.keys(v).length>=Object.keys(users).length){localStorage.setItem('usersV7', JSON.stringify(v)); users=v; renderPengguna();}}});}}catch(e){}},1000);
 </script>
 </body>
 </html>
