@@ -3,678 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GERAI KDKMP KASIH V26 FINAL FULL TANPA TANDA TANYA - 7000764</title>
+<title>GERAI KDKMP KASIH - V27 FIX</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyDummy",
+  authDomain: "kdkmp-kasih.firebaseapp.com",
+  databaseURL: "https://kdkmp-kasih-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kdkmp-kasih",
+  storageBucket: "kdkmp-kasih.appspot.com",
+  messagingSenderId: "123",
+  appId: "1:123:web:abc"
+};
+try{
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  window.db=db; window.ref=ref; window.set=set; window.onValue=onValue; window.remove=remove; window.update=update;
+}catch(e){console.log(e);}
+</script>
 <style>
-.modal-box{background:white; border-radius:16px !important; width:100% !important; max-width:520px !important; max-height:90vh !important; overflow:auto !important; position:relative !important; animation: popIn .2s ease; box-shadow:0 10px 40px rgba(0,0,0,.3);}
-@keyframes popIn{from{transform:scale(.92); opacity:0} to{transform:scale(1); opacity:1}}
-@keyframes blink{0%,100%{opacity:1} 50%{opacity:0.3}}
-.blink{animation: blink 1s infinite;}
-.product-card .img-box img{object-fit:contain !important; background:white;}
-/* HP */
-@media (max-width: 640px){
-  #gridBelanja, #gridToko, #gridPromo{grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 8px !important;}
-  .product-card .img-box{height: 135px !important;}
-  .modal-box{max-width:95% !important; max-height:85vh !important; border-radius:16px !important; margin: 10px auto !important;}
-  #viewToko .flex.justify-between{flex-direction:column !important; gap:8px !important;}
-  .max-w-7xl{padding: 0 8px !important;}
-}
-/* Tablet */
-@media (min-width: 641px) and (max-width: 1024px){
-  #gridBelanja, #gridToko{grid-template-columns: repeat(3, minmax(0,1fr)) !important;}
-  #gridPromo{grid-template-columns: repeat(3, minmax(0,1fr)) !important;}
-  .modal-box{max-width:80% !important;}
-}
+.modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:50; display:none; align-items:center; justify-content:center; padding:12px;}
+.modal-bg.active{display:flex;}
+.modal-box{background:white; border-radius:16px; width:100%; max-width:520px; max-height:90vh; overflow:auto; box-shadow:0 10px 40px rgba(0,0,0,.3);}
+.product-card .img-box img{object-fit:contain!important; background:white;}
+@media (max-width:640px){#gridBelanja,#gridToko,#gridPromo{grid-template-columns:repeat(2,minmax(0,1fr))!important; gap:8px!important;} .product-card .img-box{height:135px!important;} .modal-box{max-width:95%!important; max-height:85vh!important;}}
 </style>
 </head>
-<body class="bg-[#fff8f8] pb-[80px] md:pb-0">
-<div class="bg-[#BE1E2D] text-white p-3 md:p-4 sticky top-0 z-40 shadow">
+<body class="bg-[#FFF8F8] min-h-screen pb-[70px]">
+<div class="bg-[#BE1E2D] text-white p-3 sticky top-0 z-30">
 <div class="max-w-7xl mx-auto">
-<div class="flex justify-between items-center">
-<div class="flex items-center gap-2">
-<div id="logoBox" class="w-[55px] h-[55px] md:w-[70px] md:h-[70px] bg-white rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg cursor-pointer"><img id="logoImg" src="" style="display:none" class="w-full h-full object-contain"><span id="logoDefault" class="text-[#BE1E2D] font-black text-[22px]">K</span></div>
-<div class="leading-tight"><p class="font-black text-[14px] md:text-[22px] leading-none">GERAI KDKMP KASIH</p><p class="text-[9px] opacity-90">Koperasi Desa Merah Putih 53354 - Kertanegara</p><p id="statusGeraiHeader" class="text-[9px] font-bold mt-1">Buka - Online</p></div>
+<div class="flex justify-between items-center gap-2">
+<div class="flex items-center gap-2"><div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#BE1E2D] font-black text-xl">K</div><div><p class="font-black text-[14px]">GERAI KDKMP KASIH</p><p class="text-[10px] opacity-90">Koperasi Desa Merah Putih 53354</p><p id="statusBuka" class="text-[10px] font-bold">Buka - Online</p></div></div>
+<div class="flex gap-2"><span id="userBadge" class="bg-white text-[#BE1E2D] px-3 py-1 rounded-full text-[10px] font-black">BELUM LOGIN</span><button onclick="logout()" class="bg-[#8B0000] px-3 py-1 rounded-full text-[10px]">Keluar</button></div>
 </div>
-<div class="hidden md:flex gap-1 items-center">
-<span id="badge" class="hidden bg-white text-[#BE1E2D] px-3 py-1 rounded-full text-[10px] font-black"></span>
-<span id="notifOrder" style="display:none" class="bg-yellow-300 text-black px-3 py-1 rounded-full text-[10px] font-black blink cursor-pointer">0 BARU</span>
-<button type="button" id="bToko" style="display:none" class="bg-black/30 px-3 py-2 rounded-full text-[11px]">Toko</button>
-<button type="button" id="bBelanja" class="bg-white text-[#BE1E2D] px-3 py-2 rounded-full text-[11px] font-bold">Belanja</button>
-<button type="button" id="btnMyOrders" style="display:none" class="bg-white/20 px-3 py-2 rounded-full text-[10px]">Pesanan Saya</button>
-<button type="button" id="btnGeraiStatus" style="display:none" class="bg-green-200 text-black px-3 py-2 rounded-full text-[10px]">Buka/Tutup</button>
-<button type="button" id="btnOrders" style="display:none" class="bg-green-200 text-black px-3 py-2 rounded-full text-[10px]">Pesanan</button>
-<button type="button" id="btnVoucher" style="display:none" class="bg-white/20 px-3 py-2 rounded-full text-[10px]">Voucher</button>
-<button type="button" id="btnPay" style="display:none" class="bg-white/20 px-3 py-2 rounded-full text-[10px]">Bayar</button>
-<button type="button" id="btnPengguna" style="display:none" class="bg-white/20 px-3 py-2 rounded-full text-[10px]">Pengguna</button>
-<button type="button" id="btnMasuk" class="bg-white text-[#BE1E2D] px-4 py-2 rounded-full text-[11px] font-black">Masuk</button>
-<button type="button" id="btnKeluar" style="display:none" class="bg-black/40 px-3 py-2 rounded-full text-[11px]">Keluar</button>
+<div class="flex gap-2 mt-3"><input id="q" oninput="render()" placeholder="Cari produk..." class="flex-1 bg-white text-black rounded-full px-4 py-3 text-[13px] outline-none"><select id="kat" onchange="render()" class="bg-white text-black rounded-full px-4 py-3 text-[11px] max-w-[160px]"></select><button onclick="openAdd()" class="bg-white text-[#BE1E2D] px-4 rounded-full text-[11px] font-black">+<br>Produk</button></div>
 </div>
-<div class="flex md:hidden gap-1 items-center">
-<span id="badgeMobile" class="hidden bg-white text-[#BE1E2D] px-2 py-1 rounded-full text-[8px] font-black"></span>
-<span id="notifOrderMobile" style="display:none" class="bg-yellow-300 text-black px-2 py-1 rounded-full text-[8px] font-black blink">0</span>
-<button type="button" id="btnMasukMobile" class="bg-white text-[#BE1E2D] px-3 py-2 rounded-full text-[10px] font-black">Masuk</button>
-<button type="button" id="btnKeluarMobile" style="display:none" class="bg-black/40 px-3 py-2 rounded-full text-[9px]">Keluar</button>
-</div>
-</div>
-<div class="mt-3 flex gap-2">
-<input type="text" style="display:none" autocomplete="username">
-<input type="password" style="display:none" autocomplete="new-password">
-<input id="q" type="search" placeholder="Cari produk..." class="flex-1 rounded-full px-4 py-3 text-[13px] text-black shadow">
-<select id="kat" class="rounded-full px-3 py-3 text-[11px] text-black shadow bg-white"><option value="">Semua Kategori</option></select>
-<button type="button" id="cartBtn" class="hidden md:block bg-white text-[#BE1E2D] px-4 py-3 rounded-full text-[11px] font-bold shadow">Keranjang <span id="cartCount">0</span></button>
-<button type="button" id="addBtn" style="display:none" class="hidden md:block bg-white text-[#BE1E2D] px-3 py-3 rounded-full text-[11px] font-bold shadow">+ Produk</button>
-</div>
-</div>
-</div>
-<div id="newOrderAlert" style="display:none" class="max-w-7xl mx-auto m-3 bg-red-600 text-white rounded-xl p-4 text-center font-black text-[13px] blink shadow-lg">PESANAN BARU MASUK!<br><span class="text-[11px] font-normal">Cek di menu Pesanan</span><br><button type="button" onclick="document.getElementById('newOrderAlert').style.display='none'; openOrders();" class="mt-2 bg-white text-red-600 px-4 py-2 rounded-full text-[11px]">Lihat Pesanan</button></div>
-<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-[0_-4px_20px_rgba(0,0,0,.1)] z-[50] flex justify-around py-2">
-<button type="button" id="navBelanja" class="flex flex-col items-center px-3 py-1"><span class="text-[14px] font-black">B</span><span class="text-[8px] font-bold text-[#BE1E2D]">Belanja</span></button>
-<button type="button" id="navToko" style="display:none" class="flex flex-col items-center px-3 py-1"><span class="text-[14px] font-black">T</span><span class="text-[8px] font-bold">Toko</span><span id="navNotif" style="display:none" class="bg-red-600 text-white text-[8px] w-5 h-5 rounded-full flex items-center justify-center blink">0</span></button>
-<button type="button" id="navKeranjang" class="flex flex-col items-center px-3 py-1 relative"><span class="text-[14px] font-black">K</span><span class="text-[8px] font-bold">Keranjang</span><span id="cartCountMobile" class="absolute -top-1 -right-1 bg-[#BE1E2D] text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center">0</span></button>
-<button type="button" id="navPesanan" class="flex flex-col items-center px-3 py-1"><span class="text-[14px] font-black">P</span><span class="text-[8px] font-bold">Pesanan</span></button>
-<button type="button" id="navAdmin" style="display:none" class="flex flex-col items-center px-3 py-1"><span class="text-[14px] font-black">A</span><span class="text-[8px] font-bold">Admin</span></button>
 </div>
 <div class="max-w-7xl mx-auto p-3">
-<div id="migrasiInfo" style="display:none" class="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-3 text-[11px] relative"><span id="migrasiText"></span><button type="button" onclick="document.getElementById('migrasiInfo').style.display='none'" class="absolute top-2 right-2 bg-blue-200 w-6 h-6 rounded-full">X</button></div>
-<div id="geraiStatusBanner" style="display:none" class="rounded-xl p-3 mb-3 text-center text-[12px] font-bold border-2"></div>
-<div id="viewToko" style="display:none"><div class="flex justify-between items-center mb-3"><h2 class="font-black text-[13px] text-[#BE1E2D]">Toko - Khusus Manajer</h2><div class="flex gap-1"><button type="button" id="btnKelolaKategori" class="bg-[#BE1E2D] text-white px-3 py-2 rounded-full text-[10px] font-bold">Kategori</button><button type="button" id="btnAddProduk" class="bg-white border px-3 py-2 rounded-full text-[10px] font-bold">+ Produk</button></div></div><div id="gridToko" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2"></div></div>
-<div id="viewBelanja"><div id="promoArea" class="mb-4"><h2 class="font-black text-[14px] text-[#BE1E2D] mb-2">Promo & Bundling</h2><div id="gridPromo" class="grid grid-cols-2 md:grid-cols-4 gap-2"></div></div><h2 class="font-black text-[13px] text-[#BE1E2D] mb-2">Belanja</h2><div id="gridBelanja" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2"></div></div>
+<div id="geraiStatus" class="bg-green-50 border border-green-300 text-green-800 rounded-xl p-3 text-center text-[12px] font-bold mb-3">GERAI ONLINE - BUKA</div>
+<div id="promoArea" class="mb-4"><h2 class="font-black text-[#BE1E2D] mb-2">Promo & Bundling</h2><div id="gridPromo" class="grid grid-cols-2 md:grid-cols-4 gap-2"></div></div>
+<div id="viewBelanja"><h2 class="font-black text-[#BE1E2D] mb-2">Belanja</h2><div id="gridBelanja" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
+<div id="viewToko" class="hidden"><div class="flex justify-between items-center mb-2"><h2 class="font-black text-[#BE1E2D]">Kelola Toko</h2><div class="flex gap-2"><button onclick="openKategoriAdmin()" class="bg-[#BE1E2D] text-white px-3 py-2 rounded-full text-[11px]">Kategori</button><button onclick="openAdd()" class="bg-black text-white px-3 py-2 rounded-full text-[11px]">+ Produk</button></div></div><div id="gridToko" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
+<div id="viewKeranjang" class="hidden"><h2 class="font-black text-[#BE1E2D] mb-2">Keranjang <span id="keranjangCountBadge" class="bg-red-600 text-white px-2 py-0.5 rounded-full text-[10px]">0</span></h2><div id="listKeranjang" class="space-y-2"></div><div id="totalKeranjang" class="mt-3 p-3 bg-white rounded-xl font-black text-[14px]"></div><button onclick="checkout()" class="mt-3 w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">Checkout</button></div>
+<div id="viewPesanan" class="hidden"><h2 class="font-black text-[#BE1E2D] mb-2">Pesanan Saya</h2><div id="listPesanan" class="space-y-2"></div></div>
+<div id="viewAdmin" class="hidden"><h2 class="font-black text-[#BE1E2D] mb-2">Admin</h2><div class="grid gap-2"><button onclick="openKategoriAdmin()" class="bg-white p-4 rounded-xl text-left shadow"><p class="font-bold">Kategori Produk</p><p class="text-[11px] text-slate-500">Tambah, edit, hapus + lihat jumlah produk</p></button><button onclick="switchTab('toko')" class="bg-white p-4 rounded-xl text-left shadow"><p class="font-bold">Kelola Produk</p></button><button onclick="renderPengguna();openModal('penggunaAdmin')" class="bg-white p-4 rounded-xl text-left shadow"><p class="font-bold">Pengguna</p></button></div></div>
 </div>
-<!-- MODAL LENGKAP TANPA TANDA TANYA -->
-<div id="batalPesanan" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>Batalkan Pesanan</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="mt-4 space-y-3"><p class="text-[11px]">Pesanan status Antrian bisa dibatalkan sendiri dengan alasan.</p><input type="hidden" id="batalId"><textarea id="batalAlasan" placeholder="Alasan batal..." class="w-full border-2 rounded-xl px-4 py-3 text-[12px] h-24"></textarea><button type="button" id="doBatalBtn" class="w-full bg-red-600 text-white py-3 rounded-full font-bold">Ya, Batalkan</button></div></div></div>
+<div class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 z-40">
+<button onclick="switchTab('belanja')" class="flex flex-col items-center"><span class="font-black">B</span><span class="text-[9px]">Belanja</span></button>
+<button onclick="switchTab('toko')" class="flex flex-col items-center"><span class="font-black">T</span><span class="text-[9px]">Toko</span></button>
+<button onclick="switchTab('keranjang')" class="flex flex-col items-center relative"><span class="font-black">K</span><span class="text-[9px]">Keranjang</span><span id="cartBadge" class="absolute -top-1 -right-2 bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded-full">0</span></button>
+<button onclick="switchTab('pesanan')" class="flex flex-col items-center"><span class="font-black">P</span><span class="text-[9px]">Pesanan</span></button>
+<button onclick="switchTab('admin')" class="flex flex-col items-center"><span class="font-black">A</span><span class="text-[9px]">Admin</span></button>
+</div>
 
-<div id="logoAdmin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>Atur Logo</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="mt-3 space-y-3"><div class="border-2 border-dashed rounded-xl p-3 text-center"><input type="file" id="logoFile" accept="image/*" class="w-full text-[10px]"><div id="logoPrevBox" class="hidden mt-3"><img id="logoPrevImg" class="w-32 h-32 mx-auto object-contain border rounded-xl"></div></div><button type="button" id="saveLogoBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-bold">Simpan Logo</button><button type="button" id="delLogoBtn" class="w-full bg-slate-100 py-3 rounded-full">Hapus Logo</button></div></div></div>
+<div id="modalAdd" class="modal-bg"><div class="modal-box p-4"><div class="flex justify-between mb-3"><h3 id="modalAddTitle" class="font-black">Tambah Produk</h3><button onclick="closeAll()">X</button></div><input id="pNama" placeholder="Nama produk" class="w-full border rounded-full px-4 py-3 text-[12px] mb-2"><div class="flex gap-2 mb-2"><input id="pHarga" type="number" placeholder="Harga" class="flex-1 border rounded-full px-4 py-3 text-[12px]"><input id="pStok" type="number" placeholder="Stok" class="flex-1 border rounded-full px-4 py-3 text-[12px]"></div><div id="pKatCheckboxes" class="grid grid-cols-2 gap-1 mb-2 border p-2 rounded-xl max-h-[120px] overflow-auto"></div><textarea id="pDesk" placeholder="Deskripsi" class="w-full border rounded-xl px-4 py-2 text-[12px] mb-2"></textarea><div class="flex gap-2 mb-2 items-center"><input type="checkbox" id="pIsPromo"><label for="pIsPromo" class="text-[11px]">Promo</label><input type="checkbox" id="pSubsidiAktif" class="ml-4"><label for="pSubsidiAktif" class="text-[11px]">Subsidi</label></div><input id="pSubsidiSyarat" placeholder="Syarat subsidi" class="w-full border rounded-full px-4 py-2 text-[11px] mb-2"><input type="file" id="pFoto" accept="image/*" class="text-[11px] mb-3"><button onclick="saveProd()" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black text-[13px]">Simpan & Sync ke HP</button></div></div>
 
-<div id="auth" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99998;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-sm p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b id="tAuth" class="text-[#BE1E2D]">Masuk</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div id="formLogin" class="mt-4 space-y-3"><input id="lUser" type="text" placeholder="Username / Email / HP" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="lPass" type="password" placeholder="Password" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><p id="lMsg" class="text-red-600 text-[11px] text-center"></p><button type="button" id="doLoginBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">MASUK</button><a href="mailto:anirohdwirahayu@gmail.com?subject=Reset Password Admin Manajer KDKMP&body=Halo Admin, saya lupa password Admin Manajer. Tolong reset ke Manajer0k3. Username: Admin Manajer" class="w-full block text-center text-[10px] text-red-600 underline mt-2 py-2">Lupa Password? Hubungi anirohdwirahayu@gmail.com</a><button type="button" id="toDaftarBtn" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold">Belum punya? Daftar</button></div><div id="formDaftar" style="display:none" class="mt-4 space-y-3"><input id="dNama" placeholder="Nama *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="dKontak" placeholder="Email / HP *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="dAlamat" placeholder="Alamat *" class="w-full border-2 rounded-xl px-4 py-3 text-[13px]"><input id="dPass" type="password" placeholder="Password *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="dPass2" type="password" placeholder="Ulang *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><p id="dMsg" class="text-red-600 text-[11px] text-center"></p><button type="button" id="doDaftarBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">DAFTAR</button><button type="button" id="toLoginBtn" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold">Sudah punya? Masuk</button></div></div></div>
+<div id="kategoriAdmin" class="modal-bg"><div class="modal-box p-4"><div class="flex justify-between mb-3"><h3 class="font-black">Kelola Kategori + Jumlah Produk</h3><button onclick="closeAll()">X</button></div><input id="katNama" placeholder="Nama kategori baru (misal: Buah)" class="w-full border rounded-full px-4 py-3 text-[12px] mb-2"><div class="flex gap-2 mb-2 items-center"><input type="checkbox" id="katIsSubsidi"><label for="katIsSubsidi" class="text-[11px]">Kategori Subsidi?</label></div><input id="katSyarat" placeholder="Syarat jika subsidi" class="w-full border rounded-full px-4 py-2 text-[11px] mb-2" style="display:none"><div class="flex gap-2 mb-3"><button id="saveKategoriBtn" onclick="saveKategori()" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded-full text-[12px] font-bold">+ Tambah Kategori</button><button id="cancelKategoriBtn" onclick="cancelKategoriEdit()" class="bg-slate-200 px-4 py-2 rounded-full text-[12px]" style="display:none">Batal</button></div><div id="listKategori" class="space-y-2 max-h-[300px] overflow-auto"></div></div></div>
 
-<div id="add" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99997;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-md p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b id="addTitle">Produk</b><button type="button" class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-3"><input id="pNama" placeholder="Nama produk *" class="w-full border rounded-xl px-3 py-3 text-[13px]"><div class="grid grid-cols-2 gap-2"><input id="pHarga" type="number" placeholder="Harga *" class="border rounded-xl px-3 py-3 text-[13px]"><input id="pStok" type="number" placeholder="Stok *" class="border rounded-xl px-3 py-3 text-[13px]"></div><div class="border-2 border-dashed rounded-xl p-3 bg-slate-50"><p class="font-bold text-[11px] mb-2">Kategori (pilih lebih dari 1)</p><div id="pKatCheckboxes" class="grid grid-cols-2 gap-2 max-h-[140px] overflow-auto"></div></div><div id="subsidiBox" style="display:none" class="border-2 border-amber-300 bg-amber-50 rounded-xl p-3 space-y-2"><p class="font-black text-[11px] text-amber-800">Barang Subsidi - Syarat ON/OFF</p><label class="flex gap-2 items-center text-[11px]"><input type="checkbox" id="pSubsidiAktif" checked> Aktifkan syarat subsidi</label><textarea id="pSubsidiSyarat" placeholder="Syarat: Wajib KTP Kertanegara, Maks 2 pcs/KK" class="w-full border rounded-xl px-3 py-2 text-[11px] h-20"></textarea></div><label class="flex gap-2 text-[12px] items-center"><input type="checkbox" id="pIsPromo"> Promo/Bundling</label><textarea id="pDesk" placeholder="Deskripsi" class="w-full border rounded-xl px-3 py-2 text-[12px] h-16"></textarea><div class="border-2 border-dashed rounded-xl p-2 text-center bg-white"><input type="file" id="pFoto" accept="image/*" class="w-full text-[10px]"><div id="prevBox" class="hidden mt-2"><img id="prevImg" class="w-full h-40 object-contain border rounded-xl"></div></div><button type="button" id="saveProdBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-bold text-[13px]">SIMPAN PERMANEN</button></div></div></div>
-
-<div id="kategoriAdmin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99996;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-lg p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b>Kelola Kategori Produk</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="mt-4 space-y-3 border rounded-xl p-3 bg-slate-50"><input type="hidden" id="katEditId"><input id="katNama" placeholder="Nama kategori baru" class="w-full border rounded-full px-4 py-3 text-[12px]"><label class="flex gap-2 items-center text-[11px]"><input type="checkbox" id="katIsSubsidi"> Kategori ini Barang Subsidi</label><input id="katSyarat" placeholder="Syarat default jika subsidi" class="w-full border rounded-full px-3 py-2 text-[11px]" style="display:none"><div class="flex gap-2"><button type="button" id="saveKategoriBtn" class="flex-1 bg-[#BE1E2D] text-white py-3 rounded-full text-[11px] font-bold">+ Tambah Kategori</button><button type="button" id="cancelKategoriBtn" style="display:none" class="flex-1 bg-slate-100 py-3 rounded-full text-[11px]">Batal Edit</button></div></div><div id="listKategori" class="mt-4 space-y-2"></div></div></div>
-
-<div id="detail" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99995;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-md p-4 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b id="dNama">Detail</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><img id="dFoto" class="w-full h-64 object-contain bg-white rounded-xl mt-3 border"><div class="mt-3"><p id="dKat" class="text-[10px] bg-red-50 text-[#BE1E2D] inline px-3 py-1 rounded-full font-bold"></p><p id="dHarga" class="font-black text-[#BE1E2D] text-[22px] mt-2"></p><p id="dStok" class="text-[12px]"></p><p id="dDesk" class="text-[12px] text-slate-600 mt-2"></p><div id="dSubsidi" style="display:none" class="mt-3 bg-amber-50 border-2 border-amber-300 rounded-xl p-3"><p class="font-black text-[11px]">Syarat Barang Subsidi:</p><p id="dSubsidiText" class="text-[11px] mt-1"></p></div></div><div class="flex gap-2 mt-4"><button type="button" id="addCartDetailBtn" class="flex-1 bg-[#BE1E2D] text-white py-3 rounded-full font-bold">+ Keranjang</button><button type="button" class="btnClose flex-1 bg-slate-100 py-3 rounded-full font-bold">Tutup</button></div></div></div>
-
-<div id="cart" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99994;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-md p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b>Keranjang</b><button type="button" class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div id="cartList" class="mt-3 space-y-2 max-h-[180px] overflow-auto"></div><div class="mt-4 border-t pt-3 space-y-2"><div class="flex justify-between text-[12px]"><span>Subtotal:</span><b id="cartSub">Rp 0</b></div><div class="flex gap-2"><input id="voucherInput" placeholder="Kode Voucher" class="flex-1 border rounded-full px-3 py-3 text-[12px]"><button type="button" id="applyVoucherBtn" class="bg-[#BE1E2D] text-white px-4 py-3 rounded-full text-[11px]">Pakai</button></div><p id="voucherMsg" class="text-[10px] text-green-600"></p><div id="myVouchers" class="space-y-2"></div><div class="flex justify-between text-[12px]"><span>Diskon:</span><b id="cartDiskon" class="text-green-600">Rp 0</b></div><div class="flex justify-between font-black text-[15px] border-t pt-2"><span>Total:</span><span id="cartTotal">Rp 0</span></div></div><div class="mt-4 space-y-3 border rounded-xl p-3 bg-slate-50"><p class="font-bold text-[11px]">Pengambilan:</p><div class="flex gap-2"><label class="flex-1 flex gap-1 items-center text-[12px] bg-white border rounded-full px-3 py-3"><input type="radio" name="ambil" value="diambil" checked> Diambil</label><label class="flex-1 flex gap-1 items-center text-[12px] bg-white border rounded-full px-3 py-3"><input type="radio" name="ambil" value="diantar"> Diantar</label></div><div id="diantarFields" style="display:none" class="space-y-2 mt-3 border-t pt-3"><p class="font-bold text-[11px]">Alamat Antar + HP + Sharelok:</p><button type="button" id="btnAutoAlamat" class="w-full bg-blue-600 text-white py-2 rounded-full text-[11px] font-bold">Isi Otomatis dari Akun Saya</button><textarea id="alamatAntar" placeholder="Alamat lengkap" class="w-full border rounded-xl px-3 py-3 text-[12px] h-20"></textarea><input id="hpAntar" placeholder="No HP penerima *" class="w-full border rounded-full px-3 py-3 text-[12px]"><div class="flex gap-1"><input id="sharelok" placeholder="Link Sharelok Maps" class="flex-1 border rounded-full px-3 py-3 text-[11px]"><button type="button" id="btnSharelok" class="bg-green-600 text-white px-3 py-3 rounded-full text-[10px]">GPS</button><button type="button" id="btnOpenMaps" class="bg-slate-200 px-3 py-3 rounded-full text-[10px]">Buka Maps</button></div></div><textarea id="note" placeholder="Note tambahan" class="w-full border rounded-xl px-3 py-3 text-[12px] h-16 mt-2"></textarea><select id="paySelect" class="w-full border rounded-full px-3 py-3 text-[12px]"></select><div id="buktiBox" style="display:none" class="border-2 border-amber-300 bg-amber-50 rounded-xl p-3 space-y-2 mt-2"><p class="font-bold text-[11px]">Upload Bukti Transfer:</p><input type="file" id="buktiFile" accept="image/*" class="w-full text-[11px]"><div id="buktiPrevBox" style="display:none" class="mt-2"><img id="buktiPrevImg" class="w-full h-32 object-contain bg-white border rounded-xl"><p class="text-[9px] text-green-600 mt-1">Bukti siap masuk ke admin</p></div></div></div><button type="button" id="checkoutBtn" class="w-full mt-4 bg-green-600 text-white py-3 rounded-full font-bold">Checkout</button></div></div>
-
-<div id="pengguna" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99993;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-lg p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b>Pengguna - Edit + Password</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div id="manajerPanel" style="display:none" class="mt-3 bg-amber-50 border-2 border-amber-300 rounded-xl p-3"><p class="font-bold text-[11px]">Tambah Admin Karyawan</p><div class="grid grid-cols-2 gap-2 mt-2"><input id="kNama" placeholder="Nama" class="border rounded-full px-3 py-3 text-[11px]"><input id="kKontak" placeholder="Email/HP" class="border rounded-full px-3 py-3 text-[11px]"><input id="kPass" type="password" placeholder="Password" class="border rounded-full px-3 py-3 text-[11px]"><input id="kAlamat" placeholder="Alamat" class="border rounded-full px-3 py-3 text-[11px]"></div><button type="button" id="addKaryawanBtn" class="w-full mt-2 bg-amber-500 text-white py-3 rounded-full text-[11px] font-bold">+ Tambah Karyawan</button></div><div id="listPengguna" class="mt-3 space-y-2"></div></div></div>
-
-<div id="editUser" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99992;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>Edit Pengguna + Password</b><button type="button" class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><input type="hidden" id="penggunaEditId"><input id="eNama" placeholder="Nama" class="w-full border rounded-xl px-3 py-3 text-[12px]"><input id="eKontak" placeholder="Kontak" class="w-full border rounded-xl px-3 py-3 text-[12px]"><input id="eAlamat" placeholder="Alamat" class="w-full border rounded-xl px-3 py-3 text-[12px]"><select id="eRole" class="w-full border rounded-xl px-3 py-3 text-[12px]"><option value="konsumen">Konsumen</option><option value="admin_karyawan">Admin Karyawan</option><option value="admin_manajer">Admin Manajer</option></select><div class="border-2 border-red-300 bg-red-50 rounded-xl p-3 space-y-2"><p class="text-[10px] font-black text-red-700">Ganti Password (kosongin kalau tidak ganti):</p><input id="penggunaEditPassBaru" type="password" placeholder="Password baru min 4" class="w-full border rounded-full px-3 py-2 text-[11px]"><input id="penggunaEditPassBaru2" type="password" placeholder="Ulang password baru" class="w-full border rounded-full px-3 py-2 text-[11px]"></div><button type="button" id="saveEditUserBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full text-[12px] font-bold">Simpan Edit + Password</button></div></div></div>
-
-<div id="orders" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99991;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-2xl p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between items-start gap-2"><b class="text-[13px]">Pesanan - Terima/Tolak + Alasan</b><div class="flex gap-1"><button type="button" id="pdfHarian" class="bg-slate-100 px-2 py-2 rounded-full text-[9px]">Harian</button><button type="button" id="pdfMingguan" class="bg-slate-100 px-2 py-2 rounded-full text-[9px]">Mingguan</button><button type="button" id="pdfBulanan" class="bg-slate-100 px-2 py-2 rounded-full text-[9px]">Bulanan</button><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div></div><div id="listOrders" class="mt-3 space-y-2"></div></div></div>
-
-<div id="myOrders" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99991;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-lg p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b>Pesanan Saya - Bisa Batalkan</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div id="listMyOrders" class="mt-3 space-y-2"></div></div></div>
-
-<div id="payAdmin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99989;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-md p-5"><div class="flex justify-between"><b>Metode Pembayaran</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="mt-3 space-y-2 border rounded-xl p-3 bg-slate-50"><input type="hidden" id="payEditId"><select id="payType" class="w-full border rounded-full px-3 py-3 text-[11px]"><option value="COD">COD / Cash</option><option value="TRANSFER">Transfer Bank</option></select><input id="payName" placeholder="Nama" class="w-full border rounded-full px-3 py-3 text-[11px]"><input id="payInfo" placeholder="Info" class="w-full border rounded-full px-3 py-3 text-[11px]"><button type="button" id="savePayBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full text-[11px] font-bold">Simpan</button><button type="button" id="cancelPayBtn" style="display:none" class="w-full bg-slate-100 py-3 rounded-full text-[11px]">Batal Edit</button></div><div id="listPay" class="mt-3 space-y-2"></div></div></div>
-
-<div id="voucherAdmin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99988;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-lg p-5 max-h-[85vh] overflow-auto"><div class="flex justify-between"><b>Voucher</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="mt-3 space-y-2 border rounded-xl p-3 bg-amber-50"><input type="hidden" id="vEditId"><input id="vCode" placeholder="Kode Dasar" class="w-full border rounded-full px-3 py-3 text-[11px]"><div class="grid grid-cols-3 gap-2"><select id="vType" class="border rounded-full px-3 py-3 text-[11px]"><option value="nominal">Nominal Rp</option><option value="persen">Persen %</option></select><input id="vValue" type="number" placeholder="Nilai" class="border rounded-full px-3 py-3 text-[11px]"><input id="vJumlah" type="number" placeholder="Jumlah" value="1" class="border rounded-full px-3 py-3 text-[11px]"></div><div class="grid grid-cols-2 gap-2"><input id="vMin" type="number" placeholder="Min Belanja" class="border rounded-full px-3 py-3 text-[11px]"><input id="vExp" type="date" class="border rounded-full px-3 py-3 text-[11px]"></div><select id="vUser" class="w-full border rounded-full px-3 py-3 text-[11px]"><option value="all">Semua Pengguna (1 per orang)</option></select><div class="flex gap-2"><button type="button" id="saveVoucherBtn" class="flex-1 bg-[#BE1E2D] text-white py-3 rounded-full text-[11px] font-bold">+ Buat</button><button type="button" id="cancelVoucherBtn" style="display:none" class="flex-1 bg-slate-100 py-3 rounded-full text-[11px]">Batal</button></div></div><div id="listVoucher" class="mt-3 space-y-2"></div></div></div>
-
-<div id="geraiStatusAdmin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99987;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>Buka/Tutup Gerai</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="mt-4 space-y-3"><select id="geraiIsOnline" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><option value="true">ONLINE - Buka Gerai</option><option value="false">OFFLINE - Tutup Gerai</option></select><input id="geraiMessage" placeholder="Pesan" class="w-full border rounded-full px-4 py-3 text-[12px]"><textarea id="geraiReason" placeholder="Alasan tutup" class="w-full border rounded-xl px-4 py-3 text-[12px] h-20"></textarea><button type="button" id="saveGeraiBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-bold">Simpan Status Gerai</button></div></div></div>
-
-<div id="adminMenu" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99986;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>Menu Admin</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="grid grid-cols-2 gap-2 mt-4"><button type="button" id="mVoucher" class="bg-amber-100 border p-4 rounded-xl text-[11px] font-bold">Voucher<br>Edit</button><button type="button" id="mPay" class="bg-blue-100 border p-4 rounded-xl text-[11px] font-bold">Bayar<br>Edit</button><button type="button" id="mPengguna" class="bg-green-100 border p-4 rounded-xl text-[11px] font-bold">Pengguna<br>Edit</button><button type="button" id="mAnalisis" class="bg-purple-100 border p-4 rounded-xl text-[11px] font-bold">Analisis</button><button type="button" id="mGerai" class="bg-red-100 border p-4 rounded-xl text-[11px] font-bold">Buka/Tutup</button><button type="button" id="mKategori" class="bg-slate-100 border p-4 rounded-xl text-[11px] font-bold">Kategori</button><button type="button" id="mPesanan" class="bg-yellow-100 border p-4 rounded-xl text-[11px] font-bold col-span-2">Pesanan</button></div></div></div>
-
-<div id="analisis" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99990;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-2xl p-5"><div class="flex justify-between"><b>Analisis</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="grid grid-cols-3 gap-2 mt-3"><div class="bg-red-50 border rounded-xl p-3 text-center"><p class="text-[8px]">Omset</p><b id="aOmset" class="text-[11px]">Rp 0</b></div><div class="bg-green-50 border rounded-xl p-3 text-center"><p class="text-[8px]">Pesanan</p><b id="aPesanan" class="text-[11px]">0</b></div><div class="bg-blue-50 border rounded-xl p-3 text-center"><p class="text-[8px]">Baru</p><b id="aBaru" class="text-[11px]">0</b></div></div></div></div>
-
-<audio id="notifSound" preload="auto"><source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4d1716d5d0.mp3?filename=notification-sound-7062.mp3" type="audio/mpeg"></audio>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBP1lvYR22XOf-IC_34gHEEkfolSthDTzo",
-  authDomain: "kasih-kopdes.firebaseapp.com",
-  databaseURL: "https://kasih-kopdes-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "kasih-kopdes",
-  storageBucket: "kasih-kopdes.firebasestorage.app",
-  messagingSenderId: "746954171317",
-  appId: "1:746954171317:web:7000764fc695b1b1ce2ffc"
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-window.db=db; window.ref=ref; window.set=set; window.onValue=onValue; window.update=update; window.remove=remove;
-</script>
+<div id="modalDetail" class="modal-bg"><div class="modal-box p-4"><div class="flex justify-between mb-2"><h3 class="font-black">Detail</h3><button onclick="closeAll()">X</button></div><div id="detailContent"></div></div></div>
+<div id="penggunaAdmin" class="modal-bg"><div class="modal-box p-4"><div class="flex justify-between mb-2"><h3 class="font-black">Pengguna</h3><button onclick="closeAll()">X</button></div><div id="listPengguna" class="space-y-2 mb-3"></div><input id="eNama" placeholder="Nama" class="w-full border rounded-full px-3 py-2 text-[11px] mb-1"><input id="eKontak" placeholder="Kontak" class="w-full border rounded-full px-3 py-2 text-[11px] mb-1"><input id="eAlamat" placeholder="Alamat" class="w-full border rounded-full px-3 py-2 text-[11px] mb-1"><select id="eRole" class="w-full border rounded-full px-3 py-2 text-[11px] mb-1"><option value="warga">Warga</option><option value="admin_toko">Admin Toko</option><option value="admin_manajer">Admin Manajer</option></select><input id="penggunaEditPassBaru" type="password" placeholder="Password baru (kosong jika tidak ganti)" class="w-full border rounded-full px-3 py-2 text-[11px] mb-1"><input id="penggunaEditPassBaru2" type="password" placeholder="Ulang password baru" class="w-full border rounded-full px-3 py-2 text-[11px] mb-2"><button onclick="saveEditUser()" class="w-full bg-blue-600 text-white py-2 rounded-full text-[11px]">Simpan Edit User</button></div></div>
 <script>
-// ==== V26 FINAL FULL - MIGRASI ANTI HILANG + VOUCHER AUTO + EDIT PASSWORD ====
-const KEY_PROD='produk-kdkmp-final', KEY_USERS='users-kdkmp-final', KEY_CONFIG='config-kdkmp-final', KEY_ORDERS='orders-kdkmp-final', KEY_VOUCH='vouchers-kdkmp-final', KEY_PAY='payments-kdkmp-final', KEY_KAT='kategori-produk-final', KEY_GERAI='gerai-status';
-const OLD_PROD_KEYS=['prodV13','prodV12','prodV11','prodV10','prodV9','prod','produk'], OLD_USER_KEYS=['usersV13','usersV12','usersV11','usersV10','usersV9','users'];
-function loadWithMigration(newKey, oldKeys){
-  let data=JSON.parse(localStorage.getItem(newKey)||'null');
-  if(data && Object.keys(data).length>0) return data;
-  let merged={};
-  oldKeys.forEach(k=>{
-    try{
-      const d=JSON.parse(localStorage.getItem(k)||'null');
-      if(d && typeof d==='object' && Object.keys(d).length>0){
-        if(Array.isArray(d)){ d.forEach((item,idx)=>{ if(item) merged[item.id||idx]=item; }); }
-        else { Object.assign(merged,d); }
-      }
-    }catch(e){}
-  });
-  if(Object.keys(merged).length>0){
-    localStorage.setItem(newKey, JSON.stringify(merged));
-    return merged;
-  }
-  return {};
-}
-let produk=loadWithMigration(KEY_PROD, OLD_PROD_KEYS);
-let users=loadWithMigration(KEY_USERS, OLD_USER_KEYS);
-let config=JSON.parse(localStorage.getItem(KEY_CONFIG)||'{}');
-let orders=JSON.parse(localStorage.getItem(KEY_ORDERS)||'{}');
-let vouchers=JSON.parse(localStorage.getItem(KEY_VOUCH)||'{}');
-let payments=JSON.parse(localStorage.getItem(KEY_PAY)||'{"1":{"id":"1","type":"COD","name":"COD / Cash","info":"Bayar di tempat"},"2":{"id":"2","type":"TRANSFER","name":"Transfer BRI - Koperasi","info":"BRI 123456 a.n Koperasi Desa"}}');
-let kategoriProduk=JSON.parse(localStorage.getItem(KEY_KAT)||'null');
-if(!kategoriProduk){
-  kategoriProduk={
-    "sembako":{"id":"sembako","nama":"Sembako","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "bumbu":{"id":"bumbu","nama":"Bumbu","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "sayuran":{"id":"sayuran","nama":"Sayuran","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "snack":{"id":"snack","nama":"Snack","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "sabun":{"id":"sabun","nama":"Sabun","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "subsidi":{"id":"subsidi","nama":"Barang Subsidi","isSubsidi":true,"syarat":"Wajib KTP Kertanegara, Maks 2 pcs/KK","createdAt":Date.now()},
-    "beras":{"id":"beras","nama":"Beras","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "minyak":{"id":"minyak","nama":"Minyak","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "gula":{"id":"gula","nama":"Gula","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "mie":{"id":"mie","nama":"Mie","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "minuman":{"id":"minuman","nama":"Minuman","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "bundling":{"id":"bundling","nama":"Bundling","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "promo":{"id":"promo","nama":"Promo","isSubsidi":false,"syarat":"","createdAt":Date.now()},
-    "lainnya":{"id":"lainnya","nama":"Lainnya","isSubsidi":false,"syarat":"","createdAt":Date.now()}
-  };
-  localStorage.setItem(KEY_KAT, JSON.stringify(kategoriProduk));
-}
-let geraiStatus=JSON.parse(localStorage.getItem(KEY_GERAI)||'{"isOnline":true,"message":"Gerai Buka - Silakan belanja","reason":""}');
-if(Object.keys(produk).length===0){
-  produk={"contoh1":{nama:"Beras 5kg Kertanegara", harga:65000, stok:50, kat:["Beras","Sembako"], desk:"Beras pulen contoh", foto:null, isPromo:true, updatedAt:Date.now()}};
-  localStorage.setItem(KEY_PROD, JSON.stringify(produk));
-}
-let cur=JSON.parse(localStorage.getItem('curV14')||'null');
-let cart={}, view='belanja', editId=null, detailId=null, tempFoto=null, tempLogo=null, tempBukti=null, orderFilter='all', appliedVoucher=null, editUserId=null, katEditId=null, lastOrderCount=Object.keys(orders).length, previewData=[], previewType='';
-function hash(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return 'h'+Math.abs(h)+btoa(p).slice(0,4);}
-function ensureManajer(){if(!Object.values(users).find(u=>u.nama==='Admin Manajer')){const id='admin_manajer_001'; users[id]={id,nama:'Admin Manajer',kontak:'Admin Manajer',alamat:'Kantor Kertanegara',passHash:hash('Manajer0k3'),role:'admin_manajer',totalBelanja:0,createdAt:new Date().toISOString()}; localStorage.setItem(KEY_USERS, JSON.stringify(users)); try{if(window.db) window.set(window.ref(window.db,'users-kdkmp-final/'+id), users[id]);}catch(e){}}}
-ensureManajer();
-function closeAll(){const ids=['logoAdmin','auth','add','detail','cart','pengguna','orders','myOrders','analisis','payAdmin','voucherAdmin','editUser','adminMenu','kategoriAdmin','geraiStatusAdmin','batalPesanan']; ids.forEach(i=>{const el=document.getElementById(i); if(el) el.style.display='none';});}
-window.closeAll=closeAll;
-document.querySelectorAll('.btnClose').forEach(b=>b.addEventListener('click', closeAll));
-function switchView(v){if(v==='toko' && !(cur?.role==='admin_manajer'||cur?.role==='admin_karyawan')){alert('Toko khusus Manajer');return;} view=v; document.getElementById('viewToko').style.display=v==='toko'?'block':'none'; document.getElementById('viewBelanja').style.display=v==='belanja'?'block':'none'; render();}
-function openAuth(){document.getElementById('auth').style.display='flex'; document.getElementById('formLogin').style.display='block'; document.getElementById('formDaftar').style.display='none';}
-function toDaftar(){document.getElementById('formLogin').style.display='none'; document.getElementById('formDaftar').style.display='block';}
-function toLogin(){document.getElementById('formDaftar').style.display='none'; document.getElementById('formLogin').style.display='block';}
-function doLogin(){const u=document.getElementById('lUser').value.trim(); const p=document.getElementById('lPass').value.trim(); const m=document.getElementById('lMsg'); if(!u||!p){m.textContent='Isi';return;} const f=Object.values(users).find(x=>(x.nama.toLowerCase()===u.toLowerCase()||(x.kontak||'').toLowerCase()===u.toLowerCase())&&x.passHash===hash(p)); if(!f){m.textContent='Salah - klik Reset di bawah';return;} cur=f; localStorage.setItem('curV14', JSON.stringify(cur)); closeAll(); afterLogin();}
-function doDaftar(){const nama=document.getElementById('dNama').value.trim(); const kontak=document.getElementById('dKontak').value.trim(); const alamat=document.getElementById('dAlamat').value.trim(); const pass=document.getElementById('dPass').value.trim(); const pass2=document.getElementById('dPass2').value.trim(); const m=document.getElementById('dMsg'); if(!nama||!kontak||!alamat||!pass){m.textContent='Wajib';return;} if(pass!==pass2){m.textContent='Tidak sama';return;} const id=Date.now().toString(); users[id]={id,nama,kontak,alamat,passHash:hash(pass),role:'konsumen',totalBelanja:0,createdAt:new Date().toISOString()}; localStorage.setItem(KEY_USERS, JSON.stringify(users)); try{if(window.db) window.set(window.ref(window.db,'users-kdkmp-final/'+id), users[id]);}catch(e){} m.textContent='Sukses daftar'; setTimeout(()=>toLogin(),600);}
-function afterLogin(){
-  document.getElementById('badge')?.classList.remove('hidden'); document.getElementById('badge').textContent=cur.role.toUpperCase();
-  document.getElementById('badgeMobile')?.classList.remove('hidden'); document.getElementById('badgeMobile').textContent=cur.role.toUpperCase();
-  document.getElementById('btnMasuk').style.display='none'; document.getElementById('btnKeluar').style.display='block';
-  document.getElementById('btnMasukMobile').style.display='none'; document.getElementById('btnKeluarMobile').style.display='block';
-  document.getElementById('btnMyOrders').style.display='block'; document.getElementById('navPesanan').style.display='flex';
-  if(cur.role==='admin_manajer'){document.getElementById('bToko').style.display='block'; document.getElementById('addBtn').style.display='block'; document.getElementById('btnPengguna').style.display='block'; document.getElementById('btnPay').style.display='block'; document.getElementById('btnVoucher').style.display='block'; document.getElementById('btnOrders').style.display='block'; document.getElementById('btnGeraiStatus').style.display='block'; document.getElementById('manajerPanel').style.display='block'; document.getElementById('navToko').style.display='flex'; document.getElementById('navAdmin').style.display='flex';}
-  else if(cur.role==='admin_karyawan'){document.getElementById('bToko').style.display='block'; document.getElementById('btnOrders').style.display='block'; document.getElementById('navToko').style.display='flex';}
-  document.getElementById('migrasiInfo').style.display='block'; document.getElementById('migrasiText').innerHTML=`Firebase + Migrasi Aktif | Produk: ${Object.keys(produk).length} | Pengguna: ${Object.keys(users).length} | Pesanan: ${Object.keys(orders).length} | V26 TANPA TANDA TANYA`; setTimeout(()=>{document.getElementById('migrasiInfo').style.display='none';},6000);
-  render(); renderKategoriSelect(); renderPay(); renderVoucher(); renderPengguna(); renderOrders(); renderMyOrders(); renderLogo(); renderGeraiStatus(); renderAnalisis(); renderUserVouchers();
-}
-function logout(){localStorage.removeItem('curV14'); location.reload();}
-function openLogoAdmin(){if(cur?.role!=='admin_manajer'){alert('Hanya Manajer');return;} document.getElementById('logoAdmin').style.display='flex';}
-document.getElementById('logoFile')?.addEventListener('change', function(e){const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=ev=>{const im=new Image(); im.onload=()=>{const c=document.createElement('canvas'); const size=400; c.width=size; c.height=size; const ctx=c.getContext('2d'); ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,size,size); let w=im.width,h=im.height; const ratio=Math.min(size/w,size/h); w=w*ratio; h=h*ratio; ctx.drawImage(im,(size-w)/2,(size-h)/2,w,h); tempLogo=c.toDataURL('image/png',0.9); document.getElementById('logoPrevImg').src=tempLogo; document.getElementById('logoPrevBox').classList.remove('hidden');}; im.src=ev.target.result;}; r.readAsDataURL(file);});
-function saveLogo(){if(!tempLogo) return alert('Pilih logo'); config.logo=tempLogo; localStorage.setItem(KEY_CONFIG, JSON.stringify(config)); try{if(window.db) window.set(window.ref(window.db,'config-kdkmp-final/logo'), tempLogo);}catch(e){} renderLogo(); closeAll();}
-function deleteLogo(){if(!confirm('Hapus?')) return; config.logo=null; localStorage.setItem(KEY_CONFIG, JSON.stringify(config)); try{if(window.db) window.remove(window.ref(window.db,'config-kdkmp-final/logo'));}catch(e){} renderLogo(); closeAll();}
-function renderLogo(){const logo=config.logo; const img=document.getElementById('logoImg'); const def=document.getElementById('logoDefault'); if(logo){img.src=logo; img.style.display='block'; def.style.display='none';} else {img.style.display='none'; def.style.display='block';}}
-function renderUserVouchers(){
-  if(!cur) return;
-  const container=document.getElementById('myVouchers');
-  if(!container) return;
-  const myV=Object.values(vouchers).filter(v=>{
-    if(v.used) return false;
-    if(v.exp && new Date(v.exp) < new Date()) return false;
-    return v.userId==='all' || v.userId===cur.id || v.targetNama===cur.nama;
-  });
-  if(myV.length===0){container.innerHTML='<p class="text-[10px] text-slate-400 p-2 text-center">Belum ada voucher untuk kamu</p>';return;}
-  container.innerHTML='<p class="text-[10px] font-bold mb-1">Voucher untuk kamu (auto):</p>'+myV.map(v=>`<div class="bg-gradient-to-r from-[#BE1E2D] to-red-400 text-white rounded-xl p-3 flex justify-between items-center"><div><p class="font-black text-[11px]">${v.code} - ${v.type==='nominal'?'Rp '+v.value.toLocaleString():v.value+'%'}</p><p class="text-[9px]">Untuk: ${v.targetNama} | Min Rp ${v.min.toLocaleString()}</p></div><button onclick="pakaiVoucherAuto('${v.code}')" class="bg-white text-[#BE1E2D] px-3 py-1 rounded-full text-[10px] font-bold">Pakai</button></div>`).join('');
-}
-function pakaiVoucherAuto(code){document.getElementById('voucherInput').value=code; applyVoucher();}
-window.pakaiVoucherAuto=pakaiVoucherAuto;
-function resetAdminManajer(){
-  // Reset via email, bukan popup langsung
-  window.location.href = "mailto:anirohdwirahayu@gmail.com?subject=Reset Password Admin Manajer KDKMP KASIH&body=Halo,%0D%0A%0D%0ASaya lupa password Admin Manajer Gerai KDKMP KASIH.%0D%0AMohon reset akun:%0D%0AUsername: Admin Manajer%0D%0APassword baru: Manajer0k3%0D%0A%0D%0ATerima kasih.";
-}
-window.resetAdminManajer=resetAdminManajer;
-
-// Tambahan: fungsi reset khusus yang dipanggil via email link (hanya untuk anirohdwirahayu@gmail.com)
-function resetViaEmail(){
-  if(confirm('Reset Admin Manajer ke Manajer0k3? Hanya untuk email anirohdwirahayu@gmail.com')){
-    let h=(p)=>{let x=0;for(let i=0;i<p.length;i++){x=((x<<5)-x)+p.charCodeAt(i);x|=0;}return 'h'+Math.abs(x)+btoa(p).slice(0,4);};
-    let u=JSON.parse(localStorage.getItem('users-kdkmp-final')||'{}');
-    u['admin_manajer_001']={id:'admin_manajer_001',nama:'Admin Manajer',kontak:'Admin Manajer',alamat:'Kantor Kertanegara',passHash:h('Manajer0k3'),role:'admin_manajer'};
-    localStorage.setItem('users-kdkmp-final',JSON.stringify(u));
-    try{if(window.db) window.set(window.ref(window.db,'users-kdkmp-final/admin_manajer_001'), u['admin_manajer_001']);}catch(e){}
-    alert('Reset berhasil: Admin Manajer / Manajer0k3');
-    location.reload();
-  }
-}
-document.getElementById('pFoto')?.addEventListener('change', function(e){const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=ev=>{const im=new Image(); im.onload=()=>{const c=document.createElement('canvas'); let w=im.width,h=im.height; const max=800; if(w>max||h>max){const ratio=Math.min(max/w,max/h); w=w*ratio; h=h*ratio;} c.width=w; c.height=h; const ctx=c.getContext('2d'); ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,w,h); ctx.drawImage(im,0,0,w,h); tempFoto=c.toDataURL('image/jpeg',0.8); document.getElementById('prevImg').src=tempFoto; document.getElementById('prevBox').classList.remove('hidden');}; im.src=ev.target.result;}; r.readAsDataURL(file);});
-document.getElementById('buktiFile')?.addEventListener('change', function(e){const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=ev=>{const im=new Image(); im.onload=()=>{const c=document.createElement('canvas'); let w=im.width,h=im.height; const max=800; if(w>max||h>max){const ratio=Math.min(max/w,max/h); w=w*ratio; h=h*ratio;} c.width=w; c.height=h; const ctx=c.getContext('2d'); ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,w,h); ctx.drawImage(im,0,0,w,h); tempBukti=c.toDataURL('image/jpeg',0.7); document.getElementById('buktiPrevImg').src=tempBukti; document.getElementById('buktiPrevBox').style.display='block';}; im.src=ev.target.result;}; r.readAsDataURL(file);});
+const KEY_PROD='produk-kdkmp-final';
+const KEY_USERS='users-kdkmp-final';
+const KEY_KAT='kategori-kdkmp-final';
+const KEY_CART='cart-kdkmp-final';
+const KEY_ORDER='order-kdkmp-final';
+function hash(s){let h=0; for(let i=0;i<s.length;i++) h=Math.imul(31,h)+s.charCodeAt(0)+i; return h.toString(16);}
+let produk = JSON.parse(localStorage.getItem(KEY_PROD)||'null');
+let kategoriProduk = JSON.parse(localStorage.getItem(KEY_KAT)||'null');
+let users = JSON.parse(localStorage.getItem(KEY_USERS)||'null');
+let cur = JSON.parse(localStorage.getItem('curV14')||'null');
+let cart = JSON.parse(localStorage.getItem(KEY_CART)||'{}');
+let orders = JSON.parse(localStorage.getItem(KEY_ORDER)||'[]');
+if(!kategoriProduk){kategoriProduk={"sembako":{"id":"sembako","nama":"Sembako","isSubsidi":false,"syarat":"","createdAt":Date.now()},"beras":{"id":"beras","nama":"Beras","isSubsidi":true,"syarat":"KTP Kertanegara","createdAt":Date.now()},"minyak":{"id":"minyak","nama":"Minyak","isSubsidi":false,"syarat":"","createdAt":Date.now()},"gula":{"id":"gula","nama":"Gula","isSubsidi":false,"syarat":"","createdAt":Date.now()},"bumbu":{"id":"bumbu","nama":"Bumbu","isSubsidi":false,"syarat":"","createdAt":Date.now()}}; localStorage.setItem(KEY_KAT, JSON.stringify(kategoriProduk));}
+if(!produk){produk={"beras1":{"nama":"Beras SPHP 5kg Subsidi","harga":55000,"stok":100,"kat":["Sembako","Beras"],"desk":"Beras SPHP Subsidi","foto":null,"isPromo":false,"updatedAt":Date.now()},"minyak1":{"nama":"Minyak Goreng SunCo 2L","harga":37000,"stok":50,"kat":["Minyak"],"desk":"SunCo","foto":null,"isPromo":false,"updatedAt":Date.now()},"gula1":{"nama":"Gula Pasir 1kg","harga":16500,"stok":80,"kat":["Gula"],"desk":"Gulaku","foto":null,"isPromo":false,"updatedAt":Date.now()},"kecap1":{"nama":"Kecap Bango 550ml","harga":12000,"stok":60,"kat":["Bumbu"],"desk":"Bango","foto":null,"isPromo":false,"updatedAt":Date.now()},"berasPromo":{"nama":"Beras 5kg Promo","harga":65000,"stok":20,"kat":["Beras"],"desk":"Promo","foto":null,"isPromo":true,"updatedAt":Date.now()}}; localStorage.setItem(KEY_PROD, JSON.stringify(produk));}
+if(!users){users={"admin1":{"id":"admin1","nama":"Admin Manajer","kontak":"08123456789","alamat":"Kertanegara","role":"admin_manajer","passHash":hash('Manajer0k3'),"createdAt":Date.now()}}; localStorage.setItem(KEY_USERS, JSON.stringify(users));}
+if(!cur){cur=users["admin1"]; localStorage.setItem('curV14', JSON.stringify(cur));}
+let editId=null, tempFoto=null, katEditId=null, editUserId=null;
 function renderKategoriSelect(){
   const selFilter=document.getElementById('kat');
   const list=Object.values(kategoriProduk).sort((a,b)=>a.nama.localeCompare(b.nama));
-  // Hitung jumlah produk per kategori
-  const countPerKategori = {};
-  Object.values(produk).forEach(p=>{
-    const cats = Array.isArray(p.kat) ? p.kat : [p.kat];
-    cats.forEach(c=>{
-      countPerKategori[c] = (countPerKategori[c]||0)+1;
-    });
-  });
-  if(selFilter){
-    selFilter.innerHTML='<option value="">Semua Kategori</option>'+list.map(k=>{
-      const jumlah = countPerKategori[k.nama]||0;
-      return `<option value="${k.nama}">${k.nama} (${jumlah} produk)${k.isSubsidi?' [SUBSIDI]':''}</option>`;
-    }).join('');
-  }
+  const countPerKategori={};
+  Object.values(produk).forEach(p=>{const cats=Array.isArray(p.kat)?p.kat:[p.kat]; cats.forEach(c=>{countPerKategori[c]=(countPerKategori[c]||0)+1;});});
+  if(selFilter){selFilter.innerHTML='<option value="">Semua Kategori</option>'+list.map(k=>{const jumlah=countPerKategori[k.nama]||0; return `<option value="${k.nama}">${k.nama} (${jumlah} produk)${k.isSubsidi?' [SUBSIDI]':''}</option>`;}).join('');}
   const box=document.getElementById('pKatCheckboxes');
-  if(box){
-    box.innerHTML=list.map(k=>{
-      const jumlah = countPerKategori[k.nama]||0;
-      return `<label class="flex items-center justify-between gap-1 text-[11px] bg-white border rounded-full px-3 py-2">
-        <span class="flex items-center gap-1"><input type="checkbox" value="${k.nama}" class="kat-checkbox"> ${k.nama}${k.isSubsidi?' [SUBSIDI]':''}</span>
-        <span class="bg-[#BE1E2D] text-white text-[8px] px-2 py-0.5 rounded-full">${jumlah}</span>
-      </label>`;
-    }).join('');
-    box.querySelectorAll('.kat-checkbox').forEach(cb=>cb.addEventListener('change', updateSubsidiBox));
-  }
+  if(box){box.innerHTML=list.map(k=>{const jumlah=countPerKategori[k.nama]||0; return `<label class="flex items-center justify-between gap-1 text-[11px] bg-white border rounded-full px-3 py-2"><span class="flex items-center gap-1"><input type="checkbox" value="${k.nama}" class="kat-checkbox"> ${k.nama}${k.isSubsidi?' [SUBSIDI]':''}</span><span class="bg-[#BE1E2D] text-white text-[8px] px-2 py-0.5 rounded-full">${jumlah}</span></label>`;}).join('');}
 }
-function updateSubsidiBox(){
-  const checked=Array.from(document.querySelectorAll('.kat-checkbox:checked')).map(cb=>cb.value);
-  const hasSubsidi=checked.some(name=>{const k=Object.values(kategoriProduk).find(x=>x.nama===name); return k&&k.isSubsidi;});
-  const box=document.getElementById('subsidiBox');
-  if(hasSubsidi){box.style.display='block'; const katObj=Object.values(kategoriProduk).find(x=>x.isSubsidi && checked.includes(x.nama)); if(katObj) document.getElementById('pSubsidiSyarat').value=katObj.syarat||'';} else {box.style.display='none';}
-}
-function openKategoriAdmin(){if(cur?.role!=='admin_manajer'){alert('Hanya Manajer');return;} document.getElementById('kategoriAdmin').style.display='flex'; renderKategoriList();}
 function renderKategoriList(){
-  const el=document.getElementById('listKategori'); 
-  const list=Object.values(kategoriProduk).sort((a,b)=>b.createdAt-a.createdAt); 
-  el.innerHTML=list.map(k=>{
-    const dipakai=Object.values(produk).filter(p=>{
-      const cats=Array.isArray(p.kat)?p.kat:[p.kat]; 
-      return cats.includes(k.nama);
-    }).length; 
-    return `<div class="border rounded-xl p-3 flex justify-between items-center ${k.isSubsidi?'bg-amber-50 border-amber-300':''}">
-      <div class="flex-1">
-        <p class="font-bold text-[12px]">${k.nama} ${k.isSubsidi?'<span class="bg-amber-300 text-[8px] px-2 py-0.5 rounded-full">SUBSIDI</span>':''}</p>
-        <p class="text-[10px] mt-1"><span class="bg-[#BE1E2D] text-white px-2 py-0.5 rounded-full text-[9px]">${dipakai} produk</span> <span class="text-slate-500 ml-1">${k.isSubsidi&&k.syarat?'| Syarat: '+k.syarat:''}</span></p>
-      </div>
-      <div class="flex gap-1">
-        <button type="button" onclick="editKategori('${k.id}')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Edit</button>
-        <button type="button" onclick="hapusKategori('${k.id}')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">Hapus</button>
-      </div>
-    </div>`;
-  }).join('')||'<p class="text-[11px] text-center">Belum ada kategori</p>';
+  const el=document.getElementById('listKategori'); if(!el) return;
+  const list=Object.values(kategoriProduk).sort((a,b)=>b.createdAt-a.createdAt);
+  el.innerHTML=list.map(k=>{const dipakai=Object.values(produk).filter(p=>{const cats=Array.isArray(p.kat)?p.kat:[p.kat]; return cats.includes(k.nama);}).length; return `<div class="border rounded-xl p-3 flex justify-between items-center ${k.isSubsidi?'bg-amber-50 border-amber-300':''}"><div class="flex-1"><p class="font-bold text-[12px]">${k.nama} ${k.isSubsidi?'<span class="bg-amber-300 text-[8px] px-2 py-0.5 rounded-full">SUBSIDI</span>':''}</p><p class="text-[10px] mt-1"><span class="bg-[#BE1E2D] text-white px-2 py-0.5 rounded-full text-[9px]">${dipakai} produk</span> <span class="text-slate-500 ml-1">${k.isSubsidi&&k.syarat?'| '+k.syarat:''}</span></p></div><div class="flex gap-1"><button type="button" onclick="editKategori('${k.id}')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Edit</button><button type="button" onclick="hapusKategori('${k.id}')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">Hapus</button></div></div>`;}).join('')||'<p class="text-[11px] text-center">Belum ada kategori</p>';
 }
 function editKategori(id){const k=kategoriProduk[id]; if(!k) return; katEditId=id; document.getElementById('katNama').value=k.nama; document.getElementById('katIsSubsidi').checked=!!k.isSubsidi; document.getElementById('katSyarat').value=k.syarat||''; document.getElementById('katSyarat').style.display=k.isSubsidi?'block':'none'; document.getElementById('saveKategoriBtn').textContent='Update Kategori'; document.getElementById('cancelKategoriBtn').style.display='block';}
-function hapusKategori(id){const k=kategoriProduk[id]; if(!k) return; const dipakai=Object.values(produk).filter(p=>{const cats=Array.isArray(p.kat)?p.kat:[p.kat]; return cats.includes(k.nama);}).length; if(dipakai>0) return alert(`Tidak bisa hapus, masih dipakai ${dipakai} produk`); if(!confirm(`Hapus kategori ${k.nama}?`)) return; delete kategoriProduk[id]; localStorage.setItem(KEY_KAT, JSON.stringify(kategoriProduk)); try{if(window.db) window.remove(window.ref(window.db,'kategori-produk-final/'+id));}catch(e){} renderKategoriSelect(); renderKategoriList(); render();}
-function saveKategori(){const nama=document.getElementById('katNama').value.trim(); const isSubsidi=document.getElementById('katIsSubsidi').checked; const syarat=document.getElementById('katSyarat').value.trim(); if(!nama) return alert('Isi nama kategori'); const id=katEditId||nama.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now().toString().slice(-4); if(!katEditId && Object.values(kategoriProduk).find(k=>k.nama.toLowerCase()===nama.toLowerCase())) return alert('Kategori sudah ada'); kategoriProduk[id]={id,nama,isSubsidi,syarat: isSubsidi? (syarat||'Syarat subsidi berlaku') : '',createdAt: kategoriProduk[id]?.createdAt||Date.now(),updatedAt:Date.now()}; localStorage.setItem(KEY_KAT, JSON.stringify(kategoriProduk)); try{if(window.db) window.set(window.ref(window.db,'kategori-produk-final/'+id), kategoriProduk[id]);}catch(e){} document.getElementById('katNama').value=''; document.getElementById('katIsSubsidi').checked=false; document.getElementById('katSyarat').value=''; document.getElementById('katSyarat').style.display='none'; katEditId=null; document.getElementById('saveKategoriBtn').textContent='+ Tambah Kategori'; document.getElementById('cancelKategoriBtn').style.display='none'; renderKategoriSelect(); renderKategoriList(); render(); alert('Kategori disimpan');}
+function hapusKategori(id){const k=kategoriProduk[id]; if(!k) return; const dipakai=Object.values(produk).filter(p=>{const cats=Array.isArray(p.kat)?p.kat:[p.kat]; return cats.includes(k.nama);}).length; if(dipakai>0) return alert('Tidak bisa hapus '+k.nama+', masih dipakai '+dipakai+' produk.'); if(!confirm('Hapus kategori '+k.nama+'?')) return; delete kategoriProduk[id]; localStorage.setItem(KEY_KAT, JSON.stringify(kategoriProduk)); try{if(window.db) window.remove(window.ref(window.db,'kategori-kdkmp-final/'+id));}catch(e){} renderKategoriSelect(); renderKategoriList(); render();}
+function saveKategori(){const nama=document.getElementById('katNama').value.trim(); const isSubsidi=document.getElementById('katIsSubsidi').checked; const syarat=document.getElementById('katSyarat').value.trim(); if(!nama) return alert('Isi nama kategori'); const id=katEditId||nama.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now().toString().slice(-4); if(!katEditId && Object.values(kategoriProduk).find(k=>k.nama.toLowerCase()===nama.toLowerCase())) return alert('Kategori sudah ada'); kategoriProduk[id]={id,nama,isSubsidi,syarat:isSubsidi?(syarat||'Syarat subsidi berlaku'):'',createdAt:kategoriProduk[id]?.createdAt||Date.now(),updatedAt:Date.now()}; localStorage.setItem(KEY_KAT, JSON.stringify(kategoriProduk)); try{if(window.db) window.set(window.ref(window.db,'kategori-kdkmp-final/'+id), kategoriProduk[id]);}catch(e){} document.getElementById('katNama').value=''; document.getElementById('katIsSubsidi').checked=false; document.getElementById('katSyarat').value=''; document.getElementById('katSyarat').style.display='none'; katEditId=null; document.getElementById('saveKategoriBtn').textContent='+ Tambah Kategori'; document.getElementById('cancelKategoriBtn').style.display='none'; renderKategoriSelect(); renderKategoriList(); render();}
 function cancelKategoriEdit(){katEditId=null; document.getElementById('katNama').value=''; document.getElementById('katIsSubsidi').checked=false; document.getElementById('katSyarat').value=''; document.getElementById('katSyarat').style.display='none'; document.getElementById('saveKategoriBtn').textContent='+ Tambah Kategori'; document.getElementById('cancelKategoriBtn').style.display='none';}
-document.getElementById('katIsSubsidi')?.addEventListener('change', function(){document.getElementById('katSyarat').style.display=this.checked?'block':'none';});
-function openAdd(id){
-  if(cur?.role!=='admin_manajer'){alert('Hanya Manajer');return;}
-  editId=id||null;
-  document.getElementById('add').style.display='flex';
-  document.getElementById('addTitle').textContent=id?'Edit Produk':'Tambah Produk';
-  renderKategoriSelect();
-  setTimeout(()=>{
-    if(id && produk[id]){
-      const p=produk[id];
-      document.getElementById('pNama').value=p.nama;
-      document.getElementById('pHarga').value=p.harga;
-      document.getElementById('pStok').value=p.stok;
-      document.getElementById('pDesk').value=p.desk||'';
-      document.getElementById('pIsPromo').checked=!!p.isPromo;
-      tempFoto=p.foto||null;
-      if(p.foto){document.getElementById('prevImg').src=p.foto; document.getElementById('prevBox').classList.remove('hidden');}
-      const cats=Array.isArray(p.kat)?p.kat:[p.kat];
-      document.querySelectorAll('.kat-checkbox').forEach(cb=>{if(cats.includes(cb.value)) cb.checked=true;});
-      updateSubsidiBox();
-      if(p.subsidi){document.getElementById('pSubsidiAktif').checked=p.subsidi.aktif; document.getElementById('pSubsidiSyarat').value=p.subsidi.syarat;}
-    } else {
-      ['pNama','pHarga','pStok','pDesk','pSubsidiSyarat'].forEach(i=>{const el=document.getElementById(i); if(el) el.value='';});
-      document.getElementById('pIsPromo').checked=false; document.getElementById('pSubsidiAktif').checked=true; tempFoto=null;
-      document.getElementById('prevBox').classList.add('hidden'); document.getElementById('pFoto').value=''; document.getElementById('subsidiBox').style.display='none';
-      document.querySelectorAll('.kat-checkbox').forEach(cb=>cb.checked=false);
-    }
-  },100);
-}
-window.openAdd=openAdd;
-function saveProd(){
-  const nama=document.getElementById('pNama').value.trim();
-  const harga=parseInt(document.getElementById('pHarga').value)||0;
-  const stok=parseInt(document.getElementById('pStok').value)||0;
-  const desk=document.getElementById('pDesk').value.trim();
-  const isPromo=document.getElementById('pIsPromo').checked;
-  const subsidiAktif=document.getElementById('pSubsidiAktif').checked;
-  const subsidiSyarat=document.getElementById('pSubsidiSyarat').value.trim();
-  const checkedKats=Array.from(document.querySelectorAll('.kat-checkbox:checked')).map(cb=>cb.value);
-  if(!nama||!harga) return alert('Isi nama & harga');
-  if(checkedKats.length===0) return alert('Pilih minimal 1 kategori');
-  const id=editId||Date.now().toString();
-  const old=produk[id]||{};
-  produk[id]={nama,harga,stok,kat:checkedKats,desk,foto:tempFoto!==null?tempFoto:(old.foto||null),isPromo,updatedAt:Date.now(), subsidi: subsidiSyarat ? {aktif: subsidiAktif, syarat: subsidiSyarat} : null };
-  
-  // Simpan lokal dulu
-  localStorage.setItem(KEY_PROD, JSON.stringify(produk));
-  
-  // WAJIB sync ke Firebase biar masuk HP
-  try{
-    if(window.db){
-      window.set(window.ref(window.db,'produk-kdkmp-final/'+id), produk[id]).then(()=>{
-        console.log('Sync Firebase OK - Produk masuk HP');
-      });
-    } else {
-      alert('Firebase belum konek, cek internet');
-    }
-  }catch(e){ console.log('Gagal Firebase', e); }
-  
-  closeAll(); render();
-  alert('Produk disimpan & sync ke semua HP!');
-}
-function renderGeraiStatus(){const banner=document.getElementById('geraiStatusBanner'); const header=document.getElementById('statusGeraiHeader'); const btn=document.getElementById('btnGeraiStatus'); const isOnline=geraiStatus.isOnline; if(isOnline){banner.style.display='block'; banner.className='rounded-xl p-3 mb-3 text-center text-[12px] font-bold border-2 bg-green-50 border-green-300 text-green-800'; banner.innerHTML=`<b>GERAI ONLINE - BUKA</b> - ${geraiStatus.message||'Silakan belanja'}`; if(header) header.textContent='Buka - Online';} else {banner.style.display='block'; banner.className='rounded-xl p-3 mb-3 text-center text-[12px] font-bold border-2 bg-red-50 border-red-300 text-red-800'; banner.innerHTML=`<b>GERAI OFFLINE - TUTUP</b><br>${geraiStatus.reason||'Gerai tutup'}<br><span class="text-[10px]">${geraiStatus.message||''}</span>`; if(header) header.textContent='Tutup - Offline';}}
-function openGeraiStatus(){document.getElementById('geraiStatusAdmin').style.display='flex'; document.getElementById('geraiIsOnline').value=geraiStatus.isOnline?'true':'false'; document.getElementById('geraiMessage').value=geraiStatus.message||''; document.getElementById('geraiReason').value=geraiStatus.reason||'';}
-function saveGeraiStatus(){const isOnline=document.getElementById('geraiIsOnline').value==='true'; const message=document.getElementById('geraiMessage').value.trim(); const reason=document.getElementById('geraiReason').value.trim(); geraiStatus={isOnline,message: message||(isOnline?'Gerai Buka':'Gerai Tutup'),reason,updatedAt:Date.now(),by:cur?.nama||'Admin'}; localStorage.setItem(KEY_GERAI, JSON.stringify(geraiStatus)); try{if(window.db) window.set(window.ref(window.db,'config-kdkmp-final/geraiStatus'), geraiStatus);}catch(e){} renderGeraiStatus(); closeAll(); alert(isOnline?'ONLINE':'OFFLINE');}
-function renderPengguna(){
-  const el=document.getElementById('listPengguna'); 
-  const list=Object.values(users); 
-  const sel=document.getElementById('vUser'); 
-  if(sel){sel.innerHTML='<option value="all">Semua Pengguna (1 per orang)</option>'+list.filter(u=>u.role==='konsumen').map(u=>`<option value="${u.id}">${u.nama}</option>`).join('');} 
-  el.innerHTML=list.map(u=>`<div class="border rounded-xl p-3"><p class="font-bold text-[11px]">${u.nama} <span class="text-[7px] px-2 py-0.5 rounded-full ${u.role==='admin_manajer'?'bg-red-600 text-white':'bg-slate-100'}">${u.role}</span></p><p class="text-[10px]">${u.kontak||''} - ${u.alamat||''}</p><div class="flex gap-1 mt-2"><button type="button" onclick="openEditUser('${u.id}')" class="flex-1 bg-blue-600 text-white py-2 rounded-full text-[10px]">Edit</button><button type="button" onclick="hapusUser('${u.id}')" class="flex-1 bg-red-600 text-white py-2 rounded-full text-[10px]">Hapus</button></div></div>`).join('');
-}
-function openEditUser(id){
-  const curCheck = JSON.parse(localStorage.getItem('curV14')||'null') || cur;
-  if(!curCheck || curCheck.role!=='admin_manajer'){alert('Hanya Admin Manajer yang boleh edit pengguna');return;}
-  const u=users[id]; if(!u) return; editUserId=id;
-  document.getElementById('penggunaEditId').value=id;
-  document.getElementById('eNama').value=u.nama;
-  document.getElementById('eKontak').value=u.kontak||'';
-  document.getElementById('eAlamat').value=u.alamat||'';
-  document.getElementById('eRole').value=u.role;
-  document.getElementById('penggunaEditPassBaru').value='';
-  document.getElementById('penggunaEditPassBaru2').value='';
-  document.getElementById('editUser').style.display='flex';
-  document.getElementById('pengguna').style.display='none';
-}
-  
-window.openEditUser=openEditUser;
-function saveEditUser(){
-  const u=users[editUserId]; if(!u) return;
-  if(cur?.role!=='admin_manajer'){alert('Hanya Admin Manajer');return;}
-  const namaBaru=document.getElementById('eNama').value.trim();
-  const passBaru=document.getElementById('penggunaEditPassBaru').value.trim();
-  const passBaru2=document.getElementById('penggunaEditPassBaru2').value.trim();
-  if(!namaBaru) return alert('Nama kosong');
-  
-  let passChanged = false;
-  if(passBaru!==''){
-    if(passBaru.length<4) return alert('Password minimal 4 karakter');
-    if(passBaru!==passBaru2) return alert('Ulang password tidak sama');
-    u.passHash=hash(passBaru); // hash cuma sekali
-    passChanged = true;
-  }
-  u.nama=namaBaru;
-  u.kontak=document.getElementById('eKontak').value.trim();
-  u.alamat=document.getElementById('eAlamat').value.trim();
-  u.role=document.getElementById('eRole').value;
-  
-  localStorage.setItem(KEY_USERS, JSON.stringify(users));
-  
-  // Kalau edit diri sendiri, update cur yang di localStorage juga!
-  if(cur && cur.id===editUserId){
-    cur.nama = u.nama;
-    cur.kontak = u.kontak;
-    cur.alamat = u.alamat;
-    cur.role = u.role;
-    if(passChanged) cur.passHash = u.passHash;
-    localStorage.setItem('curV14', JSON.stringify(cur));
-  }
-  
-  try{if(window.db) window.update(window.ref(window.db,'users-kdkmp-final/'+editUserId), u);}catch(e){}
-  closeAll(); renderPengguna();
-  alert('Berhasil update user: '+u.nama+(passChanged?' + password baru: '+passBaru:' + password tetap'));
-}
-
-window.saveEditUser=saveEditUser;
-function hapusUser(id){if(id==='admin_manajer_001') return alert('Manajer utama tidak bisa dihapus'); if(cur && cur.id===id) return alert('Tidak bisa hapus diri sendiri'); if(!confirm('Hapus pengguna?')) return; delete users[id]; localStorage.setItem(KEY_USERS, JSON.stringify(users)); try{if(window.db) window.remove(window.ref(window.db,'users-kdkmp-final/'+id));}catch(e){} renderPengguna();}
-window.hapusUser=hapusUser;
-function addKaryawan(){const nama=document.getElementById('kNama').value.trim(); const kontak=document.getElementById('kKontak').value.trim(); const alamat=document.getElementById('kAlamat').value.trim(); const pass=document.getElementById('kPass').value.trim(); if(!nama||!kontak||!pass) return alert('Isi semua'); const id=Date.now().toString(); users[id]={id,nama,kontak,alamat,passHash:hash(pass),role:'admin_karyawan',totalBelanja:0,createdAt:new Date().toISOString()}; localStorage.setItem(KEY_USERS, JSON.stringify(users)); try{if(window.db) window.set(window.ref(window.db,'users-kdkmp-final/'+id), users[id]);}catch(e){} alert('Karyawan ditambah'); renderPengguna();}
-function openPayAdmin(){document.getElementById('payAdmin').style.display='flex'; renderPay();}
-function savePay(){const editIdPay=document.getElementById('payEditId').value; const type=document.getElementById('payType').value; const name=document.getElementById('payName').value.trim(); const info=document.getElementById('payInfo').value.trim(); if(!name) return alert('Isi nama'); const id=editIdPay||Date.now().toString(); payments[id]={id,type,name,info}; localStorage.setItem(KEY_PAY, JSON.stringify(payments)); try{if(window.db) window.set(window.ref(window.db,'payments-kdkmp-final/'+id), payments[id]);}catch(e){} document.getElementById('payEditId').value=''; document.getElementById('payName').value=''; document.getElementById('payInfo').value=''; document.getElementById('savePayBtn').textContent='Simpan'; document.getElementById('cancelPayBtn').style.display='none'; renderPay();}
-function editPay(id){const p=payments[id]; if(!p) return; document.getElementById('payEditId').value=id; document.getElementById('payType').value=p.type; document.getElementById('payName').value=p.name; document.getElementById('payInfo').value=p.info; document.getElementById('savePayBtn').textContent='Update'; document.getElementById('cancelPayBtn').style.display='block'; document.getElementById('payAdmin').style.display='flex';}
-window.editPay=editPay;
-function cancelPayEdit(){document.getElementById('payEditId').value=''; document.getElementById('payName').value=''; document.getElementById('payInfo').value=''; document.getElementById('savePayBtn').textContent='Simpan'; document.getElementById('cancelPayBtn').style.display='none';}
-function hapusPay(id){if(!confirm('Hapus metode ini?')) return; delete payments[id]; localStorage.setItem(KEY_PAY, JSON.stringify(payments)); try{if(window.db) window.remove(window.ref(window.db,'payments-kdkmp-final/'+id));}catch(e){} renderPay();}
-window.hapusPay=hapusPay;
-function renderPay(){
-  const el=document.getElementById('listPay'); const sel=document.getElementById('paySelect');
-  if(!el) return;
-  el.innerHTML=Object.entries(payments).map(([id,p])=>`<div class="border rounded-xl p-3 flex justify-between items-center"><div><p class="font-bold text-[11px]">${p.name} - ${p.type}</p><p class="text-[9px] text-slate-500">${p.info}</p></div><div class="flex gap-1"><button type="button" class="btn-edit-pay bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]" data-id="${id}">Edit</button><button type="button" class="btn-hapus-pay bg-red-600 text-white px-3 py-2 rounded-full text-[10px]" data-id="${id}">Hapus</button></div></div>`).join('')||'<p class="text-[10px]">Belum ada</p>';
-  el.querySelectorAll('.btn-edit-pay').forEach(b=>b.addEventListener('click', ()=>editPay(b.dataset.id)));
-  el.querySelectorAll('.btn-hapus-pay').forEach(b=>b.addEventListener('click', ()=>hapusPay(b.dataset.id)));
-  if(sel) {
-    sel.innerHTML=Object.values(payments).map(p=>`<option value="${p.id}" data-type="${p.type}">${p.name}</option>`).join('');
-    sel.addEventListener('change', function(){
-      const selected=payments[this.value];
-      const buktiBox=document.getElementById('buktiBox');
-      if(selected && selected.type==='TRANSFER'){ buktiBox.style.display='block'; } else { buktiBox.style.display='none'; }
-    });
-  }
-}
-function cleanExpiredVouchers(){const now=new Date(); let changed=false; Object.keys(vouchers).forEach(id=>{const v=vouchers[id]; if(v.exp && new Date(v.exp) < now){ delete vouchers[id]; changed=true; }}); if(changed){localStorage.setItem(KEY_VOUCH, JSON.stringify(vouchers));}}
-function openVoucherAdmin(){cleanExpiredVouchers(); document.getElementById('voucherAdmin').style.display='flex'; renderVoucher();}
-function saveVoucher(){cleanExpiredVouchers(); const editIdV=document.getElementById('vEditId').value; const codeBase=document.getElementById('vCode').value.trim().toUpperCase(); const type=document.getElementById('vType').value; const value=parseInt(document.getElementById('vValue').value)||0; const jumlah=parseInt(document.getElementById('vJumlah').value)||1; const min=parseInt(document.getElementById('vMin').value)||0; const exp=document.getElementById('vExp').value; const userId=document.getElementById('vUser').value; if(!codeBase||!value) return alert('Isi kode & nilai'); if(editIdV){ vouchers[editIdV].code=codeBase; vouchers[editIdV].type=type; vouchers[editIdV].value=value; vouchers[editIdV].min=min; vouchers[editIdV].exp=exp; vouchers[editIdV].userId=userId; vouchers[editIdV].targetNama=users[userId]?.nama||userId; localStorage.setItem(KEY_VOUCH, JSON.stringify(vouchers)); try{if(window.db) window.update(window.ref(window.db,'vouchers-kdkmp-final/'+editIdV), vouchers[editIdV]);}catch(e){} alert('Voucher diupdate!'); document.getElementById('vEditId').value=''; document.getElementById('vCode').value=''; document.getElementById('vJumlah').value='1'; document.getElementById('saveVoucherBtn').textContent='+ Buat'; document.getElementById('cancelVoucherBtn').style.display='none'; renderVoucher(); return;} let targets=[]; if(userId==='all'){ targets=Object.values(users).filter(u=> u.role==='konsumen'); if(targets.length===0) targets=[{id:'all', nama:'Semua'}]; } else { const u=users[userId]; if(!u) return alert('Pilih pengguna'); targets=[u]; } let created=0; targets.forEach(targetUser=>{ for(let i=0;i<jumlah;i++){ const id=Date.now().toString()+'_'+created+'_'+targetUser.id; const code = targets.length>1 || jumlah>1 ? `${codeBase}-${targetUser.id.slice(-3)}-${i+1}` : codeBase; vouchers[id]={id,code,type,value,min,exp,userId:targetUser.id,targetNama:targetUser.nama||targetUser.id,used:false,createdAt:Date.now()}; try{if(window.db) window.set(window.ref(window.db,'vouchers-kdkmp-final/'+id), vouchers[id]);}catch(e){} created++; } }); localStorage.setItem(KEY_VOUCH, JSON.stringify(vouchers)); alert(`Berhasil ${created} voucher!`); renderVoucher(); document.getElementById('vCode').value='';}
-function editVoucher(id){const v=vouchers[id]; if(!v) return; document.getElementById('vEditId').value=id; document.getElementById('vCode').value=v.code.split('-')[0]; document.getElementById('vType').value=v.type; document.getElementById('vValue').value=v.value; document.getElementById('vMin').value=v.min; document.getElementById('vExp').value=v.exp||''; document.getElementById('vJumlah').value='1'; document.getElementById('saveVoucherBtn').textContent='Update'; document.getElementById('cancelVoucherBtn').style.display='block'; document.getElementById('voucherAdmin').style.display='flex';}
-window.editVoucher=editVoucher;
-function cancelVoucherEdit(){document.getElementById('vEditId').value=''; document.getElementById('vCode').value=''; document.getElementById('vJumlah').value='1'; document.getElementById('saveVoucherBtn').textContent='+ Buat'; document.getElementById('cancelVoucherBtn').style.display='none';}
-function renderVoucher(){cleanExpiredVouchers(); const el=document.getElementById('listVoucher'); if(!el) return; const now=new Date(); el.innerHTML=Object.values(vouchers).sort((a,b)=>b.createdAt-a.createdAt).map(v=>{const expired = v.exp && new Date(v.exp) < now; return `<div class="border rounded-xl p-3 ${expired?'bg-red-50':v.used?'bg-gray-100':'bg-white'}"><div class="flex justify-between gap-2"><div class="flex-1"><p class="font-bold text-[11px]">${v.code} - ${v.type==='nominal'?'Rp '+v.value.toLocaleString():v.value+'%'} ${v.used?'(DIPAKAI)':''}</p><p class="text-[9px]">Untuk: ${v.targetNama||v.userId}</p></div><div class="flex flex-col gap-1"><button type="button" class="btn-edit-voucher bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]" data-id="${v.id}">Edit</button><button type="button" class="btn-hapus-voucher bg-red-600 text-white px-3 py-2 rounded-full text-[10px]" data-id="${v.id}">Hapus</button></div></div></div>`;}).join('')||'<p class="text-[10px]">Belum ada voucher</p>'; el.querySelectorAll('.btn-edit-voucher').forEach(b=>b.addEventListener('click', ()=>editVoucher(b.dataset.id))); el.querySelectorAll('.btn-hapus-voucher').forEach(b=>b.addEventListener('click', ()=>hapusVoucher(b.dataset.id)));}
-function hapusVoucher(id){if(!confirm('Hapus voucher?')) return; delete vouchers[id]; localStorage.setItem(KEY_VOUCH, JSON.stringify(vouchers)); try{if(window.db) window.remove(window.ref(window.db,'vouchers-kdkmp-final/'+id));}catch(e){} renderVoucher(); renderUserVouchers();}
-window.hapusVoucher=hapusVoucher;
-function applyVoucher(){cleanExpiredVouchers(); const code=document.getElementById('voucherInput').value.trim().toUpperCase(); const msg=document.getElementById('voucherMsg'); const found=Object.values(vouchers).find(v=>v.code===code && !v.used); if(!found){msg.textContent='Kode tidak ada / sudah dipakai'; appliedVoucher=null; updateCart(); return;} const sub=Object.entries(cart).reduce((s,[id,q])=>s+(produk[id]?.harga||0)*q,0); if(sub < found.min){msg.textContent='Min Rp '+found.min.toLocaleString(); return;} appliedVoucher=found; msg.textContent='Voucher '+found.code+' terpakai!'; updateCart();}
-function getDiscount(sub){if(!appliedVoucher) return 0; if(appliedVoucher.type==='nominal') return Math.min(appliedVoucher.value, sub); return Math.floor(sub * appliedVoucher.value / 100);}
-function openOrders(){document.getElementById('orders').style.display='flex'; document.getElementById('newOrderAlert').style.display='none'; renderOrders();}
-function openMyOrders(){document.getElementById('myOrders').style.display='flex'; renderMyOrders();}
-function openAdminMenu(){document.getElementById('adminMenu').style.display='flex';}
-function renderOrders(){
-  const el=document.getElementById('listOrders'); let list=Object.values(orders).sort((a,b)=>b.createdAt-a.createdAt);
-  if(orderFilter!=='all') list=list.filter(o=>o.status===orderFilter);
-  const baru=Object.values(orders).filter(o=>o.status==='antrian').length;
-  const nd=document.getElementById('notifOrder'); const ndm=document.getElementById('notifOrderMobile'); const navN=document.getElementById('navNotif');
-  if(nd){ nd.style.display=baru>0?'block':'none'; nd.textContent=`${baru} BARU MASUK`; } 
-  if(ndm){ ndm.style.display=baru>0?'block':'none'; ndm.textContent=`${baru}`; } 
-  if(navN){ navN.style.display=baru>0?'block':'none'; navN.textContent=baru; }
-  if(baru>0 && cur && (cur.role==='admin_manajer' || cur.role==='admin_karyawan')){ document.getElementById('newOrderAlert').style.display='block'; }
-  el.innerHTML=list.map(o=>{
-    const alamatInfo=o.ambil==='diantar' ? `<div class="mt-2 bg-blue-50 border border-blue-200 rounded p-2"><p class="text-[10px] font-bold">Alamat Antar:</p><p class="text-[10px]">${o.alamatAntar||'-'}</p><p class="text-[10px] mt-1">HP: <a href="tel:${o.hpAntar}" class="text-blue-600 font-bold">${o.hpAntar||'-'}</a> | <a href="https://wa.me/${(o.hpAntar||'').replace(/[^0-9]/g,'')}" target="_blank" class="text-green-600 font-bold">WA</a></p>${o.sharelok?`<p class="text-[10px] mt-1">Sharelok: <a href="${o.sharelok}" target="_blank" class="text-blue-600 underline">Buka Maps</a></p>`:''}</div>` : `<div class="mt-2 bg-slate-50 border rounded p-2"><p class="text-[10px]">Diambil di gerai - Note: ${o.note||'-'}</p></div>`;
-    const buktiInfo=o.buktiTF ? `<div class="mt-2"><p class="text-[10px] font-bold">Bukti TF Masuk Admin:</p><img src="${o.buktiTF}" class="w-full h-32 object-contain bg-white border rounded mt-1 cursor-pointer" onclick="window.open('${o.buktiTF}','_blank')"></div>` : (o.payType==='TRANSFER' ? `<p class="text-[10px] text-red-600">Belum upload bukti TF</p>` : `<p class="text-[10px] text-green-600">${o.payName}</p>`);
-    const alasan = o.alasan ? `<p class="text-[10px] mt-2 bg-red-50 border rounded p-2"><b>Alasan ${o.status}:</b> ${o.alasan}</p>` : '';
-    return `<div class="border-2 rounded-xl p-3 ${o.status==='antrian'?'border-yellow-400 bg-yellow-50':o.status==='dibatalkan'?'border-red-300 bg-red-50':''}"><div class="flex justify-between gap-2"><div class="flex-1"><p class="font-bold text-[11px]">${o.userNama} - Rp ${o.total.toLocaleString()} ${o.status==='antrian'?'BARU':''}</p><p class="text-[9px] text-slate-500">${new Date(o.createdAt).toLocaleString()} | ${o.ambil.toUpperCase()} | ${o.payName}</p><p class="text-[10px] mt-1">Isi: ${Object.entries(o.cart||{}).map(([id,q])=> (produk[id]?.nama||'Produk')+' x'+q).join(', ')}</p>${alamatInfo}${buktiInfo}${alasan}</div><div class="text-right ml-2 shrink-0"><span class="text-[8px] px-2 py-1 rounded-full ${o.status==='antrian'?'bg-yellow-400 text-black blink':o.status==='diterima'?'bg-green-300':o.status==='ditolak'?'bg-red-300':o.status==='dibatalkan'?'bg-red-600 text-white':'bg-slate-200'}">${o.status.toUpperCase()}</span><div class="mt-2 space-y-1"><button type="button" class="btn-terima-order block w-full bg-green-600 text-white py-2 rounded-full text-[10px]" data-id="${o.id}">Terima</button><button type="button" class="btn-tolak-order block w-full bg-red-600 text-white py-2 rounded-full text-[10px]" data-id="${o.id}">Tolak</button><select class="select-status border rounded-full px-2 py-2 text-[10px] w-full mt-1" data-id="${o.id}"><option value="antrian" ${o.status==='antrian'?'selected':''}>Antrian</option><option value="diterima" ${o.status==='diterima'?'selected':''}>Diterima</option><option value="ditolak" ${o.status==='ditolak'?'selected':''}>Ditolak</option><option value="dibatalkan" ${o.status==='dibatalkan'?'selected':''}>Dibatalkan</option><option value="proses" ${o.status==='proses'?'selected':''}>Proses</option><option value="selesai" ${o.status==='selesai'?'selected':''}>Selesai</option></select></div></div></div></div>`;
-  }).join('')||'<p class="text-[11px] p-4 text-center">Belum ada pesanan</p>';
-  el.querySelectorAll('.btn-terima-order').forEach(b=>b.addEventListener('click', ()=>terimaOrder(b.dataset.id)));
-  el.querySelectorAll('.btn-tolak-order').forEach(b=>b.addEventListener('click', ()=>tolakOrder(b.dataset.id)));
-  el.querySelectorAll('.select-status').forEach(s=>s.addEventListener('change', ()=>updateStatus(s.dataset.id, s.value)));
-}
-function renderMyOrders(){
-  const el=document.getElementById('listMyOrders');
-  if(!cur){el.innerHTML='<p class="text-[11px] p-4 text-center">Login dulu</p>'; return;}
-  const list=Object.values(orders).filter(o=>o.userId===cur.id).sort((a,b)=>b.createdAt-a.createdAt);
-  el.innerHTML=list.map(o=>{
-    const bisaBatal = o.status==='antrian';
-    const alamatInfo=o.ambil==='diantar' ? `<p class="text-[10px] mt-1">${o.alamatAntar||''} | HP: ${o.hpAntar||''}</p>${o.sharelok?`<a href="${o.sharelok}" target="_blank" class="text-[10px] text-blue-600 underline">Sharelok</a>`:''}` : `<p class="text-[10px] mt-1">Diambil di gerai</p>`;
-    const alasan=o.alasan?`<div class="mt-2 ${o.status==='dibatalkan'?'bg-red-50 border-red-300':'bg-yellow-50'} border rounded p-3"><p class="text-[11px] font-bold">Status: ${o.status.toUpperCase()}</p><p class="text-[11px]">Alasan: ${o.alasan}</p></div>`:`<div class="mt-2"><p class="text-[11px]">Status: <b>${o.status.toUpperCase()}</b></p></div>`;
-    const btnBatal = bisaBatal ? `<button type="button" class="btn-batal-sendiri w-full mt-3 bg-red-600 text-white py-2 rounded-full text-[11px] font-bold" data-id="${o.id}">Batalkan Pesanan Saya</button>` : '';
-    return `<div class="border rounded-xl p-3 ${o.status==='dibatalkan'?'bg-red-50 border-red-300':o.status==='diterima'?'bg-green-50':'bg-white'}"><p class="font-bold text-[12px]">Rp ${o.total.toLocaleString()} - ${new Date(o.createdAt).toLocaleString()}</p><p class="text-[11px] mt-1">Isi: ${Object.entries(o.cart||{}).map(([id,q])=> (produk[id]?.nama||'Produk')+' x'+q).join(', ')}</p>${alamatInfo}${o.buktiTF?`<img src="${o.buktiTF}" class="w-full h-24 object-contain bg-white border rounded mt-2">`:''}${alasan}${btnBatal}</div>`;
-  }).join('')||'<p class="text-[11px] p-4 text-center">Belum ada pesanan</p>';
-  el.querySelectorAll('.btn-batal-sendiri').forEach(b=>b.addEventListener('click', ()=>openBatalPesanan(b.dataset.id)));
-}
-function openBatalPesanan(id){const o=orders[id]; if(!o) return; if(o.status!=='antrian'){ alert('Pesanan sudah diproses admin, tidak bisa dibatalkan sendiri.'); return; } document.getElementById('batalId').value=id; document.getElementById('batalAlasan').value=''; document.getElementById('batalPesanan').style.display='flex';}
-window.openBatalPesanan=openBatalPesanan;
-function doBatalkanPesanan(){const id=document.getElementById('batalId').value; const alasan=document.getElementById('batalAlasan').value.trim(); if(!alasan){ alert('Wajib isi alasan batal'); return; } if(!orders[id]) return alert('Pesanan tidak ditemukan'); if(orders[id].status!=='antrian'){ alert('Sudah diproses, tidak bisa dibatalkan'); closeAll(); return; } orders[id].status='dibatalkan'; orders[id].alasan='Dibatalkan pembeli: '+alasan; orders[id].dibatalkanAt=Date.now(); localStorage.setItem(KEY_ORDERS, JSON.stringify(orders)); try{if(window.db) window.update(window.ref(window.db,'orders-kdkmp-final/'+id), {status:'dibatalkan', alasan: orders[id].alasan, dibatalkanAt: orders[id].dibatalkanAt});}catch(e){} closeAll(); renderOrders(); renderMyOrders(); alert('Pesanan dibatalkan: '+alasan);}
-window.doBatalkanPesanan=doBatalkanPesanan;
-function terimaOrder(id){const alasan=prompt('Terima pesanan - isi pesan:','Pesanan diterima, sedang diproses admin'); if(alasan===null) return; updateStatus(id,'diterima', alasan);}
-window.terimaOrder=terimaOrder;
-function tolakOrder(id){const alasan=prompt('Tolak pesanan - WAJIB isi alasan:','Maaf, stok habis'); if(!alasan || alasan.trim()==='') return alert('Alasan wajib'); updateStatus(id,'ditolak', alasan);}
-window.tolakOrder=tolakOrder;
-function updateStatus(id,status, alasanParam=null){if(!orders[id]) return; let alasan = alasanParam; orders[id].status=status; if(alasan!==null) orders[id].alasan=alasan; if(status==='ditolak' && !orders[id].alasan) orders[id].alasan='Ditolak admin'; localStorage.setItem(KEY_ORDERS, JSON.stringify(orders)); try{if(window.db) window.update(window.ref(window.db,'orders-kdkmp-final/'+id), {status, alasan: orders[id].alasan||''});}catch(e){} renderOrders(); renderMyOrders(); renderAnalisis();}
-window.updateStatus=updateStatus;
-function openAnalisis(){document.getElementById('analisis').style.display='flex'; renderAnalisis();}
-function renderAnalisis(){const all=Object.values(orders); const omset=all.filter(o=>o.status==='selesai').reduce((s,o)=>s+o.total,0); document.getElementById('aOmset').textContent='Rp '+omset.toLocaleString(); document.getElementById('aPesanan').textContent=all.length; document.getElementById('aBaru').textContent=Object.values(users).filter(u=> (u.totalBelanja||0)===0 && u.role==='konsumen').length;}
-function showPreview(type){const now=new Date(); let filtered=Object.values(orders); if(type==='harian') filtered=filtered.filter(o=> new Date(o.createdAt).toDateString()===now.toDateString()); if(type==='mingguan'){const weekAgo=new Date(); weekAgo.setDate(now.getDate()-7); filtered=filtered.filter(o=> new Date(o.createdAt) >= weekAgo);} if(type==='bulanan'){filtered=filtered.filter(o=> new Date(o.createdAt).getMonth()===now.getMonth() && new Date(o.createdAt).getFullYear()===now.getFullYear());} previewData=filtered; previewType=type; const area=document.getElementById('previewArea'); if(area){area.style.display='block'; document.getElementById('previewTitle').textContent=`Preview ${type} - ${filtered.length} transaksi`;}}
-function exportPDF(type){const data=previewData.length>0 && previewType===type ? previewData : Object.values(orders); const {jsPDF}=window.jspdf; const doc=new jsPDF(); const now=new Date(); doc.text(`Laporan ${type} - Kertanegara`, 10, 10); let y=18; data.forEach((o,i)=>{doc.text(`${i+1}. ${new Date(o.createdAt).toLocaleDateString()} - ${o.userNama} - Rp ${o.total} - ${o.status}`, 10, y); y+=6; if(y>280){doc.addPage(); y=10;}}); doc.save(`laporan-${type}.pdf`);}
-function openDetail(id){detailId=id; const p=produk[id]; if(!p) return; document.getElementById('dNama').textContent=p.nama; document.getElementById('dFoto').src=p.foto||'https://via.placeholder.com/400x400?text='+encodeURIComponent(p.nama); const cats=Array.isArray(p.kat)?p.kat:[p.kat]; document.getElementById('dKat').textContent=cats.join(', ')+(p.isPromo?' - PROMO':'')+(p.subsidi&&p.subsidi.aktif?' - SUBSIDI':''); document.getElementById('dHarga').textContent='Rp '+Number(p.harga).toLocaleString('id-ID'); document.getElementById('dStok').textContent='Stok: '+p.stok; document.getElementById('dDesk').textContent=p.desk||''; const subBox=document.getElementById('dSubsidi'); const subText=document.getElementById('dSubsidiText'); if(p.subsidi && p.subsidi.aktif){ subBox.style.display='block'; subText.textContent=p.subsidi.syarat; } else { subBox.style.display='none'; } document.getElementById('detail').style.display='flex';}
-window.openDetail=openDetail;
-function addCart(id){cart[id]=(cart[id]||0)+1; if(cart[id]>produk[id].stok) cart[id]=produk[id].stok; updateCart(); if(view!=='belanja') switchView('belanja');}
-window.addCart=addCart;
-function addCartFromDetail(){if(!detailId) return; addCart(detailId); closeAll();}
-function updateCart(){document.getElementById('cartCount').textContent=Object.values(cart).reduce((a,b)=>a+b,0); const mc=document.getElementById('cartCountMobile'); if(mc) mc.textContent=Object.values(cart).reduce((a,b)=>a+b,0); const list=document.getElementById('cartList'); let sub=0; list.innerHTML=Object.entries(cart).map(([id,q])=>{const p=produk[id]; if(!p) return ''; const s=p.harga*q; sub+=s; return `<div class="flex gap-2 items-center border-b py-3"><img src="${p.foto||''}" class="w-12 h-12 object-contain bg-white border rounded"><div class="flex-1"><p class="font-bold text-[12px]">${p.nama}</p><p class="text-[11px]">x ${q} = Rp ${s.toLocaleString()}</p></div><button type="button" class="btn-del-cart bg-red-50 w-8 h-8 rounded-full text-red-600" data-id="${id}">X</button></div>`;}).join('')||'<p class="text-[12px] p-4 text-center">Kosong</p>'; list.querySelectorAll('.btn-del-cart').forEach(b=>b.addEventListener('click', ()=>{delete cart[b.dataset.id]; updateCart();})); document.getElementById('cartSub').textContent='Rp '+sub.toLocaleString(); const disc=getDiscount(sub); document.getElementById('cartDiskon').textContent='Rp '+disc.toLocaleString(); const total=sub-disc; document.getElementById('cartTotal').textContent='Rp '+total.toLocaleString(); renderUserVouchers();}
-function openCart(){document.getElementById('cart').style.display='flex'; updateCart(); renderPay(); renderUserVouchers();}
-function doCheckout(){
-  if(!geraiStatus.isOnline){ alert('Gerai sedang tutup - '+(geraiStatus.reason||'Tutup')+'\n'+geraiStatus.message); return; }
-  if(Object.keys(cart).length===0) return alert('Kosong'); if(!cur){alert('Login dulu'); closeAll(); openAuth(); return;}
-  const ambil=document.querySelector('input[name="ambil"]:checked').value;
-  const note=document.getElementById('note').value.trim();
-  const payId=document.getElementById('paySelect').value;
-  const payObj=payments[payId];
-  const alamatAntar=document.getElementById('alamatAntar').value.trim();
-  const hpAntar=document.getElementById('hpAntar').value.trim();
-  const sharelok=document.getElementById('sharelok').value.trim();
-  if(ambil==='diantar'){ if(!alamatAntar){ alert('Alamat antar wajib diisi jika pilih Diantar'); return; } if(!hpAntar){ alert('No HP wajib diisi jika pilih Diantar'); return; } }
-  if(payObj && payObj.type==='TRANSFER' && !tempBukti){ if(!confirm('Anda pilih Transfer tapi belum upload bukti TF. Lanjutkan?')) return; }
-  const sub=Object.entries(cart).reduce((s,[id,q])=>s+(produk[id]?.harga||0)*q,0); const disc=getDiscount(sub); const total=sub-disc;
-  const order={id:Date.now().toString(), userId:cur.id, userNama:cur.nama, kontak:cur.kontak, alamat:cur.alamat, cart, sub,disc,total, ambil, note, alamatAntar, hpAntar, sharelok, payId, payName:payObj?.name||'', payType:payObj?.type||'COD', buktiTF: tempBukti||null, status:'antrian', alasan:'', createdAt:Date.now(), voucher:appliedVoucher?.code||null};
-  orders[order.id]=order; localStorage.setItem(KEY_ORDERS, JSON.stringify(orders)); try{if(window.db) window.set(window.ref(window.db,'orders-kdkmp-final/'+order.id), order);}catch(e){}
-  if(appliedVoucher){appliedVoucher.used=true; localStorage.setItem(KEY_VOUCH, JSON.stringify(vouchers)); try{if(window.db) window.update(window.ref(window.db,'vouchers-kdkmp-final/'+appliedVoucher.id), {used:true});}catch(e){} setTimeout(()=>{ delete vouchers[appliedVoucher.id]; localStorage.setItem(KEY_VOUCH, JSON.stringify(vouchers)); try{if(window.db) window.remove(window.ref(window.db,'vouchers-kdkmp-final/'+appliedVoucher.id));}catch(e){} renderVoucher(); renderUserVouchers(); }, 1000);}
-  cart={}; appliedVoucher=null; tempBukti=null; document.getElementById('voucherInput').value=''; document.getElementById('note').value=''; document.getElementById('alamatAntar').value=''; document.getElementById('hpAntar').value=''; document.getElementById('sharelok').value=''; document.getElementById('buktiFile').value=''; const bp=document.getElementById('buktiPrevBox'); if(bp) bp.style.display='none'; updateCart(); closeAll(); alert('Pesanan masuk Antrian! Bisa dibatalkan jika masih Antrian.'); renderOrders(); renderMyOrders(); try{ document.getElementById('notifSound').play(); }catch(e){}
-}
 function render(){
-  const q=(document.getElementById('q').value||'').toLowerCase(); const kat=document.getElementById('kat').value;
-  const list=Object.entries(produk).filter(([id,p])=>{ const cats=Array.isArray(p.kat)?p.kat:[p.kat]; if(kat && !cats.includes(kat)) return false; if(q&&!p.nama.toLowerCase().includes(q)) return false; return true;});
-const promoList=list.filter(([id,p])=>p.isPromo);
-const normalList=list; // SEMUA produk tetap tampil di Belanja, bukan cuma non-promo
-const gridPromo=document.getElementById('gridPromo');
-if(gridPromo) gridPromo.innerHTML=promoList.map(([id,p])=>`<div class="product-card bg-white border-2 border-amber-300 rounded-2xl overflow-hidden shadow"><div class="img-box h-[140px] bg-white flex items-center justify-center relative"><img src="${p.foto||'https://via.placeholder.com/300x300?text='+encodeURIComponent(p.nama)}" class="w-full h-full object-contain bg-white"><span class="absolute top-2 left-2 bg-red-600 text-white text-[8px] px-2 py-1 rounded-full font-black">PROMO</span></div><div class="p-2"><p class="font-bold text-[11px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[13px]">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[8px] text-slate-500">${Array.isArray(p.kat)?p.kat.join(', '):p.kat}</p><div class="flex gap-1 mt-2"><button type="button" onclick="openDetail('${id}')" class="flex-1 bg-white border py-2 rounded-full text-[9px] font-bold">Lihat</button><button type="button" onclick="addCart('${id}')" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded-full text-[9px] font-bold">+ Keranjang</button></div></div></div>`).join('')||'<p class="text-[10px] text-slate-400 p-2">Belum ada promo</p>';
-const promoArea=document.getElementById('promoArea');
-if(promoArea) promoArea.style.display=promoList.length===0?'none':'block';
-document.getElementById('gridToko').innerHTML=list.map(([id,p])=>`<div class="product-card bg-white rounded-2xl overflow-hidden border shadow"><div class="img-box h-[130px] bg-white flex items-center justify-center relative"><img src="${p.foto||'https://via.placeholder.com/300x300?text='+encodeURIComponent(p.nama)}" class="w-full h-full object-contain bg-white"><span class="absolute bottom-2 right-2 bg-[#BE1E2D] text-white text-[8px] px-2 py-1 rounded-full">Stok ${p.stok}</span></div><div class="p-2"><p class="font-bold text-[10px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[11px]">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[8px] text-slate-500 truncate">${Array.isArray(p.kat)?p.kat.join(', '):p.kat}</p><div class="flex gap-1 mt-2"><button type="button" onclick="openAdd('${id}')" class="flex-1 bg-blue-600 text-white py-2 rounded-full text-[8px]">Edit</button><button type="button" onclick="if(confirm('Hapus?')){delete produk['${id}']; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); try{if(window.db) window.remove(window.ref(window.db,'produk-kdkmp-final/${id}'));}catch(e){} render();}" class="flex-1 bg-red-600 text-white py-2 rounded-full text-[8px]">Hapus</button></div></div></div>`).join('')||'<p class="text-[11px]">Belum ada produk di Toko</p>';
-document.getElementById('gridBelanja').innerHTML=normalList.map(([id,p])=>`<div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border"><div class="img-box h-[150px] bg-white flex items-center justify-center relative"><img src="${p.foto||'https://via.placeholder.com/400x400?text='+encodeURIComponent(p.nama)}" class="w-full h-full object-contain bg-white"><span class="absolute top-2 left-2 bg-white/90 px-2 py-1 rounded-full text-[8px] font-bold shadow">${Array.isArray(p.kat)?p.kat[0]:p.kat}</span></div><div class="p-2"><p class="font-bold text-[11px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[13px] mt-1">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[8px] text-slate-500 truncate">${Array.isArray(p.kat)?p.kat.join(', '):p.kat} - Stok ${p.stok}</p><div class="flex gap-1 mt-2"><button type="button" onclick="openDetail('${id}')" class="flex-1 bg-slate-100 py-2 rounded-full text-[10px] font-bold">Lihat</button><button type="button" onclick="addCart('${id}')" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded-full text-[10px] font-bold">+ Keranjang</button></div></div></div>`).join('')||'<div class="col-span-full bg-white p-8 rounded-2xl text-center shadow text-[13px]">Belum ada produk - Klik + Produk di atas</div>';
-  
-  const promoArea=document.getElementById('promoArea');
-  if(promoArea) promoArea.style.display=promoList.length===0?'none':'block';
-  document.getElementById('gridToko').innerHTML=list.map(([id,p])=>`<div class="product-card bg-white rounded-2xl overflow-hidden border shadow"><div class="img-box h-[130px] bg-white flex items-center justify-center relative"><img src="${p.foto||'https://via.placeholder.com/300x300?text='+encodeURIComponent(p.nama)}" class="w-full h-full object-contain bg-white"><span class="absolute bottom-2 right-2 bg-[#BE1E2D] text-white text-[8px] px-2 py-1 rounded-full">Stok ${p.stok}</span></div><div class="p-2"><p class="font-bold text-[10px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[11px]">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[8px] text-slate-500 truncate">${Array.isArray(p.kat)?p.kat.join(', '):p.kat}</p><div class="flex gap-1 mt-2"><button type="button" class="btn-edit-produk flex-1 bg-blue-600 text-white py-2 rounded-full text-[8px]" data-id="${id}">Edit</button><button type="button" class="btn-hapus-produk flex-1 bg-red-600 text-white py-2 rounded-full text-[8px]" data-id="${id}">Hapus</button></div></div></div>`).join('');
-  document.getElementById('gridBelanja').innerHTML=normalList.map(([id,p])=>`<div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border"><div class="img-box h-[150px] bg-white flex items-center justify-center relative"><img src="${p.foto||'https://via.placeholder.com/400x400?text='+encodeURIComponent(p.nama)}" class="w-full h-full object-contain bg-white"><span class="absolute top-2 left-2 bg-white/90 px-2 py-1 rounded-full text-[8px] font-bold shadow">${Array.isArray(p.kat)?p.kat[0]:p.kat}</span></div><div class="p-2"><p class="font-bold text-[11px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[13px] mt-1">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[8px] text-slate-500 truncate">${Array.isArray(p.kat)?p.kat.join(', '):p.kat} - Stok ${p.stok}</p><div class="flex gap-1 mt-2"><button type="button" class="btn-lihat flex-1 bg-slate-100 py-2 rounded-full text-[10px] font-bold" data-id="${id}">Lihat</button><button type="button" class="btn-cart flex-1 bg-[#BE1E2D] text-white py-2 rounded-full text-[10px] font-bold" data-id="${id}">+ Keranjang</button></div></div></div>`).join('')||'<div class="col-span-full bg-white p-8 rounded-2xl text-center shadow text-[13px]">Belum ada produk - Data lama sudah dimigrasi</div>';
-  document.querySelectorAll('.btn-lihat').forEach(b=>b.addEventListener('click', ()=>openDetail(b.dataset.id)));
-  document.querySelectorAll('.btn-cart').forEach(b=>b.addEventListener('click', ()=>addCart(b.dataset.id)));
-  document.querySelectorAll('.btn-edit-produk').forEach(b=>b.addEventListener('click', ()=>openAdd(b.dataset.id)));
-  document.querySelectorAll('.btn-hapus-produk').forEach(b=>b.addEventListener('click', ()=>{if(confirm('Hapus?')){delete produk[b.dataset.id]; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); try{if(window.db) window.remove(window.ref(window.db,'produk-kdkmp-final/'+b.dataset.id));}catch(e){} render();}}));
-}
-document.getElementById('bBelanja')?.addEventListener('click', ()=>switchView('belanja'));
-document.getElementById('navBelanja')?.addEventListener('click', ()=>switchView('belanja'));
-document.getElementById('bToko')?.addEventListener('click', ()=>switchView('toko'));
-document.getElementById('navToko')?.addEventListener('click', ()=>switchView('toko'));
-document.getElementById('btnMasuk')?.addEventListener('click', openAuth);
-document.getElementById('btnMasukMobile')?.addEventListener('click', openAuth);
-document.getElementById('btnKeluar')?.addEventListener('click', logout);
-document.getElementById('btnKeluarMobile')?.addEventListener('click', logout);
-document.getElementById('cartBtn')?.addEventListener('click', openCart);
-document.getElementById('navKeranjang')?.addEventListener('click', openCart);
-document.getElementById('addBtn')?.addEventListener('click', ()=>openAdd());
-document.getElementById('btnAddProduk')?.addEventListener('click', ()=>openAdd());
-document.getElementById('logoBox')?.addEventListener('click', openLogoAdmin);
-document.getElementById('saveLogoBtn')?.addEventListener('click', saveLogo);
-document.getElementById('delLogoBtn')?.addEventListener('click', deleteLogo);
-document.getElementById('doLoginBtn')?.addEventListener('click', doLogin);
-document.getElementById('toDaftarBtn')?.addEventListener('click', toDaftar);
-document.getElementById('toLoginBtn')?.addEventListener('click', toLogin);
-document.getElementById('doDaftarBtn')?.addEventListener('click', doDaftar);
-document.getElementById('saveProdBtn')?.addEventListener('click', saveProd);
-document.getElementById('addCartDetailBtn')?.addEventListener('click', addCartFromDetail);
-document.getElementById('checkoutBtn')?.addEventListener('click', doCheckout);
-document.getElementById('addKaryawanBtn')?.addEventListener('click', addKaryawan);
-document.getElementById('savePayBtn')?.addEventListener('click', savePay);
-document.getElementById('cancelPayBtn')?.addEventListener('click', cancelPayEdit);
-document.getElementById('saveVoucherBtn')?.addEventListener('click', saveVoucher);
-document.getElementById('cancelVoucherBtn')?.addEventListener('click', cancelVoucherEdit);
-document.getElementById('applyVoucherBtn')?.addEventListener('click', applyVoucher);
-document.getElementById('pdfHarian')?.addEventListener('click', ()=>showPreview('harian'));
-document.getElementById('pdfMingguan')?.addEventListener('click', ()=>showPreview('mingguan'));
-document.getElementById('pdfBulanan')?.addEventListener('click', ()=>showPreview('bulanan'));
-document.getElementById('exportPdfBtn')?.addEventListener('click', ()=>exportPDF(previewType));
-document.querySelectorAll('.filterOrder').forEach(b=>b.addEventListener('click', function(){orderFilter=this.dataset.status; renderOrders();}));
-document.getElementById('btnOrders')?.addEventListener('click', openOrders);
-document.getElementById('btnMyOrders')?.addEventListener('click', openMyOrders);
-document.getElementById('navPesanan')?.addEventListener('click', ()=>{ if(cur){ if(cur.role==='admin_manajer'||cur.role==='admin_karyawan') openOrders(); else openMyOrders(); } else { openAuth(); } });
-document.getElementById('navAdmin')?.addEventListener('click', openAdminMenu);
-document.getElementById('mVoucher')?.addEventListener('click', ()=>{closeAll(); openVoucherAdmin();});
-document.getElementById('mPay')?.addEventListener('click', ()=>{closeAll(); openPayAdmin();});
-document.getElementById('mPengguna')?.addEventListener('click', ()=>{closeAll(); document.getElementById('pengguna').style.display='flex'; renderPengguna();});
-document.getElementById('mAnalisis')?.addEventListener('click', ()=>{closeAll(); openAnalisis();});
-document.getElementById('mPesanan')?.addEventListener('click', ()=>{closeAll(); openOrders();});
-document.getElementById('mGerai')?.addEventListener('click', ()=>{closeAll(); openGeraiStatus();});
-document.getElementById('mKategori')?.addEventListener('click', ()=>{closeAll(); openKategoriAdmin();});
-document.getElementById('btnKelolaKategori')?.addEventListener('click', openKategoriAdmin);
-document.getElementById('saveKategoriBtn')?.addEventListener('click', saveKategori);
-document.getElementById('cancelKategoriBtn')?.addEventListener('click', cancelKategoriEdit);
-document.getElementById('btnVoucher')?.addEventListener('click', openVoucherAdmin);
-document.getElementById('btnPay')?.addEventListener('click', openPayAdmin);
-document.getElementById('btnPengguna')?.addEventListener('click', ()=>{document.getElementById('pengguna').style.display='flex'; renderPengguna();});
-document.getElementById('btnGeraiStatus')?.addEventListener('click', openGeraiStatus);
-document.getElementById('saveGeraiBtn')?.addEventListener('click', saveGeraiStatus);
-document.getElementById('saveEditUserBtn')?.addEventListener('click', saveEditUser);
-document.getElementById('q').addEventListener('input', render);
-document.getElementById('kat').addEventListener('change', render);
-document.getElementById('notifOrder')?.addEventListener('click', openOrders);
-document.getElementById('notifOrderMobile')?.addEventListener('click', openOrders);
-document.getElementById('doBatalBtn')?.addEventListener('click', doBatalkanPesanan);
-document.querySelectorAll('input[name="ambil"]').forEach(r=>r.addEventListener('change', function(){const diantarFields=document.getElementById('diantarFields'); if(this.value==='diantar'){ diantarFields.style.display='block'; } else { diantarFields.style.display='none'; }}));
-document.getElementById('btnAutoAlamat')?.addEventListener('click', function(){if(!cur){ alert('Login dulu untuk isi otomatis'); return; } document.getElementById('alamatAntar').value=cur.alamat||''; document.getElementById('hpAntar').value=cur.kontak||''; alert('Alamat & HP diisi dari akun Anda: '+cur.nama);});
-document.getElementById('btnSharelok')?.addEventListener('click', function(){if(!navigator.geolocation){ alert('GPS tidak support'); return; } this.textContent='Loading...'; navigator.geolocation.getCurrentPosition(pos=>{const lat=pos.coords.latitude; const lng=pos.coords.longitude; const link=`https://www.google.com/maps?q=${lat},${lng}`; document.getElementById('sharelok').value=link; document.getElementById('btnSharelok').textContent='GPS'; alert('Lokasi didapat: '+link);}, err=>{document.getElementById('btnSharelok').textContent='GPS'; alert('Gagal ambil lokasi: '+err.message);});});
-document.getElementById('btnOpenMaps')?.addEventListener('click', function(){const link=document.getElementById('sharelok').value.trim(); if(!link){ alert('Isi sharelok dulu atau klik GPS'); return; } window.open(link, '_blank');});
-if(cur){document.getElementById('btnMasuk').style.display='none'; document.getElementById('btnKeluar').style.display='block'; document.getElementById('btnMasukMobile').style.display='none'; document.getElementById('btnKeluarMobile').style.display='block'; document.getElementById('btnMyOrders').style.display='block'; afterLogin();} else {const mi=document.getElementById('migrasiInfo'); if(mi) mi.style.display='none';}
-cleanExpiredVouchers();
-render(); renderKategoriSelect(); renderLogo(); renderPay(); renderVoucher(); renderOrders(); renderMyOrders(); renderAnalisis(); renderGeraiStatus();
-setTimeout(()=>{
   try{
-    if(window.db){
-      console.log('Mulai sync Firebase...');
-      window.onValue(window.ref(window.db,'produk-kdkmp-final'), snap=>{
-        const v=snap.val(); 
-        if(v && Object.keys(v).length>0){
-          // Bandingkan, kalau Firebase lebih baru, pakai Firebase
-          if(Object.keys(v).length >= Object.keys(produk).length){
-            localStorage.setItem(KEY_PROD, JSON.stringify(v)); 
-            produk=v; 
-            render();
-            console.log('Data dari Firebase masuk HP:', Object.keys(v).length);
-          }
-        }
-      });
-      window.onValue(window.ref(window.db,'users-kdkmp-final'), snap=>{const v=snap.val(); if(v && Object.keys(v).length>0){localStorage.setItem(KEY_USERS, JSON.stringify(v)); users=v; ensureManajer(); renderPengguna();}});
-      window.onValue(window.ref(window.db,'orders-kdkmp-final'), snap=>{
-        const v=snap.val(); 
-        if(v){
-          const newCount=Object.keys(v).length;
-          if(newCount>lastOrderCount && cur && (cur.role==='admin_manajer' || cur.role==='admin_karyawan')){
-            try{ document.getElementById('notifSound').play(); }catch(e){}
-            document.getElementById('newOrderAlert').style.display='block';
-            if(Notification && Notification.permission==='granted'){ new Notification('Pesanan Baru Masuk!', {body:`Ada pesanan baru, cek sekarang`}); }
-            else if(Notification && Notification.permission!=='denied'){ Notification.requestPermission(); }
-          }
-          lastOrderCount=newCount;
-          localStorage.setItem(KEY_ORDERS, JSON.stringify(v)); orders=v; renderOrders(); renderMyOrders();
-        }
-      });
-      window.onValue(window.ref(window.db,'vouchers-kdkmp-final'), snap=>{const v=snap.val(); if(v){localStorage.setItem(KEY_VOUCH, JSON.stringify(v)); vouchers=v; renderVoucher(); renderUserVouchers();}});
-      window.onValue(window.ref(window.db,'payments-kdkmp-final'), snap=>{const v=snap.val(); if(v){localStorage.setItem(KEY_PAY, JSON.stringify(v)); payments=v; renderPay();}});
-      window.onValue(window.ref(window.db,'config-kdkmp-final/logo'), snap=>{const v=snap.val(); if(v){config.logo=v; localStorage.setItem(KEY_CONFIG, JSON.stringify(config)); renderLogo();}});
-      window.onValue(window.ref(window.db,'config-kdkmp-final/geraiStatus'), snap=>{const v=snap.val(); if(v){localStorage.setItem(KEY_GERAI, JSON.stringify(v)); geraiStatus=v; renderGeraiStatus();}});
-      window.onValue(window.ref(window.db,'kategori-produk-final'), snap=>{const v=snap.val(); if(v && Object.keys(v).length>0){localStorage.setItem(KEY_KAT, JSON.stringify(v)); kategoriProduk=v; renderKategoriSelect(); render();}});
-    }
-  }catch(e){}
-},1200);
-window.addEventListener('load',()=>{
-  const q=document.getElementById('q'); if(q){q.value=''; setTimeout(()=>q.value='',500);}
-});
+    renderKategoriSelect();
+    const q=(document.getElementById('q')?.value||'').toLowerCase();
+    const katFil=document.getElementById('kat')?.value||'';
+    let list=Object.entries(produk);
+    if(q) list=list.filter(([id,p])=>p.nama.toLowerCase().includes(q));
+    if(katFil) list=list.filter(([id,p])=>{const cats=Array.isArray(p.kat)?p.kat:[p.kat]; return cats.includes(katFil);});
+    const promoList=list.filter(([id,p])=>p.isPromo);
+    const normalList=list;
+    const gridPromo=document.getElementById('gridPromo');
+    if(gridPromo) gridPromo.innerHTML=promoList.map(([id,p])=>`<div class="product-card bg-white border-2 border-amber-300 rounded-2xl overflow-hidden shadow"><div class="img-box h-[140px] bg-white flex items-center justify-center relative"><img src="${p.foto||'https://via.placeholder.com/300?text='+encodeURIComponent(p.nama)}" class="w-full h-full object-contain bg-white"><span class="absolute top-2 left-2 bg-red-600 text-white text-[8px] px-2 py-1 rounded-full font-black">PROMO</span></div><div class="p-2"><p class="font-bold text-[11px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[13px]">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[8px] text-slate-500">${Array.isArray(p.kat)?p.kat.join(', '):p.kat}</p><div class="flex gap-1 mt-2"><button type="button" onclick="openDetail('${id}')" class="flex-1 bg-white border py-2 rounded-full text-[9px] font-bold">Lihat</button><button type="button" onclick="addCart('${id}')" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded-full text-[9px] font-bold">+ Keranjang</button></div></div></div>`).join('')||'<p class="text-[10px] text-slate-400 p-2">Belum ada promo</p>';
+    document.getElementById('promoArea').style.display=promoList.length===0?'none':'block';
+    document.getElementById('gridToko').innerHTML=list.map(([id,p])=>`<div class="product-card bg-white rounded-2xl overflow-hidden border shadow"><div class="img-box h-[130px] bg-white flex items-center justify-center relative"><img src="${p.foto||'https://via.placeholder.com/300?text='+encodeURIComponent(p.nama)}" class="w-full h-full object-contain bg-white"><span class="absolute bottom-2 right-2 bg-[#BE1E2D] text-white text-[8px] px-2 py-1 rounded-full">Stok ${p.stok}</span></div><div class="p-2"><p class="font-bold text-[10px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[11px]">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[8px] text-slate-500 truncate">${Array.isArray(p.kat)?p.kat.join(', '):p.kat}</p><div class="flex gap-1 mt-2"><button type="button" onclick="openAdd('${id}')" class="flex-1 bg-blue-600 text-white py-2 rounded-full text-[8px]">Edit</button><button type="button" onclick="hapusProduk('${id}')" class="flex-1 bg-red-600 text-white py-2 rounded-full text-[8px]">Hapus</button></div></div></div>`).join('')||'<p class="text-[11px]">Belum ada produk</p>';
+    document.getElementById('gridBelanja').innerHTML=normalList.map(([id,p])=>`<div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border"><div class="img-box h-[150px] bg-white flex items-center justify-center relative"><img src="${p.foto||'https://via.placeholder.com/400?text='+encodeURIComponent(p.nama)}" class="w-full h-full object-contain bg-white"><span class="absolute top-2 left-2 bg-white/90 px-2 py-1 rounded-full text-[8px] font-bold shadow">${Array.isArray(p.kat)?p.kat[0]:p.kat}</span></div><div class="p-2"><p class="font-bold text-[11px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[13px] mt-1">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[8px] text-slate-500 truncate">${Array.isArray(p.kat)?p.kat.join(', '):p.kat} - Stok ${p.stok}</p><div class="flex gap-1 mt-2"><button type="button" onclick="openDetail('${id}')" class="flex-1 bg-slate-100 py-2 rounded-full text-[10px] font-bold">Lihat</button><button type="button" onclick="addCart('${id}')" class="flex-1 bg-[#BE1E2D] text-white py-2 rounded-full text-[10px] font-bold">+ Keranjang</button></div></div></div>`).join('')||'<div class="col-span-full bg-white p-8 rounded-2xl text-center shadow text-[13px]">Belum ada produk - Klik + Produk</div>';
+    updateCartBadge(); document.getElementById('userBadge').textContent=(cur?.nama||'BELUM LOGIN')+' - '+(cur?.role||'').toUpperCase();
+  }catch(e){console.error(e); alert('Error: '+e.message);}
+}
+function hapusProduk(id){if(!confirm('Hapus produk?')) return; delete produk[id]; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); try{if(window.db) window.remove(window.ref(window.db,'produk-kdkmp-final/'+id));}catch(e){} render();}
+function switchTab(t){document.getElementById('viewBelanja').classList.add('hidden'); document.getElementById('viewToko').classList.add('hidden'); document.getElementById('viewKeranjang').classList.add('hidden'); document.getElementById('viewPesanan').classList.add('hidden'); document.getElementById('viewAdmin').classList.add('hidden'); if(t==='belanja') document.getElementById('viewBelanja').classList.remove('hidden'); if(t==='toko') document.getElementById('viewToko').classList.remove('hidden'); if(t==='keranjang'){document.getElementById('viewKeranjang').classList.remove('hidden'); renderKeranjang();} if(t==='pesanan'){document.getElementById('viewPesanan').classList.remove('hidden'); renderPesanan();} if(t==='admin'){document.getElementById('viewAdmin').classList.remove('hidden');} window.scrollTo(0,0);}
+function openAdd(id=null){editId=id; if(id && produk[id]){const p=produk[id]; document.getElementById('pNama').value=p.nama; document.getElementById('pHarga').value=p.harga; document.getElementById('pStok').value=p.stok; document.getElementById('pDesk').value=p.desk||''; document.getElementById('pIsPromo').checked=!!p.isPromo; document.getElementById('modalAddTitle').textContent='Edit Produk'; setTimeout(()=>{document.querySelectorAll('.kat-checkbox').forEach(cb=>{const cats=Array.isArray(p.kat)?p.kat:[p.kat]; cb.checked=cats.includes(cb.value);});},100);} else {document.getElementById('pNama').value=''; document.getElementById('pHarga').value=''; document.getElementById('pStok').value=''; document.getElementById('pDesk').value=''; document.getElementById('pIsPromo').checked=false; document.getElementById('modalAddTitle').textContent='Tambah Produk'; setTimeout(()=>{document.querySelectorAll('.kat-checkbox').forEach(cb=>cb.checked=false);},100);} tempFoto=null; openModal('modalAdd');}
+function saveProd(){const nama=document.getElementById('pNama').value.trim(); const harga=parseInt(document.getElementById('pHarga').value)||0; const stok=parseInt(document.getElementById('pStok').value)||0; const desk=document.getElementById('pDesk').value.trim(); const isPromo=document.getElementById('pIsPromo').checked; const subsidiAktif=document.getElementById('pSubsidiAktif').checked; const subsidiSyarat=document.getElementById('pSubsidiSyarat').value.trim(); const checkedKats=Array.from(document.querySelectorAll('.kat-checkbox:checked')).map(cb=>cb.value); if(!nama||!harga) return alert('Isi nama & harga'); if(checkedKats.length===0) return alert('Pilih minimal 1 kategori'); const id=editId||Date.now().toString(); const old=produk[id]||{}; produk[id]={nama,harga,stok,kat:checkedKats,desk,foto:tempFoto!==null?tempFoto:(old.foto||null),isPromo,updatedAt:Date.now(), subsidi: subsidiSyarat ? {aktif: subsidiAktif, syarat: subsidiSyarat} : null }; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); try{if(window.db){window.set(window.ref(window.db,'produk-kdkmp-final/'+id), produk[id]);}}catch(e){} closeAll(); render(); alert('Produk disimpan & sync ke HP!');}
+document.getElementById('pFoto')?.addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{tempFoto=ev.target.result;}; r.readAsDataURL(f);});
+document.getElementById('katIsSubsidi')?.addEventListener('change', e=>{document.getElementById('katSyarat').style.display=e.target.checked?'block':'none';});
+function openKategoriAdmin(){renderKategoriList(); renderKategoriSelect(); openModal('kategoriAdmin');}
+function openModal(id){document.getElementById(id)?.classList.add('active');}
+function closeAll(){document.querySelectorAll('.modal-bg').forEach(m=>m.classList.remove('active'));}
+function openDetail(id){const p=produk[id]; if(!p) return; document.getElementById('detailContent').innerHTML=`<img src="${p.foto||'https://via.placeholder.com/400?text='+encodeURIComponent(p.nama)}" class="w-full h-[200px] object-contain bg-white rounded-xl"><p class="font-black mt-2">${p.nama}</p><p class="text-[#BE1E2D] font-black">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[11px] text-slate-600 mt-1">Kategori: ${Array.isArray(p.kat)?p.kat.join(', '):p.kat}</p><p class="text-[11px] mt-2">${p.desk||''}</p><button onclick="addCart('${id}');closeAll();" class="w-full mt-3 bg-[#BE1E2D] text-white py-3 rounded-full font-black">+ Keranjang</button>`; openModal('modalDetail');}
+function addCart(id){cart[id]=(cart[id]||0)+1; localStorage.setItem(KEY_CART, JSON.stringify(cart)); updateCartBadge(); alert('Masuk keranjang');}
+function updateCartBadge(){const total=Object.values(cart).reduce((a,b)=>a+b,0); document.getElementById('cartBadge').textContent=total; document.getElementById('keranjangCountBadge').textContent=total;}
+function renderKeranjang(){const el=document.getElementById('listKeranjang'); let total=0; el.innerHTML=Object.entries(cart).map(([id,qty])=>{const p=produk[id]; if(!p) return ''; const sub=p.harga*qty; total+=sub; return `<div class="bg-white p-3 rounded-xl flex justify-between items-center"><div><p class="font-bold text-[12px]">${p.nama}</p><p class="text-[10px]">Rp ${p.harga.toLocaleString('id-ID')} x ${qty}</p></div><div class="flex gap-2 items-center"><button onclick="cart['${id}']--; if(cart['${id}']<=0) delete cart['${id}']; localStorage.setItem(KEY_CART, JSON.stringify(cart)); renderKeranjang(); updateCartBadge();" class="bg-slate-200 px-2 py-1 rounded-full">-</button><span class="text-[12px] font-bold">${qty}</span><button onclick="cart['${id}']++; localStorage.setItem(KEY_CART, JSON.stringify(cart)); renderKeranjang(); updateCartBadge();" class="bg-slate-200 px-2 py-1 rounded-full">+</button></div></div>`;}).join('')||'<p class="text-[12px] text-center">Keranjang kosong</p>'; document.getElementById('totalKeranjang').textContent='Total: Rp '+total.toLocaleString('id-ID');}
+function checkout(){if(Object.keys(cart).length===0) return alert('Keranjang kosong'); const id=Date.now().toString(); const items=Object.entries(cart).map(([pid,qty])=>({pid,nama:produk[pid]?.nama,qty,harga:produk[pid]?.harga})); const total=items.reduce((s,i)=>s+i.harga*i.qty,0); orders.push({id,items,total,status:'Baru',createdAt:Date.now(),user:cur?.nama}); localStorage.setItem(KEY_ORDER, JSON.stringify(orders)); cart={}; localStorage.setItem(KEY_CART, JSON.stringify(cart)); updateCartBadge(); alert('Pesanan dibuat! Total Rp '+total.toLocaleString('id-ID')); switchTab('pesanan'); renderPesanan();}
+function renderPesanan(){const el=document.getElementById('listPesanan'); el.innerHTML=orders.slice().reverse().map(o=>`<div class="bg-white p-3 rounded-xl"><p class="font-bold text-[12px]">#${o.id} - Rp ${o.total.toLocaleString('id-ID')}</p><p class="text-[10px]">${o.items.map(i=>i.nama+' x'+i.qty).join(', ')}</p><p class="text-[9px] text-slate-500">${new Date(o.createdAt).toLocaleString('id-ID')} - ${o.status}</p></div>`).join('')||'<p class="text-[12px] text-center">Belum ada pesanan</p>';}
+function renderPengguna(){const el=document.getElementById('listPengguna'); if(!el) return; el.innerHTML=Object.values(users).map(u=>`<div class="border rounded-xl p-2 flex justify-between items-center"><div><p class="font-bold text-[11px]">${u.nama} - ${u.role}</p><p class="text-[9px] text-slate-500">${u.kontak||''}</p></div><button onclick="openEditUser('${u.id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[9px]">Edit</button></div>`).join('');}
+function openEditUser(id){editUserId=id; const u=users[id]; if(!u) return; document.getElementById('eNama').value=u.nama; document.getElementById('eKontak').value=u.kontak||''; document.getElementById('eAlamat').value=u.alamat||''; document.getElementById('eRole').value=u.role; document.getElementById('penggunaEditPassBaru').value=''; document.getElementById('penggunaEditPassBaru2').value=''; openModal('penggunaAdmin');}
+function saveEditUser(){const u=users[editUserId]; if(!u) return; if(cur?.role!=='admin_manajer') return alert('Hanya Admin Manajer'); const namaBaru=document.getElementById('eNama').value.trim(); const passBaru=document.getElementById('penggunaEditPassBaru').value.trim(); const passBaru2=document.getElementById('penggunaEditPassBaru2').value.trim(); if(!namaBaru) return alert('Nama kosong'); let passChanged=false; if(passBaru!==''){if(passBaru.length<4) return alert('Password minimal 4'); if(passBaru!==passBaru2) return alert('Ulang password tidak sama'); u.passHash=hash(passBaru); passChanged=true;} u.nama=namaBaru; u.kontak=document.getElementById('eKontak').value.trim(); u.alamat=document.getElementById('eAlamat').value.trim(); u.role=document.getElementById('eRole').value; localStorage.setItem(KEY_USERS, JSON.stringify(users)); if(cur && cur.id===editUserId){cur.nama=u.nama; cur.kontak=u.kontak; cur.alamat=u.alamat; cur.role=u.role; if(passChanged) cur.passHash=u.passHash; localStorage.setItem('curV14', JSON.stringify(cur));} try{if(window.db) window.update(window.ref(window.db,'users-kdkmp-final/'+editUserId), u);}catch(e){} closeAll(); renderPengguna(); render(); alert('Berhasil update user: '+u.nama+(passChanged?' + password baru: '+passBaru:' + password tetap'));}
+function logout(){localStorage.removeItem('curV14'); location.reload();}
+setTimeout(()=>{try{if(window.db){window.onValue(window.ref(window.db,'produk-kdkmp-final'), snap=>{const v=snap.val(); if(v && Object.keys(v).length>0){const localCount=Object.keys(produk).length; const fbCount=Object.keys(v).length; if(fbCount>=localCount || localCount===0){localStorage.setItem(KEY_PROD, JSON.stringify(v)); produk=v; render();}}}); window.onValue(window.ref(window.db,'kategori-kdkmp-final'), snap=>{const v=snap.val(); if(v && Object.keys(v).length>0){localStorage.setItem(KEY_KAT, JSON.stringify(v)); kategoriProduk=v; renderKategoriSelect(); renderKategoriList(); render();}});}}catch(e){}},800);
+render();
 </script>
 </body>
 </html>
