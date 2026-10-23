@@ -333,21 +333,73 @@ window.openEditUser = function(id){
   document.getElementById('modalEditPengguna').style.display = 'flex';
 }
 
+// TARUH DI DALAM SCRIPT UTAMA - GANTI YANG LAMA
 window.saveEditUser = function(){
   const id = document.getElementById('penggunaEditId').value;
-  if(!users[id]) return;
+  if(!users[id]) return alert('User tidak ditemukan');
   
-  users[id].nama = document.getElementById('penggunaEditNama').value.trim();
+  // Cek hanya Admin Manajer yang boleh edit password orang lain
+  if(cur.role !== 'admin_manajer'){
+    return alert('Hanya Admin Manajer yang boleh edit pengguna');
+  }
+  
+  const namaBaru = document.getElementById('penggunaEditNama').value.trim();
+  const passBaru = document.getElementById('penggunaEditPassBaru').value.trim();
+  const passBaru2 = document.getElementById('penggunaEditPassBaru2').value.trim();
+  
+  if(!namaBaru) return alert('Nama tidak boleh kosong');
+  
+  // Kalau isi password baru, cek
+  if(passBaru !== ''){
+    if(passBaru.length < 4) return alert('Password baru minimal 4 huruf');
+    if(passBaru !== passBaru2) return alert('Ulang password tidak sama');
+    
+    // HASH PASSWORD BARU (pakai fungsi hash yang sudah ada di V25)
+    users[id].passHash = hash(passBaru);
+    console.log('Password di-update untuk:', users[id].nama);
+  }
+  
+  // Update data lain
+  users[id].nama = namaBaru;
   users[id].kontak = document.getElementById('penggunaEditKontak').value.trim();
   users[id].alamat = document.getElementById('penggunaEditAlamat').value.trim();
   users[id].role = document.getElementById('penggunaEditRole').value;
   
   localStorage.setItem(KEY_USERS, JSON.stringify(users));
-  try{ window.set(window.ref(window.db,'users-kdkmp-final/'+id), users[id]); }catch(e){}
+  try{ 
+    window.set(window.ref(window.db,'users-kdkmp-final/'+id), users[id]); 
+  }catch(e){}
   
   document.getElementById('modalEditPengguna').style.display = 'none';
+  // Kosongin field password biar aman
+  document.getElementById('penggunaEditPassBaru').value = '';
+  document.getElementById('penggunaEditPassBaru2').value = '';
+  
   renderPengguna();
-  alert('Pengguna berhasil di-edit');
+  alert('✅ Berhasil! \n' + (passBaru ? 'Password baru sudah diganti' : 'Data diperbarui tanpa ganti password'));
+}
+
+// FUNGSI HASH (kalau belum ada di V25 kamu, tambahin ini)
+function hash(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return 'h'+Math.abs(h);}
+
+// BUKA MODAL EDIT - tambahin cek role
+window.openEditUser = function(id){
+  if(cur.role !== 'admin_manajer'){
+    return alert('Hanya Admin Manajer yang bisa edit pengguna');
+  }
+  
+  const u = users[id];
+  if(!u) return alert('User tidak ditemukan');
+  
+  document.getElementById('penggunaEditId').value = id;
+  document.getElementById('penggunaEditNama').value = u.nama;
+  document.getElementById('penggunaEditKontak').value = u.kontak || '';
+  document.getElementById('penggunaEditAlamat').value = u.alamat || '';
+  document.getElementById('penggunaEditRole').value = u.role;
+  document.getElementById('penggunaEditPassBaru').value = '';
+  document.getElementById('penggunaEditPassBaru2').value = '';
+  
+  document.getElementById('modalEditPengguna').style.display = 'flex';
 }
 
 window.hapusUser = function(id){
@@ -582,8 +634,8 @@ setTimeout(()=>{
 },1200);
 </script>
 <div id="modalEditPengguna" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;padding:16px">
-  <div class="modal-box p-5 w-full max-w-[400px]">
-    <div class="flex justify-between"><b class="text-[13px]">Edit Pengguna</b><button onclick="this.closest('#modalEditPengguna').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
+  <div class="modal-box p-5 w-full max-w-[400px] max-h-[90vh] overflow-auto">
+    <div class="flex justify-between"><b class="text-[13px]">Edit Pengguna + Password (Admin Manajer)</b><button onclick="this.closest('#modalEditPengguna').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
     <div class="mt-3 space-y-2">
       <input type="hidden" id="penggunaEditId">
       <input id="penggunaEditNama" placeholder="Nama" class="w-full border rounded-full px-3 py-2 text-[11px]">
@@ -594,7 +646,16 @@ setTimeout(()=>{
         <option value="admin">Admin</option>
         <option value="admin_manajer">Admin Manajer</option>
       </select>
-      <button onclick="saveEditUser()" class="w-full bg-[#BE1E2D] text-white py-2 rounded-full font-bold text-[11px]">Simpan Perubahan</button>
+      
+      <!-- KHUSUS ADMIN MANAJER - EDIT PASSWORD -->
+      <div id="boxEditPass" class="border-2 border-red-300 bg-red-50 rounded-xl p-3 space-y-2">
+        <p class="text-[10px] font-black text-red-700">🔑 Ganti Password (khusus Admin Manajer) - kosongin kalau tidak ganti:</p>
+        <input id="penggunaEditPassBaru" type="password" placeholder="Password baru (min 4 huruf)" class="w-full border rounded-full px-3 py-2 text-[11px]">
+        <input id="penggunaEditPassBaru2" type="password" placeholder="Ulang password baru" class="w-full border rounded-full px-3 py-2 text-[11px]">
+        <p class="text-[8px] text-slate-500">* Kalau dikosongin, password lama tetap dipakai</p>
+      </div>
+      
+      <button onclick="saveEditUser()" class="w-full bg-[#BE1E2D] text-white py-2 rounded-full font-bold text-[11px]">💾 Simpan Perubahan + Password</button>
     </div>
   </div>
 </div>
