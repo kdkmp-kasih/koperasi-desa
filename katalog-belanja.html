@@ -2,25 +2,18 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GERAI KDKMP KASIH V19 FINAL SYNC - kasih-kopdes</title>
+<title>GERAI KDKMP KASIH V22 RESET - ADMIN ONLY</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>#logoBox{width:70px;height:70px}</style>
 </head>
 <body class="bg-[#fff8f8]">
 <div class="bg-[#BE1E2D] text-white p-4 sticky top-0 z-40">
 <div class="max-w-7xl mx-auto flex justify-between items-center">
 <div class="flex items-center gap-3">
-<div id="logoBox" class="bg-white rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg cursor-pointer"><img id="logoImg" style="display:none" class="w-full h-full object-contain"><span id="logoDefault" class="text-[#BE1E2D] font-black text-[28px]">K</span></div>
-<div><p class="font-black text-[18px]">GERAI KDKMP KASIH</p><p class="text-[11px]">Koperasi Desa Merah Putih 53354 • <span id="syncStatus" class="bg-white/20 px-2 rounded-full text-[8px]">CONNECTING FIREBASE...</span></p></div>
+<div class="w-[60px] h-[60px] bg-white rounded-full flex items-center justify-center text-[#BE1E2D] font-black text-[28px]">K</div>
+<div><p class="font-black">GERAI KDKMP KASIH</p><p class="text-[10px]">Koperasi Desa Merah Putih 53354 • <span id="syncStatus" class="bg-yellow-300 text-black px-2 py-0.5 rounded-full">V22 RESET MODE</span></p></div>
 </div>
-<div class="flex gap-1 items-center flex-wrap max-w-[65%] justify-end">
+<div class="flex gap-1 items-center">
 <span id="badge" class="hidden bg-white text-[#BE1E2D] px-3 py-1 rounded-full text-[10px] font-black"></span>
-<span id="notifOrder" style="display:none" class="bg-yellow-300 text-black px-3 py-1 rounded-full text-[10px] font-black animate-pulse cursor-pointer">0 BARU</span>
-<button id="bToko" style="display:none" class="bg-black/30 px-4 py-2 rounded-full text-[11px] font-bold">🏪 Toko</button>
-<button id="bBelanja" class="bg-white text-[#BE1E2D] px-4 py-2 rounded-full text-[12px] font-bold shadow">🛒 Belanja</button>
-<button id="btnMyOrders" style="display:none" class="bg-white/20 px-3 py-2 rounded-full text-[10px] font-bold">📦 Pesanan Saya</button>
-<button id="btnOrders" style="display:none" class="bg-green-200 text-black px-3 py-2 rounded-full text-[10px] font-bold">📦 Semua Pesanan</button>
 <button id="btnMasuk" class="bg-white text-[#BE1E2D] px-5 py-2 rounded-full text-[12px] font-black shadow">Masuk</button>
 <button id="btnKeluar" style="display:none" class="bg-black/40 px-4 py-2 rounded-full text-[11px] font-bold">Keluar</button>
 </div>
@@ -34,22 +27,21 @@
 </div>
 
 <div class="max-w-7xl mx-auto p-4">
-<div id="migrasiInfo" class="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4 text-[11px]"><span id="migrasiText">Sync Firebase kasih-kopdes aktif - data tidak akan hilang</span></div>
-<div id="viewToko" style="display:none"><h2 class="font-black text-[14px] text-[#BE1E2D] mb-3">🏪 Toko - Stok (Sync Online)</h2><div id="gridToko" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div></div>
-<div id="viewBelanja"><div id="promoArea" class="mb-6"><h2 class="font-black text-[16px] text-[#BE1E2D] mb-3">🔥 Promo & Bundling</h2><div id="gridPromo" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div></div><h2 class="font-black text-[14px] text-[#BE1E2D] mb-3">🛒 Belanja</h2><div id="gridBelanja" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div></div>
+<div class="bg-red-600 text-white rounded-xl p-4 mb-4 text-center">
+<b class="text-[14px]">🔥 V22 RESET TOTAL - HAPUS KONSUMEN 🔥</b><br>
+<span class="text-[11px]">Klik tombol di bawah sekali untuk hapus semua akun konsumen dan reset Admin Manajer</span><br>
+<button onclick="resetTotalAdmin()" class="mt-3 bg-white text-red-600 px-6 py-3 rounded-full text-[12px] font-black shadow">🗑️ HAPUS KONSUMEN & RESET ADMIN MANAJER</button>
+<div class="mt-3 bg-white/20 rounded p-2 text-[10px]">Setelah reset → Login: <b>Admin Manajer / Manajer0k3</b></div>
+</div>
+<div id="gridBelanja" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
 </div>
 
-<!-- MODALS SINGKAT (sama seperti V18) -->
-<div id="auth" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>Masuk</b><button class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="mt-4 space-y-3"><input id="lUser" placeholder="Username / Email / HP" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="lPass" type="password" placeholder="Password" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><p id="lMsg" class="text-red-600 text-[11px] text-center"></p><button id="doLoginBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">MASUK</button><button id="toDaftarBtn" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold">Belum punya? Daftar</button></div><div id="formDaftar" style="display:none" class="mt-4 space-y-3"><input id="dNama" placeholder="Nama *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="dKontak" placeholder="Email / HP *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="dAlamat" placeholder="Alamat *" class="w-full border-2 rounded-xl px-4 py-3 text-[13px]"><input id="dPass" type="password" placeholder="Password *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="dPass2" type="password" placeholder="Ulang *" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><p id="dMsg" class="text-red-600 text-[11px] text-center"></p><button id="doDaftarBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">DAFTAR</button><button id="toLoginBtn" class="w-full bg-slate-100 py-3 rounded-full text-[11px] font-bold">Sudah punya? Masuk</button></div></div></div>
-<div id="cart" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99995;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-md p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b>🛒 Keranjang</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div id="cartList" class="mt-3 space-y-2 max-h-[200px] overflow-auto"></div><div class="mt-4 border-t pt-3 space-y-2"><div class="flex justify-between text-[11px]"><span>Subtotal:</span><b id="cartSub">Rp 0</b></div><div class="flex justify-between font-black text-[14px] border-t pt-2"><span>Total:</span><span id="cartTotal">Rp 0</span></div></div><div class="mt-4 space-y-2 border rounded-xl p-3 bg-slate-50"><div class="flex gap-2"><label class="flex-1 flex gap-1 items-center text-[11px] bg-white border rounded-full px-3 py-2"><input type="radio" name="ambil" value="diambil" checked> Diambil</label><label class="flex-1 flex gap-1 items-center text-[11px] bg-white border rounded-full px-3 py-2"><input type="radio" name="ambil" value="diantar"> Diantar</label></div><textarea id="note" placeholder="Note" class="w-full border rounded-xl px-3 py-2 text-[11px] h-14"></textarea><select id="paySelect" class="w-full border rounded-full px-3 py-2 text-[11px]"><option value="COD">COD / Cash</option></select></div><button id="checkoutBtn" class="w-full mt-4 bg-green-600 text-white py-3 rounded-full font-bold">✅ Checkout</button></div></div>
-<div id="orders" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99992;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-2xl p-5 max-h-[85vh] overflow-auto"><div class="flex justify-between"><b>📦 Semua Pesanan - Terima/Tolak + Alasan</b><button class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="flex gap-1 mt-3 overflow-auto"><button class="filterOrder bg-[#BE1E2D] text-white px-3 py-1 rounded-full text-[9px]" data-status="all">Semua</button><button class="filterOrder bg-slate-100 px-3 py-1 rounded-full text-[9px]" data-status="antrian">Antrian</button><button class="filterOrder bg-slate-100 px-3 py-1 rounded-full text-[9px]" data-status="diterima">Diterima</button><button class="filterOrder bg-slate-100 px-3 py-1 rounded-full text-[9px]" data-status="ditolak">Ditolak</button><button class="filterOrder bg-slate-100 px-3 py-1 rounded-full text-[9px]" data-status="selesai">Selesai</button></div><div id="listOrders" class="mt-3 space-y-2"></div></div></div>
-<div id="myOrders" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99992;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-lg p-5 max-h-[85vh] overflow-auto"><div class="flex justify-between"><b>📦 Pesanan Saya - Status & Alasan</b><button class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div id="listMyOrders" class="mt-3 space-y-2"></div></div></div>
-<div id="add" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99997;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-md p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b>Produk</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><input id="pNama" placeholder="Nama" class="w-full border rounded-xl px-3 py-2 text-[11px]"><div class="grid grid-cols-2 gap-2"><input id="pHarga" type="number" placeholder="Harga" class="border rounded-xl px-3 py-2 text-[11px]"><input id="pStok" type="number" placeholder="Stok" class="border rounded-xl px-3 py-2 text-[11px]"></div><select id="pKat" class="w-full border rounded-xl px-3 py-2 text-[11px]"><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Bundling</option><option>Promo</option><option>Lainnya</option></select><label class="flex gap-2 text-[11px] items-center"><input type="checkbox" id="pIsPromo"> Promo/Bundling</label><textarea id="pDesk" placeholder="Deskripsi" class="w-full border rounded-xl px-3 py-2 text-[11px] h-12"></textarea><div class="border-2 border-dashed rounded-xl p-2 text-center bg-white"><input type="file" id="pFoto" accept="image/*" class="w-full text-[10px]"><div id="prevBox" class="hidden mt-2"><img id="prevImg" class="w-full h-40 object-contain bg-white border rounded-xl"></div></div><button id="saveProdBtn" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 SIMPAN KE FIREBASE</button></div></div></div>
+<div id="auth" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>Login Admin</b><button class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="bg-yellow-50 border rounded p-2 mt-3 text-[10px]">Username: <b>Admin Manajer</b><br>Password: <b>Manajer0k3</b></div><div class="mt-4 space-y-3"><input id="lUser" value="Admin Manajer" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><input id="lPass" value="Manajer0k3" type="password" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><p id="lMsg" class="text-red-600 text-[11px] text-center"></p><button id="doLoginBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-black">MASUK SEBAGAI ADMIN</button></div></div></div>
+<div id="add" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99997;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-md p-5"><div class="flex justify-between"><b>Produk</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><input id="pNama" placeholder="Nama" class="w-full border rounded-xl px-3 py-2 text-[11px]"><div class="grid grid-cols-2 gap-2"><input id="pHarga" type="number" placeholder="Harga" class="border rounded-xl px-3 py-2 text-[11px]"><input id="pStok" type="number" placeholder="Stok" class="border rounded-xl px-3 py-2 text-[11px]"></div><select id="pKat" class="w-full border rounded-xl px-3 py-2 text-[11px]"><option>Sembako</option><option>Beras</option><option>Minyak</option><option>Gula</option><option>Mie</option><option>Minuman</option><option>Bundling</option><option>Promo</option><option>Lainnya</option></select><input type="file" id="pFoto" accept="image/*" class="w-full text-[10px]"><div id="prevBox" class="hidden mt-2"><img id="prevImg" class="w-full h-40 object-contain border rounded-xl"></div><button id="saveProdBtn" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 SIMPAN</button></div></div></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
-
+  import { getDatabase, ref, set, onValue, remove, get } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
   const firebaseConfig = {
     apiKey: "AIzaSyBP1lvYR22XOf-IC_34gHEEkfolSthDTzo",
     authDomain: "kasih-kopdes.firebaseapp.com",
@@ -60,183 +52,134 @@
     appId: "1:746954171317:web:7000764fc695b1b1ce2ffc",
     measurementId: "G-X1JQ7P97X9"
   };
-
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  
-  window.db = db; window.ref = ref; window.set = set; window.onValue = onValue; window.update = update; window.remove = remove; window.get = get;
-  
-  const KEY_PROD='produk-kdkmp-final', KEY_USERS='users-kdkmp-final', KEY_ORDERS='orders-kdkmp-final';
-  let produk = JSON.parse(localStorage.getItem(KEY_PROD)||'{}');
-  let users = JSON.parse(localStorage.getItem(KEY_USERS)||'{}');
-  let orders = JSON.parse(localStorage.getItem(KEY_ORDERS)||'{}');
-  let cur = JSON.parse(localStorage.getItem('curV14')||'null');
-  let cart={}, editId=null, tempFoto=null, orderFilter='all';
-
-  function hash(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return 'h'+Math.abs(h)+btoa(p).slice(0,4);}
-
-  // === CORE SYNC LOGIC ===
-  function setupFirebaseListeners(){
-    onValue(ref(db, 'produk-kdkmp-final'), snap=>{
-      const val = snap.val();
-      document.getElementById('syncStatus').textContent='✅ LIVE SYNC';
-      document.getElementById('syncStatus').className='bg-green-500 px-2 rounded-full text-[8px]';
-      if(val){ localStorage.setItem(KEY_PROD, JSON.stringify(val)); produk=val; render(); }
-    });
-    onValue(ref(db, 'users-kdkmp-final'), snap=>{
-      const val=snap.val(); if(val){ localStorage.setItem(KEY_USERS, JSON.stringify(val)); users=val; }
-    });
-    onValue(ref(db, 'orders-kdkmp-final'), snap=>{
-      const val=snap.val(); if(val){ localStorage.setItem(KEY_ORDERS, JSON.stringify(val)); orders=val; renderOrders(); renderMyOrders(); }
-      const baru=Object.values(orders||{}).filter(o=>o.status==='antrian').length;
-      const notif=document.getElementById('notifOrder');
-      if(notif){ notif.style.display=baru>0?'block':'none'; notif.textContent=baru+' BARU'; }
-    });
-  }
-  setupFirebaseListeners();
-
-  window.saveProdToFirebase = function(prod, id){
-    set(ref(db, 'produk-kdkmp-final/'+id), prod);
-  }
-  window.saveOrderToFirebase = function(order){
-    set(ref(db, 'orders-kdkmp-final/'+order.id), order);
-  }
-  window.saveUserToFirebase = function(user){
-    set(ref(db, 'users-kdkmp-final/'+user.id), user);
-  }
-  // Expose for non-module script
-  window.getAppData = ()=>({produk, users, orders, cur, cart, editId, tempFoto, orderFilter, KEY_PROD, KEY_USERS, KEY_ORDERS, hash});
-  window.setAppData = (d)=>{produk=d.produk??produk; users=d.users??users; orders=d.orders??orders; cur=d.cur??cur; cart=d.cart??cart; editId=d.editId??editId; tempFoto=d.tempFoto??tempFoto;};
+  window.db=db; window.ref=ref; window.set=set; window.onValue=onValue; window.remove=remove; window.get=get;
 </script>
 
 <script>
-// Non-module logic pakai data dari module
-function getData(){ return window.getAppData(); }
-function setData(d){ window.setAppData(d); }
+function hash(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return 'h'+Math.abs(h)+btoa(p).slice(0,4);}
+const KEY_PROD='produk-kdkmp-final', KEY_USERS='users-kdkmp-final';
+let users=JSON.parse(localStorage.getItem(KEY_USERS)||'{}');
+let produk=JSON.parse(localStorage.getItem(KEY_PROD)||'{}');
+let cur=JSON.parse(localStorage.getItem('curV14')||'null');
+let tempFoto=null, editId=null;
 
-function ensureManajer(){
-  const {users, KEY_USERS, hash} = getData();
-  if(!Object.values(users).find(u=>u.nama==='Admin Manajer')){
-    const id='admin_manajer_001';
-    users[id]={id,nama:'Admin Manajer',kontak:'Admin Manajer',alamat:'Kantor Kertanegara',passHash:hash('Manajer0k3'),role:'admin_manajer',totalBelanja:0,createdAt:new Date().toISOString()};
-    localStorage.setItem(KEY_USERS, JSON.stringify(users));
-    window.saveUserToFirebase(users[id]);
-  }
-}
-function closeAll(){document.querySelectorAll('#auth,#add,#cart,#orders,#myOrders').forEach(el=>el.style.display='none');}
+function closeAll(){document.querySelectorAll('#auth,#add').forEach(el=>el.style.display='none');}
 document.querySelectorAll('.btnClose').forEach(b=>b.addEventListener('click', closeAll));
 
+// === RESET TOTAL - HAPUS KONSUMEN, RESET ADMIN ===
+async function resetTotalAdmin(){
+  if(!confirm('YAKIN? Ini akan:\n1. Hapus SEMUA akun konsumen di HP ini & di Firebase kasih-kopdes\n2. Reset Admin Manajer jadi baru\nLanjutkan?')) return;
+  
+  const id='admin_manajer_001';
+  const adminBaru={
+    id:id,
+    nama:'Admin Manajer',
+    kontak:'Admin Manajer',
+    alamat:'Kantor Kertanegara',
+    passHash:hash('Manajer0k3'),
+    role:'admin_manajer',
+    totalBelanja:0,
+    createdAt:new Date().toISOString()
+  };
+
+  // 1. HAPUS DI FIREBASE - hapus semua users
+  try{
+    if(window.db && window.ref && window.remove && window.get){
+      const snap = await window.get(window.ref(window.db, 'users-kdkmp-final'));
+      const all = snap.val() || {};
+      // hapus satu per satu biar bersih
+      for(const uid of Object.keys(all)){
+        await window.remove(window.ref(window.db, 'users-kdkmp-final/'+uid));
+      }
+      // buat admin baru
+      await window.set(window.ref(window.db, 'users-kdkmp-final/'+id), adminBaru);
+    }
+  }catch(e){console.log('Firebase error', e)}
+
+  // 2. HAPUS DI LOCAL
+  localStorage.setItem(KEY_USERS, JSON.stringify({[id]:adminBaru}));
+  localStorage.removeItem('curV14');
+  localStorage.setItem(KEY_PROD, JSON.stringify(produk)); // produk tetap
+
+  alert('✅ BERHASIL!\n\nSemua konsumen sudah dihapus!\nSisa 1 akun:\nUsername: Admin Manajer\nPassword: Manajer0k3\n\nSilakan login sekarang.');
+  location.reload();
+}
+window.resetTotalAdmin=resetTotalAdmin;
+
+function doLogin(){
+  users=JSON.parse(localStorage.getItem(KEY_USERS)||'{}');
+  const u=document.getElementById('lUser').value.trim();
+  const p=document.getElementById('lPass').value.trim();
+  
+  // Fallback paksa admin
+  if(u.toLowerCase()==='admin manajer' && p==='Manajer0k3'){
+    const id='admin_manajer_001';
+    const adminBaru={
+      id,nama:'Admin Manajer',kontak:'Admin Manajer',alamat:'Kantor',
+      passHash:hash('Manajer0k3'),role:'admin_manajer',totalBelanja:0,
+      createdAt:new Date().toISOString()
+    };
+    users={[id]:adminBaru};
+    localStorage.setItem(KEY_USERS, JSON.stringify(users));
+    localStorage.setItem('curV14', JSON.stringify(adminBaru));
+    if(window.db) window.set(window.ref(window.db,'users-kdkmp-final/'+id), adminBaru);
+    location.reload();
+    return;
+  }
+  
+  const found=Object.values(users).find(x=>(x.nama.toLowerCase()===u.toLowerCase())&&x.passHash===hash(p));
+  if(!found){
+    document.getElementById('lMsg').textContent='Salah! Pakai Admin Manajer / Manajer0k3 atau klik Reset di atas';
+    return;
+  }
+  localStorage.setItem('curV14', JSON.stringify(found));
+  location.reload();
+}
+
 function afterLogin(){
-  const {cur}=getData();
+  if(!cur) return;
   document.getElementById('badge').classList.remove('hidden');
   document.getElementById('badge').textContent=cur.role.toUpperCase();
   document.getElementById('btnMasuk').style.display='none';
   document.getElementById('btnKeluar').style.display='block';
-  document.getElementById('btnMyOrders').style.display='block';
-  if(cur.role==='admin_manajer'){document.getElementById('bToko').style.display='block';document.getElementById('addBtn').style.display='block';document.getElementById('btnOrders').style.display='block';}
-  else if(cur.role==='admin_karyawan'){document.getElementById('bToko').style.display='block';document.getElementById('btnOrders').style.display='block';}
-  render();renderOrders();renderMyOrders();
+  if(cur.role==='admin_manajer'){
+    document.getElementById('addBtn').style.display='block';
+  }
+  render();
 }
-function doLogin(){
-  const {users, hash}=getData();
-  const u=document.getElementById('lUser').value.trim(); const p=document.getElementById('lPass').value.trim();
-  const f=Object.values(users).find(x=>(x.nama.toLowerCase()===u.toLowerCase()||(x.kontak||'').toLowerCase()===u.toLowerCase())&&x.passHash===hash(p));
-  if(!f){document.getElementById('lMsg').textContent='Salah';return;}
-  localStorage.setItem('curV14', JSON.stringify(f)); setData({cur:f}); closeAll(); afterLogin();
-}
-function doDaftar(){
-  const {users, KEY_USERS, hash}=getData();
-  const nama=document.getElementById('dNama').value.trim(); const kontak=document.getElementById('dKontak').value.trim(); const alamat=document.getElementById('dAlamat').value.trim(); const pass=document.getElementById('dPass').value.trim(); const pass2=document.getElementById('dPass2').value.trim();
-  if(!nama||!kontak||!alamat||!pass){document.getElementById('dMsg').textContent='Wajib';return;} if(pass!==pass2){document.getElementById('dMsg').textContent='Tidak sama';return;}
-  const id=Date.now().toString(); const user={id,nama,kontak,alamat,passHash:hash(pass),role:'konsumen',totalBelanja:0,createdAt:new Date().toISOString()};
-  users[id]=user; localStorage.setItem(KEY_USERS, JSON.stringify(users)); window.saveUserToFirebase(user); document.getElementById('dMsg').textContent='✅ Sukses, silakan login'; setTimeout(()=>{document.getElementById('formDaftar').style.display='none';},600);
-}
-function switchView(v){document.getElementById('viewToko').style.display=v==='toko'?'block':'none';document.getElementById('viewBelanja').style.display=v==='belanja'?'block':'none';}
 function render(){
-  const {produk}=getData();
-  const q=(document.getElementById('q').value||'').toLowerCase(); const kat=document.getElementById('kat').value;
-  const list=Object.entries(produk).filter(([id,p])=>{ if(kat&&p.kat!==kat) return false; if(q&&!p.nama.toLowerCase().includes(q)) return false; return true;});
-  const promoList=list.filter(([id,p])=>p.isPromo); const normalList=list.filter(([id,p])=>!p.isPromo);
-  document.getElementById('gridPromo').innerHTML=promoList.map(([id,p])=>`<div class="bg-white border-2 border-amber-300 rounded-2xl overflow-hidden shadow"><div class="h-[160px] bg-white flex items-center justify-center"><img src="${p.foto||'https://via.placeholder.com/300'}" class="w-full h-full object-contain"></div><div class="p-3"><p class="font-bold text-[12px]">${p.nama}</p><p class="font-black text-[#BE1E2D]">Rp ${p.harga.toLocaleString('id-ID')}</p><button onclick="addCart('${id}')" class="w-full mt-2 bg-[#BE1E2D] text-white py-2 rounded-full text-[10px] font-bold">+ Keranjang</button></div></div>`).join('');
-  document.getElementById('promoArea').style.display=promoList.length===0?'none':'block';
-  document.getElementById('gridToko').innerHTML=list.map(([id,p])=>`<div class="bg-white rounded-2xl overflow-hidden border shadow"><div class="h-[140px] bg-white flex items-center justify-center"><img src="${p.foto||''}" class="w-full h-full object-contain"></div><div class="p-3"><p class="font-bold text-[11px] truncate">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[12px]">Rp ${p.harga.toLocaleString('id-ID')}</p><div class="flex gap-1 mt-2"><button onclick="openAdd('${id}')" class="flex-1 bg-blue-600 text-white py-2 rounded-full text-[9px]">Edit</button><button onclick="hapusProd('${id}')" class="flex-1 bg-red-600 text-white py-2 rounded-full text-[9px]">Hapus</button></div></div></div>`).join('');
-  document.getElementById('gridBelanja').innerHTML=normalList.map(([id,p])=>`<div class="bg-white rounded-2xl overflow-hidden shadow-md border"><div class="h-[180px] bg-white flex items-center justify-center"><img src="${p.foto||''}" class="w-full h-full object-contain"></div><div class="p-3"><p class="font-bold text-[12px]">${p.nama}</p><p class="font-black text-[#BE1E2D] text-[15px]">Rp ${p.harga.toLocaleString('id-ID')}</p><p class="text-[10px] text-slate-500">Stok ${p.stok}</p><button onclick="addCart('${id}')" class="w-full mt-3 bg-[#BE1E2D] text-white py-2.5 rounded-full text-[11px] font-bold">+ Keranjang</button></div></div>`).join('')||'<div class="col-span-full bg-white p-8 rounded-2xl text-center">Belum ada produk - Tambah sebagai Manajer</div>';
-}
-function openAdd(id=null){
-  const {produk}=getData();
-  setData({editId:id});
-  document.getElementById('add').style.display='flex';
-  if(id&&produk[id]){const p=produk[id];document.getElementById('pNama').value=p.nama;document.getElementById('pHarga').value=p.harga;document.getElementById('pStok').value=p.stok;document.getElementById('pKat').value=p.kat;document.getElementById('pDesk').value=p.desk||'';document.getElementById('pIsPromo').checked=!!p.isPromo;setData({tempFoto:p.foto});if(p.foto){document.getElementById('prevImg').src=p.foto;document.getElementById('prevBox').classList.remove('hidden');}}else{document.getElementById('pNama').value='';document.getElementById('pHarga').value='';document.getElementById('pStok').value='';document.getElementById('pDesk').value='';document.getElementById('pIsPromo').checked=false;setData({tempFoto:null});document.getElementById('prevBox').classList.add('hidden');}
-}
-document.getElementById('pFoto')?.addEventListener('change', function(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');let w=im.width,h=im.height;const max=800;if(w>max||h>max){const ratio=Math.min(max/w,max/h);w=w*ratio;h=h*ratio;}c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,w,h);ctx.drawImage(im,0,0,w,h);const data=c.toDataURL('image/jpeg',0.8);setData({tempFoto:data});document.getElementById('prevImg').src=data;document.getElementById('prevBox').classList.remove('hidden');};im.src=ev.target.result;};r.readAsDataURL(file);});
-function saveProd(){
-  const {produk, KEY_PROD, editId, tempFoto}=getData();
-  const nama=document.getElementById('pNama').value.trim();const harga=parseInt(document.getElementById('pHarga').value)||0;const stok=parseInt(document.getElementById('pStok').value)||0;const kat=document.getElementById('pKat').value;const desk=document.getElementById('pDesk').value.trim();const isPromo=document.getElementById('pIsPromo').checked;
-  if(!nama||!harga)return alert('Isi nama & harga');
-  const id=editId||Date.now().toString();
-  const prod={nama,harga,stok,kat,desk,foto:tempFoto||produk[id]?.foto||null,isPromo,updatedAt:Date.now()};
-  produk[id]=prod; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); window.saveProdToFirebase(prod,id); closeAll(); render();
-}
-function hapusProd(id){if(!confirm('Hapus?'))return;const {produk, KEY_PROD}=getData();delete produk[id];localStorage.setItem(KEY_PROD, JSON.stringify(produk));window.remove(window.ref(window.db,'produk-kdkmp-final/'+id));render();}
-function addCart(id){
-  let {cart}=getData(); const {produk}=getData();
-  cart[id]=(cart[id]||0)+1; if(cart[id]>produk[id].stok) cart[id]=produk[id].stok; setData({cart}); updateCart();
-}
-function updateCart(){
-  const {cart, produk}=getData();
-  document.getElementById('cartCount').textContent=Object.values(cart).reduce((a,b)=>a+b,0);
-  const list=document.getElementById('cartList');let sub=0;
-  list.innerHTML=Object.entries(cart).map(([id,q])=>{const p=produk[id];if(!p)return'';const s=p.harga*q;sub+=s;return `<div class="flex gap-2 items-center border-b py-2"><img src="${p.foto||''}" class="w-12 h-12 object-contain bg-white border rounded"><div class="flex-1"><p class="font-bold text-[12px]">${p.nama}</p><p class="text-[11px]">x ${q} = Rp ${s.toLocaleString()}</p></div><button onclick="removeCart('${id}')" class="text-red-600">X</button></div>`;}).join('')||'<p class="text-[11px]">Kosong</p>';
-  document.getElementById('cartSub').textContent='Rp '+sub.toLocaleString(); document.getElementById('cartTotal').textContent='Rp '+sub.toLocaleString();
-}
-function removeCart(id){let {cart}=getData();delete cart[id];setData({cart});updateCart();}
-function openCart(){document.getElementById('cart').style.display='flex';updateCart();}
-function doCheckout(){
-  const {cart, produk, cur, KEY_ORDERS}=getData();
-  if(Object.keys(cart).length===0)return alert('Kosong');if(!cur){alert('Login dulu');closeAll();document.getElementById('auth').style.display='flex';return;}
-  const ambil=document.querySelector('input[name="ambil"]:checked').value;const note=document.getElementById('note').value.trim();const payId=document.getElementById('paySelect').value;
-  const sub=Object.entries(cart).reduce((s,[id,q])=>s+(produk[id]?.harga||0)*q,0);
-  const order={id:Date.now().toString(), userId:cur.id, userNama:cur.nama, kontak:cur.kontak, alamat:cur.alamat, cart, sub,total:sub, ambil, note, payId, status:'antrian', alasan:'', createdAt:Date.now()};
-  let {orders}=getData();orders[order.id]=order;localStorage.setItem(KEY_ORDERS, JSON.stringify(orders));window.saveOrderToFirebase(order);
-  setData({cart:{}, orders});updateCart();closeAll();alert('✅ Pesanan masuk Antrian! Admin akan terima/tolak dengan alasan');renderOrders();renderMyOrders();
-}
-function renderOrders(){
-  const {orders}=getData();const el=document.getElementById('listOrders');let list=Object.values(orders).sort((a,b)=>b.createdAt-a.createdAt);const f=document.querySelector('.filterOrder.bg-[#BE1E2D]')?.dataset.status||'all';if(f!=='all')list=list.filter(o=>o.status===f);
-  el.innerHTML=list.map(o=>{const alasan=o.alasan?`<p class="text-[9px] mt-1 bg-yellow-50 border rounded p-1"><b>Alasan ${o.status}:</b> ${o.alasan}</p>`:'';return `<div class="border rounded-xl p-3"><div class="flex justify-between"><div class="flex-1"><p class="font-bold text-[11px]">${o.userNama} - Rp ${o.total.toLocaleString()}</p><p class="text-[9px]">${new Date(o.createdAt).toLocaleString()} | ${o.ambil}</p><p class="text-[10px] mt-1">Isi: ${Object.entries(o.cart||{}).map(([id,q])=> (getData().produk[id]?.nama||'Produk')+' x'+q).join(', ')}</p>${alasan}</div><div class="text-right ml-2"><span class="text-[8px] px-2 py-1 rounded-full ${o.status==='antrian'?'bg-yellow-200':o.status==='diterima'?'bg-green-300':o.status==='ditolak'?'bg-red-300':'bg-slate-200'}">${o.status.toUpperCase()}</span><div class="mt-2 space-y-1"><button onclick="terimaOrder('${o.id}')" class="block w-full bg-green-600 text-white py-1 rounded-full text-[8px]">✅ Terima</button><button onclick="tolakOrder('${o.id}')" class="block w-full bg-red-600 text-white py-1 rounded-full text-[8px]">❌ Tolak + Alasan</button></div></div></div></div>`;}).join('')||'<p class="text-[10px]">Belum ada pesanan</p>';
-}
-function renderMyOrders(){
-  const {orders, cur}=getData();const el=document.getElementById('listMyOrders');if(!cur){el.innerHTML='<p class="text-[11px]">Login dulu</p>';return;}
-  const list=Object.values(orders).filter(o=>o.userId===cur.id).sort((a,b)=>b.createdAt-a.createdAt);
-  el.innerHTML=list.map(o=>{const alasan=o.alasan?`<div class="mt-2 bg-yellow-50 border rounded p-2"><p class="text-[10px] font-bold">Status: ${o.status.toUpperCase()}</p><p class="text-[10px]">Alasan: ${o.alasan}</p></div>`:`<p class="text-[10px] mt-1">Status: <b>${o.status.toUpperCase()}</b></p>`;return `<div class="border rounded-xl p-3 ${o.status==='ditolak'?'bg-red-50 border-red-300':o.status==='diterima'?'bg-green-50 border-green-300':'bg-white'}"><p class="font-bold text-[11px]">Rp ${o.total.toLocaleString()} - ${new Date(o.createdAt).toLocaleString()}</p><p class="text-[10px]">Isi: ${Object.entries(o.cart||{}).map(([id,q])=> (getData().produk[id]?.nama||'Produk')+' x'+q).join(', ')}</p>${alasan}</div>`;}).join('')||'<p class="text-[11px]">Belum ada pesanan</p>';
-}
-function terimaOrder(id){const alasan=prompt('Terima pesanan - isi pesan untuk pembeli:','Pesanan diterima, sedang diproses admin');if(alasan===null)return;updateStatus(id,'diterima',alasan);}
-function tolakOrder(id){const alasan=prompt('Tolak pesanan - WAJIB isi alasan:','Maaf, stok habis / alamat tidak terjangkau');if(!alasan||alasan.trim()==='')return alert('Alasan wajib diisi');updateStatus(id,'ditolak',alasan);}
-function updateStatus(id,status,alasan){
-  const {orders, KEY_ORDERS}=getData();if(!orders[id])return;orders[id].status=status;orders[id].alasan=alasan||'';localStorage.setItem(KEY_ORDERS, JSON.stringify(orders));window.update(window.ref(window.db,'orders-kdkmp-final/'+id),{status,alasan:alasan||''});renderOrders();renderMyOrders();
+  produk=JSON.parse(localStorage.getItem(KEY_PROD)||'{}');
+  const q=(document.getElementById('q').value||'').toLowerCase();
+  const list=Object.entries(produk).filter(([id,p])=>!q||p.nama.toLowerCase().includes(q));
+  document.getElementById('gridBelanja').innerHTML=list.map(([id,p])=>`<div class="bg-white rounded-2xl overflow-hidden shadow border"><div class="h-[160px] bg-white flex items-center justify-center"><img src="${p.foto||''}" class="w-full h-full object-contain"></div><div class="p-3"><p class="font-bold text-[12px]">${p.nama}</p><p class="font-black text-[#BE1E2D]">Rp ${p.harga.toLocaleString()}</p></div></div>`).join('')||'<div class="col-span-full bg-white p-8 rounded-2xl text-center">Belum ada produk - Login Admin untuk tambah</div>';
 }
 
-document.getElementById('bBelanja').addEventListener('click',()=>switchView('belanja'));
-document.getElementById('bToko').addEventListener('click',()=>switchView('toko'));
 document.getElementById('btnMasuk').addEventListener('click',()=>{document.getElementById('auth').style.display='flex';});
 document.getElementById('btnKeluar').addEventListener('click',()=>{localStorage.removeItem('curV14');location.reload();});
-document.getElementById('cartBtn').addEventListener('click',openCart);
-document.getElementById('addBtn').addEventListener('click',()=>openAdd());
-document.getElementById('saveProdBtn').addEventListener('click',saveProd);
 document.getElementById('doLoginBtn').addEventListener('click',doLogin);
-document.getElementById('toDaftarBtn').addEventListener('click',()=>{document.getElementById('formDaftar').style.display='block';});
-document.getElementById('toLoginBtn').addEventListener('click',()=>{document.getElementById('formDaftar').style.display='none';});
-document.getElementById('doDaftarBtn').addEventListener('click',doDaftar);
-document.getElementById('checkoutBtn').addEventListener('click',doCheckout);
-document.getElementById('btnOrders').addEventListener('click',()=>{document.getElementById('orders').style.display='flex';renderOrders();});
-document.getElementById('btnMyOrders').addEventListener('click',()=>{document.getElementById('myOrders').style.display='flex';renderMyOrders();});
-document.querySelectorAll('.filterOrder').forEach(b=>b.addEventListener('click',function(){document.querySelectorAll('.filterOrder').forEach(x=>x.className='filterOrder bg-slate-100 px-3 py-1 rounded-full text-[9px]');this.className='filterOrder bg-[#BE1E2D] text-white px-3 py-1 rounded-full text-[9px]';renderOrders();}));
+document.getElementById('saveProdBtn').addEventListener('click',()=>{
+  const nama=document.getElementById('pNama').value.trim();const harga=parseInt(document.getElementById('pHarga').value)||0;const stok=parseInt(document.getElementById('pStok').value)||0;const kat=document.getElementById('pKat').value;
+  if(!nama||!harga)return alert('Isi nama harga');
+  const id=editId||Date.now().toString();
+  const prod={nama,harga,stok,kat,foto:tempFoto||null,updatedAt:Date.now()};
+  produk[id]=prod; localStorage.setItem(KEY_PROD, JSON.stringify(produk));
+  if(window.db) window.set(window.ref(window.db,'produk-kdkmp-final/'+id), prod);
+  closeAll(); render();
+});
+document.getElementById('pFoto')?.addEventListener('change',function(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');let w=im.width,h=im.height;const max=800;if(w>max||h>max){const ratio=Math.min(max/w,max/h);w=w*ratio;h=h*ratio;}c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);tempFoto=c.toDataURL('image/jpeg',0.8);document.getElementById('prevImg').src=tempFoto;document.getElementById('prevBox').classList.remove('hidden');};im.src=ev.target.result;};r.readAsDataURL(file);});
 document.getElementById('q').addEventListener('input',render);
-document.getElementById('kat').addEventListener('change',render);
 
-const curStored=JSON.parse(localStorage.getItem('curV14')||'null');
-if(curStored){setData({cur:curStored});afterLogin();}
-ensureManajer();
-setTimeout(()=>{render();renderOrders();renderMyOrders();},800);
+if(cur){ afterLogin(); }
+render();
+
+// Auto bikin admin kalau kosong
+if(Object.keys(users).length===0){
+  const id='admin_manajer_001';
+  const adminBaru={id,nama:'Admin Manajer',kontak:'Admin Manajer',alamat:'Kantor',passHash:hash('Manajer0k3'),role:'admin_manajer',totalBelanja:0,createdAt:new Date().toISOString()};
+  localStorage.setItem(KEY_USERS, JSON.stringify({[id]:adminBaru}));
+}
 </script>
 </body>
 </html>
