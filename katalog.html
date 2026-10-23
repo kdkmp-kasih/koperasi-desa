@@ -11,10 +11,20 @@
 @keyframes popIn{from{transform:scale(.92); opacity:0} to{transform:scale(1); opacity:1}}
 @keyframes blink{0%,100%{opacity:1} 50%{opacity:0.3}}
 .blink{animation: blink 1s infinite;}
+.product-card .img-box img{object-fit:contain !important; background:white;}
+/* HP */
 @media (max-width: 640px){
   #gridBelanja, #gridToko, #gridPromo{grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 8px !important;}
   .product-card .img-box{height: 135px !important;}
-  .modal-box{max-width:100% !important; max-height:88vh !important; border-radius:16px !important;}
+  .modal-box{max-width:95% !important; max-height:85vh !important; border-radius:16px !important; margin: 10px auto !important;}
+  #viewToko .flex.justify-between{flex-direction:column !important; gap:8px !important;}
+  .max-w-7xl{padding: 0 8px !important;}
+}
+/* Tablet */
+@media (min-width: 641px) and (max-width: 1024px){
+  #gridBelanja, #gridToko{grid-template-columns: repeat(3, minmax(0,1fr)) !important;}
+  #gridPromo{grid-template-columns: repeat(3, minmax(0,1fr)) !important;}
+  .modal-box{max-width:80% !important;}
 }
 </style>
 </head>
@@ -345,9 +355,23 @@ function saveProd(){
   const id=editId||Date.now().toString();
   const old=produk[id]||{};
   produk[id]={nama,harga,stok,kat:checkedKats,desk,foto:tempFoto!==null?tempFoto:(old.foto||null),isPromo,updatedAt:Date.now(), subsidi: subsidiSyarat ? {aktif: subsidiAktif, syarat: subsidiSyarat} : null };
+  
+  // Simpan lokal dulu
   localStorage.setItem(KEY_PROD, JSON.stringify(produk));
-  try{if(window.db) window.set(window.ref(window.db,'produk-kdkmp-final/'+id), produk[id]);}catch(e){}
+  
+  // WAJIB sync ke Firebase biar masuk HP
+  try{
+    if(window.db){
+      window.set(window.ref(window.db,'produk-kdkmp-final/'+id), produk[id]).then(()=>{
+        console.log('Sync Firebase OK - Produk masuk HP');
+      });
+    } else {
+      alert('Firebase belum konek, cek internet');
+    }
+  }catch(e){ console.log('Gagal Firebase', e); }
+  
   closeAll(); render();
+  alert('Produk disimpan & sync ke semua HP!');
 }
 function renderGeraiStatus(){const banner=document.getElementById('geraiStatusBanner'); const header=document.getElementById('statusGeraiHeader'); const btn=document.getElementById('btnGeraiStatus'); const isOnline=geraiStatus.isOnline; if(isOnline){banner.style.display='block'; banner.className='rounded-xl p-3 mb-3 text-center text-[12px] font-bold border-2 bg-green-50 border-green-300 text-green-800'; banner.innerHTML=`<b>GERAI ONLINE - BUKA</b> - ${geraiStatus.message||'Silakan belanja'}`; if(header) header.textContent='Buka - Online';} else {banner.style.display='block'; banner.className='rounded-xl p-3 mb-3 text-center text-[12px] font-bold border-2 bg-red-50 border-red-300 text-red-800'; banner.innerHTML=`<b>GERAI OFFLINE - TUTUP</b><br>${geraiStatus.reason||'Gerai tutup'}<br><span class="text-[10px]">${geraiStatus.message||''}</span>`; if(header) header.textContent='Tutup - Offline';}}
 function openGeraiStatus(){document.getElementById('geraiStatusAdmin').style.display='flex'; document.getElementById('geraiIsOnline').value=geraiStatus.isOnline?'true':'false'; document.getElementById('geraiMessage').value=geraiStatus.message||''; document.getElementById('geraiReason').value=geraiStatus.reason||'';}
@@ -382,20 +406,36 @@ function saveEditUser(){
   const passBaru=document.getElementById('penggunaEditPassBaru').value.trim();
   const passBaru2=document.getElementById('penggunaEditPassBaru2').value.trim();
   if(!namaBaru) return alert('Nama kosong');
+  
+  let passChanged = false;
   if(passBaru!==''){
-    if(passBaru.length<4) return alert('Password minimal 4');
+    if(passBaru.length<4) return alert('Password minimal 4 karakter');
     if(passBaru!==passBaru2) return alert('Ulang password tidak sama');
-    u.passHash=hash(passBaru);
+    u.passHash=hash(passBaru); // hash cuma sekali
+    passChanged = true;
   }
   u.nama=namaBaru;
   u.kontak=document.getElementById('eKontak').value.trim();
   u.alamat=document.getElementById('eAlamat').value.trim();
   u.role=document.getElementById('eRole').value;
+  
   localStorage.setItem(KEY_USERS, JSON.stringify(users));
+  
+  // Kalau edit diri sendiri, update cur yang di localStorage juga!
+  if(cur && cur.id===editUserId){
+    cur.nama = u.nama;
+    cur.kontak = u.kontak;
+    cur.alamat = u.alamat;
+    cur.role = u.role;
+    if(passChanged) cur.passHash = u.passHash;
+    localStorage.setItem('curV14', JSON.stringify(cur));
+  }
+  
   try{if(window.db) window.update(window.ref(window.db,'users-kdkmp-final/'+editUserId), u);}catch(e){}
   closeAll(); renderPengguna();
-  alert('Berhasil update'+(passBaru?' + password diganti':''));
+  alert('Berhasil update user: '+u.nama+(passChanged?' + password baru: '+passBaru:' + password tetap'));
 }
+
 window.saveEditUser=saveEditUser;
 function hapusUser(id){if(id==='admin_manajer_001') return alert('Manajer utama tidak bisa dihapus'); if(cur && cur.id===id) return alert('Tidak bisa hapus diri sendiri'); if(!confirm('Hapus pengguna?')) return; delete users[id]; localStorage.setItem(KEY_USERS, JSON.stringify(users)); try{if(window.db) window.remove(window.ref(window.db,'users-kdkmp-final/'+id));}catch(e){} renderPengguna();}
 window.hapusUser=hapusUser;
@@ -591,7 +631,19 @@ render(); renderKategoriSelect(); renderLogo(); renderPay(); renderVoucher(); re
 setTimeout(()=>{
   try{
     if(window.db){
-      window.onValue(window.ref(window.db,'produk-kdkmp-final'), snap=>{const v=snap.val(); if(v && Object.keys(v).length>0){localStorage.setItem(KEY_PROD, JSON.stringify(v)); produk=v; render();}});
+      console.log('Mulai sync Firebase...');
+      window.onValue(window.ref(window.db,'produk-kdkmp-final'), snap=>{
+        const v=snap.val(); 
+        if(v && Object.keys(v).length>0){
+          // Bandingkan, kalau Firebase lebih baru, pakai Firebase
+          if(Object.keys(v).length >= Object.keys(produk).length){
+            localStorage.setItem(KEY_PROD, JSON.stringify(v)); 
+            produk=v; 
+            render();
+            console.log('Data dari Firebase masuk HP:', Object.keys(v).length);
+          }
+        }
+      });
       window.onValue(window.ref(window.db,'users-kdkmp-final'), snap=>{const v=snap.val(); if(v && Object.keys(v).length>0){localStorage.setItem(KEY_USERS, JSON.stringify(v)); users=v; ensureManajer(); renderPengguna();}});
       window.onValue(window.ref(window.db,'orders-kdkmp-final'), snap=>{
         const v=snap.val(); 
