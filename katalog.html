@@ -7,22 +7,28 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-const firebaseConfig = {
-  apiKey: "GANTI_DENGAN_APIKEY_ASLI",
-  authDomain: "kdkmp-kasih.firebaseapp.com",
-  databaseURL: "https://kdkmp-kasih-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "kdkmp-kasih",
-  storageBucket: "kdkmp-kasih.appspot.com",
-  messagingSenderId: "123",
-  appId: "1:123:web:abc"
-};
-try{
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBP1lvYR22XOf-IC_34gHEEkfolSthDTzo",
+    authDomain: "kasih-kopdes.firebaseapp.com",
+    databaseURL: "https://kasih-kopdes-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "kasih-kopdes",
+    storageBucket: "kasih-kopdes.firebasestorage.app",
+    messagingSenderId: "746954171317",
+    appId: "1:746954171317:web:7000764fc695b1b1ce2ffc",
+    measurementId: "G-X1JQ7P97X9"
+  };
+
+  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  window.db=db; window.ref=ref; window.set=set; window.onValue=onValue; window.remove=remove; window.update=update;
-}catch(e){console.log(e);}
+  const analytics = getAnalytics(app);
 </script>
 <style>
 .modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:50; display:none; align-items:center; justify-content:center; padding:12px;}
