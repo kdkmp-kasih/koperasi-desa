@@ -244,9 +244,31 @@ document.getElementById('buktiFile')?.addEventListener('change', function(e){con
 function renderKategoriSelect(){
   const selFilter=document.getElementById('kat');
   const list=Object.values(kategoriProduk).sort((a,b)=>a.nama.localeCompare(b.nama));
-  if(selFilter){selFilter.innerHTML='<option value="">Semua Kategori</option>'+list.map(k=>`<option value="${k.nama}">${k.nama}${k.isSubsidi?' [SUBSIDI]':''}</option>`).join('');}
+  // Hitung jumlah produk per kategori
+  const countPerKategori = {};
+  Object.values(produk).forEach(p=>{
+    const cats = Array.isArray(p.kat) ? p.kat : [p.kat];
+    cats.forEach(c=>{
+      countPerKategori[c] = (countPerKategori[c]||0)+1;
+    });
+  });
+  if(selFilter){
+    selFilter.innerHTML='<option value="">Semua Kategori</option>'+list.map(k=>{
+      const jumlah = countPerKategori[k.nama]||0;
+      return `<option value="${k.nama}">${k.nama} (${jumlah} produk)${k.isSubsidi?' [SUBSIDI]':''}</option>`;
+    }).join('');
+  }
   const box=document.getElementById('pKatCheckboxes');
-  if(box){box.innerHTML=list.map(k=>`<label class="flex items-center gap-1 text-[11px] bg-white border rounded-full px-2 py-2"><input type="checkbox" value="${k.nama}" class="kat-checkbox"> ${k.nama}${k.isSubsidi?' [SUBSIDI]':''}</label>`).join(''); box.querySelectorAll('.kat-checkbox').forEach(cb=>cb.addEventListener('change', updateSubsidiBox));}
+  if(box){
+    box.innerHTML=list.map(k=>{
+      const jumlah = countPerKategori[k.nama]||0;
+      return `<label class="flex items-center justify-between gap-1 text-[11px] bg-white border rounded-full px-3 py-2">
+        <span class="flex items-center gap-1"><input type="checkbox" value="${k.nama}" class="kat-checkbox"> ${k.nama}${k.isSubsidi?' [SUBSIDI]':''}</span>
+        <span class="bg-[#BE1E2D] text-white text-[8px] px-2 py-0.5 rounded-full">${jumlah}</span>
+      </label>`;
+    }).join('');
+    box.querySelectorAll('.kat-checkbox').forEach(cb=>cb.addEventListener('change', updateSubsidiBox));
+  }
 }
 function updateSubsidiBox(){
   const checked=Array.from(document.querySelectorAll('.kat-checkbox:checked')).map(cb=>cb.value);
@@ -255,7 +277,26 @@ function updateSubsidiBox(){
   if(hasSubsidi){box.style.display='block'; const katObj=Object.values(kategoriProduk).find(x=>x.isSubsidi && checked.includes(x.nama)); if(katObj) document.getElementById('pSubsidiSyarat').value=katObj.syarat||'';} else {box.style.display='none';}
 }
 function openKategoriAdmin(){if(cur?.role!=='admin_manajer'){alert('Hanya Manajer');return;} document.getElementById('kategoriAdmin').style.display='flex'; renderKategoriList();}
-function renderKategoriList(){const el=document.getElementById('listKategori'); const list=Object.values(kategoriProduk).sort((a,b)=>b.createdAt-a.createdAt); el.innerHTML=list.map(k=>{const dipakai=Object.values(produk).filter(p=>{const cats=Array.isArray(p.kat)?p.kat:[p.kat]; return cats.includes(k.nama);}).length; return `<div class="border rounded-xl p-3 flex justify-between items-center ${k.isSubsidi?'bg-amber-50 border-amber-300':''}"><div><p class="font-bold text-[12px]">${k.nama} ${k.isSubsidi?'<span class="bg-amber-300 text-[8px] px-2 py-0.5 rounded-full">SUBSIDI</span>':''}</p><p class="text-[9px] text-slate-500">Dipakai ${dipakai} produk ${k.isSubsidi&&k.syarat?'| Syarat: '+k.syarat:''}</p></div><div class="flex gap-1"><button type="button" class="btn-edit-kat bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]" data-id="${k.id}">Edit</button><button type="button" class="btn-hapus-kat bg-red-600 text-white px-3 py-2 rounded-full text-[10px]" data-id="${k.id}">Hapus</button></div></div>`;}).join('')||'<p class="text-[11px] text-center">Belum ada kategori</p>'; el.querySelectorAll('.btn-edit-kat').forEach(b=>b.addEventListener('click', ()=>editKategori(b.dataset.id))); el.querySelectorAll('.btn-hapus-kat').forEach(b=>b.addEventListener('click', ()=>hapusKategori(b.dataset.id)));}
+function renderKategoriList(){
+  const el=document.getElementById('listKategori'); 
+  const list=Object.values(kategoriProduk).sort((a,b)=>b.createdAt-a.createdAt); 
+  el.innerHTML=list.map(k=>{
+    const dipakai=Object.values(produk).filter(p=>{
+      const cats=Array.isArray(p.kat)?p.kat:[p.kat]; 
+      return cats.includes(k.nama);
+    }).length; 
+    return `<div class="border rounded-xl p-3 flex justify-between items-center ${k.isSubsidi?'bg-amber-50 border-amber-300':''}">
+      <div class="flex-1">
+        <p class="font-bold text-[12px]">${k.nama} ${k.isSubsidi?'<span class="bg-amber-300 text-[8px] px-2 py-0.5 rounded-full">SUBSIDI</span>':''}</p>
+        <p class="text-[10px] mt-1"><span class="bg-[#BE1E2D] text-white px-2 py-0.5 rounded-full text-[9px]">${dipakai} produk</span> <span class="text-slate-500 ml-1">${k.isSubsidi&&k.syarat?'| Syarat: '+k.syarat:''}</span></p>
+      </div>
+      <div class="flex gap-1">
+        <button type="button" onclick="editKategori('${k.id}')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Edit</button>
+        <button type="button" onclick="hapusKategori('${k.id}')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">Hapus</button>
+      </div>
+    </div>`;
+  }).join('')||'<p class="text-[11px] text-center">Belum ada kategori</p>';
+}
 function editKategori(id){const k=kategoriProduk[id]; if(!k) return; katEditId=id; document.getElementById('katNama').value=k.nama; document.getElementById('katIsSubsidi').checked=!!k.isSubsidi; document.getElementById('katSyarat').value=k.syarat||''; document.getElementById('katSyarat').style.display=k.isSubsidi?'block':'none'; document.getElementById('saveKategoriBtn').textContent='Update Kategori'; document.getElementById('cancelKategoriBtn').style.display='block';}
 function hapusKategori(id){const k=kategoriProduk[id]; if(!k) return; const dipakai=Object.values(produk).filter(p=>{const cats=Array.isArray(p.kat)?p.kat:[p.kat]; return cats.includes(k.nama);}).length; if(dipakai>0) return alert(`Tidak bisa hapus, masih dipakai ${dipakai} produk`); if(!confirm(`Hapus kategori ${k.nama}?`)) return; delete kategoriProduk[id]; localStorage.setItem(KEY_KAT, JSON.stringify(kategoriProduk)); try{if(window.db) window.remove(window.ref(window.db,'kategori-produk-final/'+id));}catch(e){} renderKategoriSelect(); renderKategoriList(); render();}
 function saveKategori(){const nama=document.getElementById('katNama').value.trim(); const isSubsidi=document.getElementById('katIsSubsidi').checked; const syarat=document.getElementById('katSyarat').value.trim(); if(!nama) return alert('Isi nama kategori'); const id=katEditId||nama.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now().toString().slice(-4); if(!katEditId && Object.values(kategoriProduk).find(k=>k.nama.toLowerCase()===nama.toLowerCase())) return alert('Kategori sudah ada'); kategoriProduk[id]={id,nama,isSubsidi,syarat: isSubsidi? (syarat||'Syarat subsidi berlaku') : '',createdAt: kategoriProduk[id]?.createdAt||Date.now(),updatedAt:Date.now()}; localStorage.setItem(KEY_KAT, JSON.stringify(kategoriProduk)); try{if(window.db) window.set(window.ref(window.db,'kategori-produk-final/'+id), kategoriProduk[id]);}catch(e){} document.getElementById('katNama').value=''; document.getElementById('katIsSubsidi').checked=false; document.getElementById('katSyarat').value=''; document.getElementById('katSyarat').style.display='none'; katEditId=null; document.getElementById('saveKategoriBtn').textContent='+ Tambah Kategori'; document.getElementById('cancelKategoriBtn').style.display='none'; renderKategoriSelect(); renderKategoriList(); render(); alert('Kategori disimpan');}
