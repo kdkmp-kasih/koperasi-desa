@@ -302,7 +302,63 @@ function saveGeraiStatus(){const isOnline=document.getElementById('geraiIsOnline
 window.renderGeraiStatus=renderGeraiStatus; window.openGeraiStatus=openGeraiStatus; window.saveGeraiStatus=saveGeraiStatus;
 function getUserTags(u){const tags=[]; if((u.totalBelanja||0)===0) tags.push('🆕 Baru'); return tags;}
 function renderPengguna(){const el=document.getElementById('listPengguna'); const list=Object.values(users); const sel=document.getElementById('vUser'); if(sel){sel.innerHTML='<option value="all">Semua Pengguna (1 per orang)</option>'+list.filter(u=>u.role==='konsumen').map(u=>`<option value="${u.id}">${u.nama}</option>`).join('');} el.innerHTML=list.map(u=>`<div class="border rounded-xl p-3"><p class="font-bold text-[11px]">${u.nama} <span class="text-[7px] px-2 py-0.5 rounded-full ${u.role==='admin_manajer'?'bg-red-600 text-white':'bg-slate-100'}">${u.role}</span></p><p class="text-[10px]">${u.kontak||''}</p><div class="flex gap-1 mt-2"><button type="button" class="btn-edit-user flex-1 bg-blue-600 text-white py-2 rounded-full text-[10px]" data-id="${u.id}">✏️ Edit</button><button type="button" class="btn-hapus-user flex-1 bg-red-600 text-white py-2 rounded-full text-[10px]" data-id="${u.id}">🗑️ Hapus</button></div></div>`).join(''); el.querySelectorAll('.btn-edit-user').forEach(b=>b.addEventListener('click', ()=>openEditUser(b.dataset.id))); el.querySelectorAll('.btn-hapus-user').forEach(b=>b.addEventListener('click', ()=>hapusUser(b.dataset.id)));}
-function openEditUser(id){const u=users[id]; if(!u) return; editUserId=id; document.getElementById('eNama').value=u.nama; document.getElementById('eKontak').value=u.kontak||''; document.getElementById('eAlamat').value=u.alamat||''; document.getElementById('eRole').value=u.role; document.getElementById('ePass').value=''; document.getElementById('editUser').style.display='flex';}
+function renderPengguna(){
+  const el = document.getElementById('listPengguna');
+  el.innerHTML = Object.values(users).map(u => `
+    <div class="border rounded-xl p-2 flex justify-between items-center bg-white">
+      <div>
+        <p class="text-[11px] font-bold">${u.nama} <span class="text-[8px] bg-slate-100 px-2 py-1 rounded-full">${u.role}</span></p>
+        <p class="text-[9px] text-slate-500">${u.kontak || ''} - ${u.alamat || ''}</p>
+      </div>
+      <div class="flex gap-1">
+        <button onclick="openEditUser('${u.id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[9px] font-bold">Edit</button>
+        <button onclick="hapusUser('${u.id}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// INI YANG HILANG DI V25 - FUNGSI EDIT NYA
+window.openEditUser = function(id){
+  const u = users[id];
+  if(!u) return alert('User tidak ditemukan');
+  
+  // Buka modal edit (pakai modal yang sama kayak tambah pengguna)
+  document.getElementById('penggunaEditId').value = id;
+  document.getElementById('penggunaEditNama').value = u.nama;
+  document.getElementById('penggunaEditKontak').value = u.kontak || '';
+  document.getElementById('penggunaEditAlamat').value = u.alamat || '';
+  document.getElementById('penggunaEditRole').value = u.role;
+  
+  document.getElementById('modalEditPengguna').style.display = 'flex';
+}
+
+window.saveEditUser = function(){
+  const id = document.getElementById('penggunaEditId').value;
+  if(!users[id]) return;
+  
+  users[id].nama = document.getElementById('penggunaEditNama').value.trim();
+  users[id].kontak = document.getElementById('penggunaEditKontak').value.trim();
+  users[id].alamat = document.getElementById('penggunaEditAlamat').value.trim();
+  users[id].role = document.getElementById('penggunaEditRole').value;
+  
+  localStorage.setItem(KEY_USERS, JSON.stringify(users));
+  try{ window.set(window.ref(window.db,'users-kdkmp-final/'+id), users[id]); }catch(e){}
+  
+  document.getElementById('modalEditPengguna').style.display = 'none';
+  renderPengguna();
+  alert('Pengguna berhasil di-edit');
+}
+
+window.hapusUser = function(id){
+  if(!confirm('Hapus pengguna ini?')) return;
+  if(id === cur.id) return alert('Tidak bisa hapus akun sendiri');
+  delete users[id];
+  localStorage.setItem(KEY_USERS, JSON.stringify(users));
+  try{ window.remove(window.ref(window.db,'users-kdkmp-final/'+id)); }catch(e){}
+  renderPengguna();
+}
+  function openEditUser(id){const u=users[id]; if(!u) return; editUserId=id; document.getElementById('eNama').value=u.nama; document.getElementById('eKontak').value=u.kontak||''; document.getElementById('eAlamat').value=u.alamat||''; document.getElementById('eRole').value=u.role; document.getElementById('ePass').value=''; document.getElementById('editUser').style.display='flex';}
 window.openEditUser=openEditUser;
 function saveEditUser(){const u=users[editUserId]; if(!u) return; u.nama=document.getElementById('eNama').value.trim(); u.kontak=document.getElementById('eKontak').value.trim(); u.alamat=document.getElementById('eAlamat').value.trim(); u.role=document.getElementById('eRole').value; const pass=document.getElementById('ePass').value.trim(); if(pass) u.passHash=hash(pass); localStorage.setItem(KEY_USERS, JSON.stringify(users)); try{if(window.db) window.update(window.ref(window.db,'users-kdkmp-final/'+editUserId), u);}catch(e){} closeAll(); renderPengguna();}
 function hapusUser(id){if(id==='admin_manajer_001') return alert('Manajer utama tidak bisa dihapus'); if(cur && cur.id===id) return alert('Tidak bisa hapus diri sendiri'); if(!confirm('Hapus pengguna?')) return; delete users[id]; localStorage.setItem(KEY_USERS, JSON.stringify(users)); try{if(window.db) window.remove(window.ref(window.db,'users-kdkmp-final/'+id));}catch(e){} renderPengguna();}
@@ -525,5 +581,22 @@ setTimeout(()=>{
   }catch(e){}
 },1200);
 </script>
+<div id="modalEditPengguna" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;padding:16px">
+  <div class="modal-box p-5 w-full max-w-[400px]">
+    <div class="flex justify-between"><b class="text-[13px]">Edit Pengguna</b><button onclick="this.closest('#modalEditPengguna').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
+    <div class="mt-3 space-y-2">
+      <input type="hidden" id="penggunaEditId">
+      <input id="penggunaEditNama" placeholder="Nama" class="w-full border rounded-full px-3 py-2 text-[11px]">
+      <input id="penggunaEditKontak" placeholder="Kontak / HP" class="w-full border rounded-full px-3 py-2 text-[11px]">
+      <input id="penggunaEditAlamat" placeholder="Alamat" class="w-full border rounded-xl px-3 py-2 text-[11px]">
+      <select id="penggunaEditRole" class="w-full border rounded-full px-3 py-2 text-[11px]">
+        <option value="konsumen">Konsumen</option>
+        <option value="admin">Admin</option>
+        <option value="admin_manajer">Admin Manajer</option>
+      </select>
+      <button onclick="saveEditUser()" class="w-full bg-[#BE1E2D] text-white py-2 rounded-full font-bold text-[11px]">Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
