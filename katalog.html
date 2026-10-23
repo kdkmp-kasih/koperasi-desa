@@ -220,33 +220,7 @@ function afterLogin(){
   else if(cur.role==='admin_karyawan'){document.getElementById('bToko').style.display='block'; document.getElementById('btnOrders').style.display='block'; document.getElementById('navToko').style.display='flex';}
   document.getElementById('migrasiInfo').style.display='block'; document.getElementById('migrasiText').innerHTML=`? Firebase + Migrasi Aktif | Produk: ${Object.keys(produk).length} | Pengguna: ${Object.keys(users).length} | Pesanan: ${Object.keys(orders).length} | Dialog Center`; setTimeout(()=>{document.getElementById('migrasiInfo').style.display='none';},6000);
   render(); renderKategoriSelect(); renderPay(); renderVoucher(); renderPengguna(); renderOrders(); renderMyOrders(); renderLogo(); renderGeraiStatus(); renderAnalisis();
-  }
-<div id="modalEditPengguna" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;padding:16px">
-  <div class="modal-box p-5 w-full max-w-[400px] max-h-[90vh] overflow-auto">
-    <div class="flex justify-between"><b class="text-[13px]">Edit Pengguna + Password (Admin Manajer)</b><button onclick="this.closest('#modalEditPengguna').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
-    <div class="mt-3 space-y-2">
-      <input type="hidden" id="penggunaEditId">
-      <input id="penggunaEditNama" placeholder="Nama" class="w-full border rounded-full px-3 py-2 text-[11px]">
-      <input id="penggunaEditKontak" placeholder="Kontak / HP" class="w-full border rounded-full px-3 py-2 text-[11px]">
-      <input id="penggunaEditAlamat" placeholder="Alamat" class="w-full border rounded-xl px-3 py-2 text-[11px]">
-      <select id="penggunaEditRole" class="w-full border rounded-full px-3 py-2 text-[11px]">
-        <option value="konsumen">Konsumen</option>
-        <option value="admin">Admin</option>
-        <option value="admin_manajer">Admin Manajer</option>
-      </select>
-      
-      <!-- KHUSUS ADMIN MANAJER - EDIT PASSWORD -->
-      <div id="boxEditPass" class="border-2 border-red-300 bg-red-50 rounded-xl p-3 space-y-2">
-        <p class="text-[10px] font-black text-red-700">🔑 Ganti Password (khusus Admin Manajer) - kosongin kalau tidak ganti:</p>
-        <input id="penggunaEditPassBaru" type="password" placeholder="Password baru (min 4 huruf)" class="w-full border rounded-full px-3 py-2 text-[11px]">
-        <input id="penggunaEditPassBaru2" type="password" placeholder="Ulang password baru" class="w-full border rounded-full px-3 py-2 text-[11px]">
-        <p class="text-[8px] text-slate-500">* Kalau dikosongin, password lama tetap dipakai</p>
-      </div>
-      
-      <button onclick="saveEditUser()" class="w-full bg-[#BE1E2D] text-white py-2 rounded-full font-bold text-[11px]">💾 Simpan Perubahan + Password</button>
-    </div>
-  </div>
-</div>
+}
 function logout(){localStorage.removeItem('curV14'); location.reload();}
 function openLogoAdmin(){if(cur?.role!=='admin_manajer'){alert('Hanya Manajer');return;} document.getElementById('logoAdmin').style.display='flex';}
 document.getElementById('logoFile')?.addEventListener('change', function(e){const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=ev=>{const im=new Image(); im.onload=()=>{const c=document.createElement('canvas'); const size=400; c.width=size; c.height=size; const ctx=c.getContext('2d'); ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,size,size); let w=im.width,h=im.height; const ratio=Math.min(size/w,size/h); w=w*ratio; h=h*ratio; ctx.drawImage(im,(size-w)/2,(size-h)/2,w,h); tempLogo=c.toDataURL('image/png',0.9); document.getElementById('logoPrevImg').src=tempLogo; document.getElementById('logoPrevBox').classList.remove('hidden');}; im.src=ev.target.result;}; r.readAsDataURL(file);});
@@ -551,31 +525,5 @@ setTimeout(()=>{
   }catch(e){}
 },1200);
 </script>
-<div id="modalEditPengguna" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;padding:16px">
-  <div class="modal-box p-5 w-full max-w-[400px] max-h-[90vh] overflow-auto">
-    <div class="flex justify-between"><b class="text-[13px]">Edit Pengguna + Password (Admin Manajer)</b><button onclick="this.closest('#modalEditPengguna').style.display='none'" class="bg-slate-100 w-8 h-8 rounded-full">X</button></div>
-    <div class="mt-3 space-y-2">
-      <input type="hidden" id="penggunaEditId">
-      <input id="penggunaEditNama" placeholder="Nama" class="w-full border rounded-full px-3 py-2 text-[11px]">
-      <input id="penggunaEditKontak" placeholder="Kontak / HP" class="w-full border rounded-full px-3 py-2 text-[11px]">
-      <input id="penggunaEditAlamat" placeholder="Alamat" class="w-full border rounded-xl px-3 py-2 text-[11px]">
-      <select id="penggunaEditRole" class="w-full border rounded-full px-3 py-2 text-[11px]">
-        <option value="konsumen">Konsumen</option>
-        <option value="admin">Admin</option>
-        <option value="admin_manajer">Admin Manajer</option>
-      </select>
-      
-      <!-- KHUSUS ADMIN MANAJER - EDIT PASSWORD -->
-      <div id="boxEditPass" class="border-2 border-red-300 bg-red-50 rounded-xl p-3 space-y-2">
-        <p class="text-[10px] font-black text-red-700">🔑 Ganti Password (khusus Admin Manajer) - kosongin kalau tidak ganti:</p>
-        <input id="penggunaEditPassBaru" type="password" placeholder="Password baru (min 4 huruf)" class="w-full border rounded-full px-3 py-2 text-[11px]">
-        <input id="penggunaEditPassBaru2" type="password" placeholder="Ulang password baru" class="w-full border rounded-full px-3 py-2 text-[11px]">
-        <p class="text-[8px] text-slate-500">* Kalau dikosongin, password lama tetap dipakai</p>
-      </div>
-      
-      <button onclick="saveEditUser()" class="w-full bg-[#BE1E2D] text-white py-2 rounded-full font-bold text-[11px]">💾 Simpan Perubahan + Password</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
