@@ -121,7 +121,52 @@
 <div id="geraiStatusAdmin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99987;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>🟢/🔴 Buka/Tutup Gerai</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="mt-4 space-y-3"><select id="geraiIsOnline" class="w-full border-2 rounded-full px-4 py-3 text-[13px]"><option value="true">🟢 ONLINE - Buka Gerai</option><option value="false">🔴 OFFLINE - Tutup Gerai</option></select><input id="geraiMessage" placeholder="Pesan: ex: Buka jam 08:00-20:00" class="w-full border rounded-full px-4 py-3 text-[12px]"><textarea id="geraiReason" placeholder="Alasan tutup: ex: Stok opname" class="w-full border rounded-xl px-4 py-3 text-[12px] h-20"></textarea><button type="button" id="saveGeraiBtn" class="w-full bg-[#BE1E2D] text-white py-3 rounded-full font-bold">💾 Simpan Status Gerai</button></div></div></div>
 <div id="adminMenu" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99986;align-items:center;justify-content:center;padding:16px"><div class="modal-box bg-white rounded-2xl w-full max-w-sm p-5"><div class="flex justify-between"><b>⚙️ Menu Admin</b><button type="button" class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><div class="grid grid-cols-2 gap-2 mt-4"><button type="button" id="mVoucher" class="bg-amber-100 border border-amber-300 p-4 rounded-xl text-[11px] font-bold">🎫 Voucher<br>Edit</button><button type="button" id="mPay" class="bg-blue-100 border border-blue-300 p-4 rounded-xl text-[11px] font-bold">💳 Bayar<br>Edit/Hapus</button><button type="button" id="mPengguna" class="bg-green-100 border border-green-300 p-4 rounded-xl text-[11px] font-bold">👥 Pengguna<br>Edit/Hapus</button><button type="button" id="mAnalisis" class="bg-purple-100 border border-purple-300 p-4 rounded-xl text-[11px] font-bold">📊 Analisis<br>Manajer</button><button type="button" id="mGerai" class="bg-red-100 border border-red-300 p-4 rounded-xl text-[11px] font-bold">🟢/🔴 Buka/Tutup<br>Gerai</button><button type="button" id="mKategori" class="bg-slate-100 border border-slate-300 p-4 rounded-xl text-[11px] font-bold">🏷️ Kelola Kategori<br>Edit/Hapus</button><button type="button" id="mPesanan" class="bg-yellow-100 border border-yellow-300 p-4 rounded-xl text-[11px] font-bold col-span-2">📦 Pesanan<br>Terima/Tolak + Alasan</button></div></div></div>
 <audio id="notifSound" preload="auto"><source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4d1716d5d0.mp3?filename=notification-sound-7062.mp3" type="audio/mpeg"></audio>
+window.buatVoucherBaru = function(){
+  if(cur.role !== 'admin' && cur.role !== 'admin_manajer') return alert('Hanya admin');
+  
+  let daftarUser = Object.values(users).filter(u=>u.role==='konsumen').map(u=>`<option value="${u.id}">${u.nama} - ${u.kontak||''}</option>`).join('');
+  
+  let kode = prompt('Kode Voucher (contoh: KASIH10):');
+  if(!kode) return;
+  let diskon = parseInt(prompt('Diskon % (contoh: 10):')||'0');
+  let minBel = parseInt(prompt('Minimal belanja Rp (contoh: 20000):')||'0');
+  
+  // PILIH SASARAN - INI YANG BIKIN OTOMATIS
+  let sasaranInput = prompt(`Sasaran voucher:\nKetik 'all' untuk semua pengguna\nAtau ketik ID pengguna. Daftar:\n${Object.values(users).filter(u=>u.role==='konsumen').map(u=>u.id+' = '+u.nama).join('\n')}\n\nKetik all atau ID:`);
+  if(!sasaranInput) return;
+  
+  let id = 'v_'+Date.now();
+  let data = {
+    id: id,
+    kode: kode.toUpperCase().trim(),
+    diskon: diskon,
+    minBelanja: minBel,
+    sasaran: sasaranInput.trim(), // bisa 'all' atau ID user
+    sasaranNama: sasaranInput==='all'?'Semua Pengguna':(users[sasaranInput]?.nama||sasaranInput),
+    deskripsi: `Diskon ${diskon}%`,
+    dibuat: Date.now()
+  };
+  
+  vouchers[id] = data;
+  localStorage.setItem(KEY_VOUCHER, JSON.stringify(vouchers));
+  try{ set(ref(db, 'vouchers-kdkmp-final/'+id), data); }catch(e){}
+  
+  alert(`✅ Voucher ${data.kode} berhasil dibuat untuk: ${data.sasaranNama}\nSekarang akan muncul otomatis di akun dia`);
+  if(typeof renderVoucherAdmin === 'function') renderVoucherAdmin();
+}
 
+function renderVoucherAdmin(){
+  let el = document.getElementById('listVoucherAdmin');
+  if(!el) return;
+  el.innerHTML = Object.values(vouchers).map(v=>`
+    <div class="border p-2 rounded-xl text-[10px] flex justify-between bg-white">
+      <div><b>${v.kode}</b> - ${v.diskon}%<br>Untuk: ${v.sasaranNama} | Min: Rp${v.minBelanja.toLocaleString()}<br>Sasaran ID: ${v.sasaran}</div>
+      <button onclick="hapusVoucher('${v.id}')" class="bg-red-600 text-white px-2 rounded-full">Hapus</button>
+    </div>
+  `).join('');
+}
+window.hapusVoucher=(id)=>{if(!confirm('Hapus voucher?'))return;delete vouchers[id];localStorage.setItem(KEY_VOUCHER,JSON.stringify(vouchers));try{remove(ref(db,'vouchers-kdkmp-final/'+id))}catch(e){}renderVoucherAdmin();renderUserVouchers();}
+  
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
 import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
@@ -139,6 +184,19 @@ const db = getDatabase(app);
 window.db=db; window.ref=ref; window.set=set; window.onValue=onValue; window.update=update; window.remove=remove;
 </script>
 
+  const KEY_VOUCHER = 'vouchers-kdkmp-final';
+let vouchers = JSON.parse(localStorage.getItem(KEY_VOUCHER) || '{}');
+
+// SYNC FIREBASE UNTUK VOUCHER - BIAR OTOMATIS MASUK
+try{
+  onValue(ref(db, 'vouchers-kdkmp-final'), (snap)=>{
+    if(snap.exists()){
+      vouchers = snap.val();
+      localStorage.setItem(KEY_VOUCHER, JSON.stringify(vouchers));
+      if(cur && cur.role === 'konsumen'){ renderUserVouchers(); renderVoucherCheckout(); }
+    }
+  });
+}catch(e){}
 <script>
 // ==== MIGRASI ANTI HILANG - INI KUNCI BIAR DATA LAMA BALIK ====
 const KEY_PROD='produk-kdkmp-final', KEY_USERS='users-kdkmp-final', KEY_CONFIG='config-kdkmp-final', KEY_ORDERS='orders-kdkmp-final', KEY_VOUCH='vouchers-kdkmp-final', KEY_PAY='payments-kdkmp-final', KEY_KAT='kategori-produk-final', KEY_GERAI='gerai-status';
@@ -210,7 +268,63 @@ function toDaftar(){document.getElementById('formLogin').style.display='none'; d
 function toLogin(){document.getElementById('formDaftar').style.display='none'; document.getElementById('formLogin').style.display='block';}
 function doLogin(){const u=document.getElementById('lUser').value.trim(); const p=document.getElementById('lPass').value.trim(); const m=document.getElementById('lMsg'); if(!u||!p){m.textContent='Isi';return;} const f=Object.values(users).find(x=>(x.nama.toLowerCase()===u.toLowerCase()||(x.kontak||'').toLowerCase()===u.toLowerCase())&&x.passHash===hash(p)); if(!f){m.textContent='Salah';return;} cur=f; localStorage.setItem('curV14', JSON.stringify(cur)); closeAll(); afterLogin();}
 function doDaftar(){const nama=document.getElementById('dNama').value.trim(); const kontak=document.getElementById('dKontak').value.trim(); const alamat=document.getElementById('dAlamat').value.trim(); const pass=document.getElementById('dPass').value.trim(); const pass2=document.getElementById('dPass2').value.trim(); const m=document.getElementById('dMsg'); if(!nama||!kontak||!alamat||!pass){m.textContent='Wajib';return;} if(pass!==pass2){m.textContent='Tidak sama';return;} const id=Date.now().toString(); users[id]={id,nama,kontak,alamat,passHash:hash(pass),role:'konsumen',totalBelanja:0,createdAt:new Date().toISOString()}; localStorage.setItem(KEY_USERS, JSON.stringify(users)); try{if(window.db) window.set(window.ref(window.db,'users-kdkmp-final/'+id), users[id]);}catch(e){} m.textContent='✅ Sukses'; setTimeout(()=>toLogin(),600);}
-function afterLogin(){
+function afterLogin()
+function renderUserVouchers(){
+  let box = document.getElementById('myVouchers');
+  if(!box || !cur) return;
+  
+  // FILTER: voucher untuk 'all' ATAU untuk ID ku ATAU untuk nama ku (biar kompatibel V25 lama)
+  let myV = Object.values(vouchers).filter(v=>{
+    return v.sasaran === 'all' || v.sasaran === cur.id || v.sasaran === cur.nama || v.sasaranNama === cur.nama;
+  });
+  
+  if(myV.length===0){
+    box.innerHTML = `<p class="text-[9px] text-slate-400 text-center p-2">🎫 Belum ada voucher untuk akun ${cur.nama}</p>`;
+    return;
+  }
+  
+  box.innerHTML = myV.map(v=>`
+    <div class="bg-gradient-to-r from-[#BE1E2D] to-red-500 text-white rounded-xl p-3 flex justify-between items-center shadow">
+      <div>
+        <p class="font-black text-[11px]">🎫 ${v.kode} - DISKON ${v.diskon}%</p>
+        <p class="text-[8px]">Untuk: Kamu | Min. Rp${v.minBelanja.toLocaleString()}</p>
+      </div>
+      <button onclick="pakaiVoucher('${v.kode}')" class="bg-white text-[#BE1E2D] px-4 py-2 rounded-full text-[10px] font-black">PAKAI</button>
+    </div>
+  `).join('');
+}
+
+function renderVoucherCheckout(){
+  // Tampilkan juga di dropdown checkout biar bisa dipilih
+  let sel = document.getElementById('selectVoucherCheckout');
+  if(!sel || !cur) return;
+  let myV = Object.values(vouchers).filter(v=> v.sasaran==='all' || v.sasaran===cur.id || v.sasaranNama===cur.nama);
+  sel.innerHTML = `<option value="">-- Pilih Voucher (${myV.length}) --</option>` + myV.map(v=>`<option value="${v.kode}">${v.kode} - ${v.diskon}% (Min Rp${v.minBelanja.toLocaleString()})</option>`).join('');
+}
+
+window.pakaiVoucher = function(kode){
+  let v = Object.values(vouchers).find(x=>x.kode===kode);
+  if(!v) return alert('Voucher tidak ditemukan');
+  document.getElementById('inputVoucher').value = kode;
+  cekVoucher();
+  document.getElementById('cart').scrollTop = 0;
+}
+
+window.cekVoucher = function(){
+  let kode = document.getElementById('inputVoucher').value.trim().toUpperCase();
+  let v = Object.values(vouchers).find(x=>x.kode===kode);
+  let msg = document.getElementById('voucherMsg');
+  if(!v){ msg.innerHTML='<span class="text-red-600">Kode salah</span>'; window.voucherAktif=null; return; }
+  // cek apakah untuk user ini
+  if(v.sasaran!=='all' && v.sasaran!==cur.id && v.sasaranNama!==cur.nama){
+    msg.innerHTML='<span class="text-red-600">Voucher ini bukan untuk akun kamu</span>'; window.voucherAktif=null; return;
+  }
+  let total = cart.reduce((s,i)=>s+(i.harga*i.qty),0);
+  if(total < v.minBelanja){ msg.innerHTML=`<span class="text-red-600">Min belanja Rp${v.minBelanja.toLocaleString()}</span>`; window.voucherAktif=null; return; }
+  window.voucherAktif = v;
+  msg.innerHTML=`<span class="text-green-600">✅ Berhasil! Diskon ${v.diskon}% aktif</span>`;
+  if(typeof renderCart === 'function') renderCart();
+}{
   document.getElementById('badge')?.classList.remove('hidden'); document.getElementById('badge').textContent=cur.role.toUpperCase();
   document.getElementById('badgeMobile')?.classList.remove('hidden'); document.getElementById('badgeMobile').textContent=cur.role.toUpperCase();
   document.getElementById('btnMasuk').style.display='none'; document.getElementById('btnKeluar').style.display='block';
