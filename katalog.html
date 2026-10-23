@@ -57,10 +57,7 @@ try{
 </div>
 </div>
 <div class="flex gap-2 mt-3">
-  <form autocomplete="off" onsubmit="return false" class="flex gap-2 flex-1">
-<input id="q" type="search" autocomplete="off" name="q_kdkmp_random_2024" placeholder="Cari produk..." class="flex-1 bg-white text-black rounded-full px-4 py-3 text-[13px] outline-none">
-</form>
-<input id="q" type="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="search_products_kdkmp_53354" placeholder="Cari produk..." class="flex-1 bg-white text-black rounded-full px-4 py-3 text-[13px] outline-none">
+<input id="q" placeholder="Cari produk..." class="flex-1 bg-white text-black rounded-full px-4 py-3 text-[13px] outline-none">
 <select id="kat" class="bg-white text-black rounded-full px-4 py-3 text-[11px] max-w-[160px]"></select>
 <button id="cartBtn" class="bg-white text-[#BE1E2D] px-4 rounded-full text-[11px] font-black">Keranjang (<span id="cartCount">0</span>)</button>
 </div>
@@ -166,14 +163,37 @@ function loadWithMigration(newKey, oldKeys){
       }
     }catch(e){}
   });
-if(Object.keys(produk).length===0){
-  produk={
-    "beras1":{nama:"Beras Premium 5kg", harga:65000, stok:100, kat:["Sembako","Beras"], desk:"Beras pulen", foto:"https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", isPromo:false, updatedAt:Date.now()},
-    "minyak1":{nama:"Minyak Goreng 2L", harga:37000, stok:50, kat:["Minyak"], desk:"SunCo", foto:"https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400", isPromo:false, updatedAt:Date.now()},
-    "gula1":{nama:"Gula Pasir 1kg", harga:16500, stok:80, kat:["Gula"], desk:"Gulaku", foto:"https://images.unsplash.com/photo-1581268161341-3e8f1c3d0b5e?w=400", isPromo:false, updatedAt:Date.now()},
-    "kecap1":{nama:"Kecap Bango 420 ml", harga:10000, stok:60, kat:["Bumbu"], desk:"Bango", foto:"https://images.unsplash.com/photo-1563599175592-c58dc214deff?w=400", isPromo:false, updatedAt:Date.now()}
+  if(Object.keys(merged).length>0){
+    localStorage.setItem(newKey, JSON.stringify(merged));
+    return merged;
+  }
+  return {};
+}
+let produk=loadWithMigration(KEY_PROD, OLD_PROD_KEYS);
+let users=loadWithMigration(KEY_USERS, OLD_USER_KEYS);
+let config=JSON.parse(localStorage.getItem(KEY_CONFIG)||'{}');
+let orders=JSON.parse(localStorage.getItem(KEY_ORDERS)||'{}');
+let vouchers=JSON.parse(localStorage.getItem(KEY_VOUCH)||'{}');
+let payments=JSON.parse(localStorage.getItem(KEY_PAY)||'{"1":{"id":"1","type":"COD","name":"COD / Cash","info":"Bayar di tempat"},"2":{"id":"2","type":"TRANSFER","name":"Transfer BRI - Koperasi","info":"BRI 123456 a.n Koperasi Desa"}}');
+let kategoriProduk=JSON.parse(localStorage.getItem(KEY_KAT)||'null');
+if(!kategoriProduk){
+  kategoriProduk={
+    "sembako":{"id":"sembako","nama":"Sembako","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "bumbu":{"id":"bumbu","nama":"Bumbu","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "sayuran":{"id":"sayuran","nama":"Sayuran","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "snack":{"id":"snack","nama":"Snack","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "sabun":{"id":"sabun","nama":"Sabun","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "subsidi":{"id":"subsidi","nama":"Barang Subsidi","isSubsidi":true,"syarat":"Wajib KTP Kertanegara, Maks 2 pcs/KK","createdAt":Date.now()},
+    "beras":{"id":"beras","nama":"Beras","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "minyak":{"id":"minyak","nama":"Minyak","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "gula":{"id":"gula","nama":"Gula","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "mie":{"id":"mie","nama":"Mie","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "minuman":{"id":"minuman","nama":"Minuman","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "bundling":{"id":"bundling","nama":"Bundling","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "promo":{"id":"promo","nama":"Promo","isSubsidi":false,"syarat":"","createdAt":Date.now()},
+    "lainnya":{"id":"lainnya","nama":"Lainnya","isSubsidi":false,"syarat":"","createdAt":Date.now()}
   };
-  localStorage.setItem(KEY_PROD, JSON.stringify(produk));
+  localStorage.setItem(KEY_KAT, JSON.stringify(kategoriProduk));
 }
 let geraiStatus=JSON.parse(localStorage.getItem(KEY_GERAI)||'{"isOnline":true,"message":"Gerai Buka - Silakan belanja","reason":""}');
 if(Object.keys(produk).length===0){
