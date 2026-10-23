@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MANAJEMEN STOK FULL - KDKMP KASIH LIVE</title>
+<title>STOK FULL V35.1 - KODE BANTUAN + OPNAME LENGKAP</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -12,142 +12,124 @@
 <body class="bg-[#f5f5ff]">
 <div class="bg-[#BE1E2D] text-white p-3 sticky top-0 z-40">
 <div class="flex justify-between items-center max-w-[1600px] mx-auto">
-<div><p class="font-black text-[15px]">📦 STOK FULL LIVE SYNC</p><p class="text-[9px]"><span id="syncStatus" class="bg-yellow-300 text-black px-2 py-0.5 rounded-full">LIVE kasih-kopdes.firebaseapp.com</span> <span id="liveInfo" class="text-[9px]"></span></p></div>
-<div class="flex gap-1 overflow-x-auto max-w-[65%]">
-<button onclick="switchTab('dash')" id="tab-dash" class="tab-active whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold">1.Dashboard</button>
-<button onclick="switchTab('master')" id="tab-master" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold">2.Master Barang</button>
-<button onclick="switchTab('masuk')" id="tab-masuk" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold">3.Stok Masuk</button>
-<button onclick="switchTab('keluar')" id="tab-keluar" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold">4.Stok Keluar</button>
-<button onclick="switchTab('rekap')" id="tab-rekap" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold">5.Rekap Stok</button>
-<button onclick="switchTab('supplier')" id="tab-supplier" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold">6.Supplier</button>
-<button onclick="switchTab('opname')" id="tab-opname" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold">7.Opname</button>
-<button onclick="switchTab('laporan')" id="tab-laporan" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold">8.Laporan</button>
+<div><p class="font-black text-[15px]">📦 STOK V35.1 - KODE BANTUAN</p><p class="text-[9px]"><span id="syncStatus" class="bg-yellow-300 text-black px-2 py-0.5 rounded-full">LIVE kasih-kopdes.firebaseapp.com</span> <span id="liveInfo"></span></p></div>
+<div class="flex gap-1 overflow-x-auto max-w-[70%]">
+<button onclick="switchTab('dash')" id="tab-dash" class="tab-active whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold">1.Dash</button>
+<button onclick="switchTab('master')" id="tab-master" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px]">2.Master</button>
+<button onclick="switchTab('masuk')" id="tab-masuk" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px]">3.Masuk</button>
+<button onclick="switchTab('keluar')" id="tab-keluar" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px]">4.Keluar</button>
+<button onclick="switchTab('rekap')" id="tab-rekap" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px]">5.Rekap</button>
+<button onclick="switchTab('supplier')" id="tab-supplier" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px]">6.Supplier</button>
+<button onclick="switchTab('opname')" id="tab-opname" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px]">7.Opname</button>
+<button onclick="switchTab('laporan')" id="tab-laporan" class="bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px]">8.Laporan</button>
 </div>
 </div>
 </div>
 
-<!-- 1. DASHBOARD -->
+<!-- TOMBOL BANTUAN KODE GLOBAL -->
+<div class="max-w-[1600px] mx-auto p-2 flex gap-2">
+<button onclick="openBantuanKode()" class="bg-blue-600 text-white px-4 py-2 rounded-full text-[11px] font-bold shadow">📖 Bantuan Kode - Klik untuk lihat semua kode barang</button>
+<span class="text-[10px] text-slate-500 py-2">Kode jadi kunci - klik bantuan di semua tab, pilih kode otomatis isi form</span>
+</div>
+
+<!-- 1 DASHBOARD -->
 <div id="view-dash" class="max-w-[1600px] mx-auto p-4">
 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-<div class="bg-white rounded-2xl p-4 shadow border-l-4 border-[#BE1E2D]"><p class="text-[10px] text-slate-500">Total Barang</p><b id="dTotal" class="text-[24px]">0</b><p class="text-[9px]">jenis</p></div>
-<div class="bg-white rounded-2xl p-4 shadow border-l-4 border-blue-500"><p class="text-[10px]">Masuk Bulan Ini</p><b id="dMasukBulan" class="text-[24px] text-blue-600">0</b><p class="text-[9px]">pcs</p></div>
-<div class="bg-white rounded-2xl p-4 shadow border-l-4 border-orange-500"><p class="text-[10px]">Keluar Bulan Ini</p><b id="dKeluarBulan" class="text-[24px] text-orange-600">0</b><p class="text-[9px]">pcs</p></div>
-<div class="bg-white rounded-2xl p-4 shadow border-l-4 border-red-500"><p class="text-[10px]">Stok Hampir Habis</p><b id="dHampirHabis" class="text-[24px] text-red-600">0</b><p class="text-[9px]">item < stok min</p></div>
+<div class="bg-white rounded-2xl p-4 shadow border-l-4 border-[#BE1E2D]"><p class="text-[10px]">Total Barang</p><b id="dTotal" class="text-[24px]">0</b></div>
+<div class="bg-white rounded-2xl p-4 shadow border-l-4 border-blue-500"><p class="text-[10px]">Masuk Bulan Ini</p><b id="dMasukBulan" class="text-[24px] text-blue-600">0</b></div>
+<div class="bg-white rounded-2xl p-4 shadow border-l-4 border-orange-500"><p class="text-[10px]">Keluar Bulan Ini</p><b id="dKeluarBulan" class="text-[24px] text-orange-600">0</b></div>
+<div class="bg-white rounded-2xl p-4 shadow border-l-4 border-red-500"><p class="text-[10px]">Hampir Habis</p><b id="dHampirHabis" class="text-[24px] text-red-600">0</b></div>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-<div class="bg-white rounded-2xl p-4 shadow"><b class="text-[12px]">🔥 Stok Terbanyak (Top 5)</b><div class="overflow-auto mt-2"><table class="w-full text-[10px]"><thead class="bg-slate-100"><tr><th class="p-1 text-left">Kode</th><th class="p-1 text-left">Nama</th><th class="p-1">Kategori</th><th class="p-1">Stok</th></tr></thead><tbody id="dTopBanyak"></tbody></table></div></div>
-<div class="bg-white rounded-2xl p-4 shadow border-2 border-red-200"><b class="text-[12px] text-red-600">⚠️ Stok Menipis (Dibawah Min)</b><div class="overflow-auto mt-2"><table class="w-full text-[10px]"><thead class="bg-red-50"><tr><th class="p-1 text-left">Kode</th><th class="p-1 text-left">Nama</th><th class="p-1">Kat</th><th class="p-1">Stok</th><th class="p-1">Min</th></tr></thead><tbody id="dTopMenipis"></tbody></table></div></div>
+<div class="bg-white rounded-2xl p-4 shadow"><b class="text-[12px]">🔥 Stok Terbanyak</b><table class="w-full text-[10px] mt-2"><thead class="bg-slate-100"><tr><th class="p-1 text-left">Kode</th><th class="p-1 text-left">Nama</th><th class="p-1">Kat</th><th class="p-1">Stok</th></tr></thead><tbody id="dTopBanyak"></tbody></table></div>
+<div class="bg-white rounded-2xl p-4 shadow border-2 border-red-200"><b class="text-[12px] text-red-600">⚠️ Menipis</b><table class="w-full text-[10px] mt-2"><thead class="bg-red-50"><tr><th class="p-1 text-left">Kode</th><th class="p-1 text-left">Nama</th><th class="p-1">Kat</th><th class="p-1">Stok</th><th class="p-1">Min</th></tr></thead><tbody id="dTopMenipis"></tbody></table></div>
 </div>
 </div>
 
-<!-- 2. MASTER BARANG -->
+<!-- 2 MASTER -->
 <div id="view-master" style="display:none" class="max-w-[1600px] mx-auto p-4">
-<div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+<div class="flex flex-wrap justify-between gap-2 mb-3">
 <b class="text-[14px] text-[#BE1E2D]">2. Master Barang</b>
 <div class="flex gap-1 flex-wrap">
-<input type="file" id="importMaster" accept=".xlsx,.xls" class="hidden"><button onclick="document.getElementById('importMaster').click()" class="bg-green-600 text-white px-3 py-2 rounded-full text-[10px] font-bold">📥 Import Excel</button>
-<button onclick="exportExcel('master')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">📤 Excel</button>
-<button onclick="exportPDF('master')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">📄 PDF</button>
-<button onclick="hapusSemua('master')" class="bg-black/20 px-3 py-2 rounded-full text-[10px]">🗑️ Hapus Semua</button>
-<button onclick="openMaster()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px] font-bold">+ Tambah Barang</button>
+<button onclick="openBantuanKode('master')" class="bg-blue-100 text-blue-700 px-3 py-2 rounded-full text-[10px] font-bold">📖 Bantuan Kode</button>
+<button onclick="exportExcel('master')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Excel</button>
+<button onclick="exportPDF('master')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">PDF</button>
+<button onclick="openMaster()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px]">+ Tambah</button>
 </div>
 </div>
-<div class="flex gap-2 mb-3 flex-wrap">
-<input id="qMaster" placeholder="🔍 Cari kode/nama/kategori..." class="flex-1 border rounded-full px-4 py-2 text-[11px] min-w-[180px]">
-<select id="fKategori" class="border rounded-full px-3 py-2 text-[11px]"><option value="">Semua Kategori</option></select>
-<select id="fSumber" class="border rounded-full px-3 py-2 text-[11px]"><option value="">Semua Sumber</option><option value="agrinas">🏢 Agrinas</option><option value="umkm">👩‍🌾 UMKM</option></select>
-</div>
-<div class="bg-white rounded-2xl shadow overflow-auto">
-<table class="w-full text-[11px]"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 text-left">Kode</th><th class="p-2 text-left">Nama Barang</th><th class="p-2">Kategori</th><th class="p-2">Satuan</th><th class="p-2">Sumber</th><th class="p-2">Beli</th><th class="p-2">Jual</th><th class="p-2">Stok</th><th class="p-2">Min</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodyMaster"></tbody></table>
-</div>
+<div class="flex gap-2 mb-3 flex-wrap"><input id="qMaster" placeholder="🔍 Cari kode/nama..." class="flex-1 border rounded-full px-4 py-2 text-[11px]"><select id="fKategori" class="border rounded-full px-3 py-2 text-[11px]"><option value="">Semua Kat</option></select></div>
+<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-slate-100"><tr><th class="p-2 text-left">Kode (Kunci)</th><th class="p-2 text-left">Nama</th><th class="p-2">Kat</th><th class="p-2">Satuan</th><th class="p-2">Sumber</th><th class="p-2">Beli</th><th class="p-2">Jual</th><th class="p-2">Stok</th><th class="p-2">Min</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodyMaster"></tbody></table></div>
 </div>
 
-<!-- 3. STOK MASUK -->
+<!-- 3 MASUK -->
 <div id="view-masuk" style="display:none" class="max-w-[1600px] mx-auto p-4">
-<div class="flex flex-wrap justify-between items-center gap-2 mb-3">
-<b class="text-[14px] text-[#BE1E2D]">3. Stok Masuk - Ngelink ke Rekap</b>
-<div class="flex gap-1 flex-wrap">
-<input type="file" id="importMasuk" accept=".xlsx" class="hidden"><button onclick="document.getElementById('importMasuk').click()" class="bg-green-600 text-white px-3 py-2 rounded-full text-[10px]">Import</button>
-<button onclick="exportExcel('masuk')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Excel</button>
-<button onclick="exportPDF('masuk')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">PDF</button>
-<button onclick="hapusSemua('masuk')" class="bg-black/20 px-3 py-2 rounded-full text-[10px]">Hapus Semua</button>
-<button onclick="openMasuk()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px] font-bold">+ Tambah Masuk</button>
+<div class="flex flex-wrap justify-between gap-2 mb-3">
+<b class="text-[14px] text-[#BE1E2D]">3. Stok Masuk</b>
+<div class="flex gap-1 flex-wrap"><button onclick="openBantuanKode('masuk')" class="bg-blue-100 text-blue-700 px-3 py-2 rounded-full text-[10px] font-bold">📖 Bantuan Kode</button><button onclick="exportExcel('masuk')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Excel</button><button onclick="exportPDF('masuk')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">PDF</button><button onclick="openMasuk()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px]">+ Masuk</button></div>
 </div>
-</div>
-<div class="flex gap-2 mb-3 flex-wrap">
-<input id="qMasuk" placeholder="🔍 Cari..." class="flex-1 border rounded-full px-4 py-2 text-[11px] min-w-[150px]">
-<input id="fMasukDari" type="date" class="border rounded-full px-3 py-2 text-[11px]"><input id="fMasukSampai" type="date" class="border rounded-full px-3 py-2 text-[11px]">
-</div>
-<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-blue-50"><tr><th class="p-2">No</th><th class="p-2">Tanggal</th><th class="p-2">Kode</th><th class="p-2 text-left">Nama</th><th class="p-2">Jumlah</th><th class="p-2">Supplier</th><th class="p-2">Keterangan</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodyMasuk"></tbody></table></div>
+<div class="flex gap-2 mb-3 flex-wrap"><input id="qMasuk" placeholder="🔍 Cari..." class="flex-1 border rounded-full px-4 py-2 text-[11px]"><input id="fMasukDari" type="date" class="border rounded-full px-3 py-2 text-[11px]"><input id="fMasukSampai" type="date" class="border rounded-full px-3 py-2 text-[11px]"></div>
+<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-blue-50"><tr><th class="p-2">No</th><th class="p-2">Tanggal</th><th class="p-2">Kode</th><th class="p-2 text-left">Nama</th><th class="p-2">Jumlah</th><th class="p-2">Supplier</th><th class="p-2">Ket</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodyMasuk"></tbody></table></div>
 </div>
 
-<!-- 4. STOK KELUAR -->
+<!-- 4 KELUAR -->
 <div id="view-keluar" style="display:none" class="max-w-[1600px] mx-auto p-4">
-<div class="flex flex-wrap justify-between items-center gap-2 mb-3">
-<b class="text-[14px] text-[#BE1E2D]">4. Stok Keluar - Ngelink ke Rekap</b>
-<div class="flex gap-1 flex-wrap">
-<input type="file" id="importKeluar" accept=".xlsx" class="hidden"><button onclick="document.getElementById('importKeluar').click()" class="bg-green-600 text-white px-3 py-2 rounded-full text-[10px]">Import</button>
-<button onclick="exportExcel('keluar')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Excel</button>
-<button onclick="exportPDF('keluar')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">PDF</button>
-<button onclick="hapusSemua('keluar')" class="bg-black/20 px-3 py-2 rounded-full text-[10px]">Hapus Semua</button>
-<button onclick="openKeluar()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px] font-bold">+ Tambah Keluar</button>
+<div class="flex flex-wrap justify-between gap-2 mb-3">
+<b class="text-[14px] text-[#BE1E2D]">4. Stok Keluar</b>
+<div class="flex gap-1 flex-wrap"><button onclick="openBantuanKode('keluar')" class="bg-blue-100 text-blue-700 px-3 py-2 rounded-full text-[10px] font-bold">📖 Bantuan Kode</button><button onclick="exportExcel('keluar')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Excel</button><button onclick="exportPDF('keluar')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">PDF</button><button onclick="openKeluar()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px]">+ Keluar</button></div>
 </div>
-</div>
-<div class="flex gap-2 mb-3 flex-wrap">
-<input id="qKeluar" placeholder="🔍 Cari..." class="flex-1 border rounded-full px-4 py-2 text-[11px] min-w-[150px]">
-<input id="fKeluarDari" type="date" class="border rounded-full px-3 py-2 text-[11px]"><input id="fKeluarSampai" type="date" class="border rounded-full px-3 py-2 text-[11px]">
-</div>
-<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-orange-50"><tr><th class="p-2">No</th><th class="p-2">Tanggal</th><th class="p-2">Kode</th><th class="p-2 text-left">Nama</th><th class="p-2">Jumlah</th><th class="p-2">Penerima</th><th class="p-2">Keterangan</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodyKeluar"></tbody></table></div>
+<div class="flex gap-2 mb-3 flex-wrap"><input id="qKeluar" placeholder="🔍 Cari..." class="flex-1 border rounded-full px-4 py-2 text-[11px]"><input id="fKeluarDari" type="date" class="border rounded-full px-3 py-2 text-[11px]"><input id="fKeluarSampai" type="date" class="border rounded-full px-3 py-2 text-[11px]"></div>
+<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-orange-50"><tr><th class="p-2">No</th><th class="p-2">Tanggal</th><th class="p-2">Kode</th><th class="p-2 text-left">Nama</th><th class="p-2">Jumlah</th><th class="p-2">Penerima</th><th class="p-2">Ket</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodyKeluar"></tbody></table></div>
 </div>
 
-<!-- 5. REKAP STOK -->
+<!-- 5 REKAP -->
 <div id="view-rekap" style="display:none" class="max-w-[1600px] mx-auto p-4">
-<div class="flex flex-wrap justify-between items-center gap-2 mb-3">
-<b class="text-[14px] text-[#BE1E2D]">5. Rekap Stok (Kode, Nama, Kat, Awal, Masuk, Keluar, Akhir)</b>
-<div class="flex gap-1"><button onclick="exportExcel('rekap')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Excel</button><button onclick="exportPDF('rekap')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">PDF</button></div>
-</div>
-<div class="flex gap-2 mb-3 flex-wrap"><input id="qRekap" placeholder="🔍 Cari..." class="flex-1 border rounded-full px-4 py-2 text-[11px]"><input id="fRekapDari" type="date" class="border rounded-full px-3 py-2 text-[11px]"><input id="fRekapSampai" type="date" class="border rounded-full px-3 py-2 text-[11px]"></div>
-<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-slate-100"><tr><th class="p-2 text-left">Kode</th><th class="p-2 text-left">Nama</th><th class="p-2">Kategori</th><th class="p-2">Awal</th><th class="p-2 text-blue-600">Masuk</th><th class="p-2 text-orange-600">Keluar</th><th class="p-2">Akhir</th><th class="p-2">Min</th></tr></thead><tbody id="tbodyRekap"></tbody></table></div>
+<div class="flex flex-wrap justify-between gap-2 mb-3"><b class="text-[14px] text-[#BE1E2D]">5. Rekap Stok</b><div class="flex gap-1"><button onclick="openBantuanKode('rekap')" class="bg-blue-100 text-blue-700 px-3 py-2 rounded-full text-[10px]">📖 Bantuan Kode</button><button onclick="exportExcel('rekap')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Excel</button><button onclick="exportPDF('rekap')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">PDF</button></div></div>
+<div class="flex gap-2 mb-3 flex-wrap"><input id="qRekap" placeholder="🔍 Cari kode..." class="flex-1 border rounded-full px-4 py-2 text-[11px]"></div>
+<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-slate-100"><tr><th class="p-2 text-left">Kode</th><th class="p-2 text-left">Nama</th><th class="p-2">Kat</th><th class="p-2">Awal</th><th class="p-2 text-blue-600">Masuk</th><th class="p-2 text-orange-600">Keluar</th><th class="p-2">Akhir</th></tr></thead><tbody id="tbodyRekap"></tbody></table></div>
 </div>
 
-<!-- 6. SUPPLIER -->
+<!-- 6 SUPPLIER -->
 <div id="view-supplier" style="display:none" class="max-w-[1600px] mx-auto p-4">
-<div class="flex justify-between items-center mb-3"><b class="text-[14px] text-[#BE1E2D]">6. Rekap Data Supplier</b><button onclick="openSupplier()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px]">+ Supplier</button></div>
-<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-slate-100"><tr><th class="p-2 text-left">Kode Supplier</th><th class="p-2 text-left">Nama Supplier</th><th class="p-2">Kontak</th><th class="p-2">Total Pasok</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodySupplier"></tbody></table></div>
+<div class="flex justify-between mb-3"><b class="text-[14px] text-[#BE1E2D]">6. Supplier</b><button onclick="openSupplier()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px]">+ Supplier</button></div>
+<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-slate-100"><tr><th class="p-2 text-left">Kode Supplier</th><th class="p-2 text-left">Nama</th><th class="p-2">Kontak</th><th class="p-2">Total</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodySupplier"></tbody></table></div>
 </div>
 
-<!-- 7. OPNAME -->
+<!-- 7 OPNAME - UPDATE SESUAI REQUEST -->
 <div id="view-opname" style="display:none" class="max-w-[1600px] mx-auto p-4">
-<div class="flex flex-wrap justify-between items-center gap-2 mb-3">
-<b class="text-[14px] text-[#BE1E2D]">7. Stok Opname - Ngelink Master</b>
-<div class="flex gap-1 flex-wrap"><button onclick="exportExcel('opname')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Excel</button><button onclick="exportPDF('opname')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">PDF</button><button onclick="hapusSemua('opname')" class="bg-black/20 px-3 py-2 rounded-full text-[10px]">Hapus Semua</button><button onclick="openOpname()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px]">+ Mulai Opname</button></div>
+<div class="flex flex-wrap justify-between gap-2 mb-3">
+<b class="text-[14px] text-[#BE1E2D]">7. Stok Opname (Tanggal, Petugas, Daftar Barang)</b>
+<div class="flex gap-1 flex-wrap"><button onclick="openBantuanKode('opname')" class="bg-blue-100 text-blue-700 px-3 py-2 rounded-full text-[10px]">📖 Bantuan Kode</button><button onclick="exportExcel('opname')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">Excel</button><button onclick="exportPDF('opname')" class="bg-red-600 text-white px-3 py-2 rounded-full text-[10px]">PDF</button><button onclick="openOpname()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px]">+ Mulai Opname</button></div>
 </div>
 <div class="flex gap-2 mb-3 flex-wrap"><input id="qOpname" placeholder="🔍 Cari..." class="flex-1 border rounded-full px-4 py-2 text-[11px]"><input id="fOpnameDari" type="date" class="border rounded-full px-3 py-2 text-[11px]"><input id="fOpnameSampai" type="date" class="border rounded-full px-3 py-2 text-[11px]"></div>
-<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-purple-50"><tr><th class="p-2">Tanggal</th><th class="p-2">Kode</th><th class="p-2 text-left">Nama</th><th class="p-2">Sistem</th><th class="p-2">Fisik</th><th class="p-2">Selisih</th><th class="p-2">Keterangan</th><th class="p-2">Status</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodyOpname"></tbody></table></div>
+<div class="bg-white rounded-2xl shadow overflow-auto"><table class="w-full text-[11px]"><thead class="bg-purple-50"><tr><th class="p-2">Tanggal</th><th class="p-2">Petugas</th><th class="p-2">Kode</th><th class="p-2 text-left">Nama barang</th><th class="p-2">Stok sistem</th><th class="p-2">Stok fisik</th><th class="p-2">Selisih</th><th class="p-2">Keterangan</th><th class="p-2">Status</th><th class="p-2">Aksi</th></tr></thead><tbody id="tbodyOpname"></tbody></table></div>
 </div>
 
-<!-- 8. LAPORAN -->
+<!-- 8 LAPORAN -->
 <div id="view-laporan" style="display:none" class="max-w-[1600px] mx-auto p-4">
 <b class="text-[14px] text-[#BE1E2D]">8. Laporan</b>
 <div class="bg-white rounded-2xl p-4 shadow mt-3 grid grid-cols-1 md:grid-cols-4 gap-3">
-<select id="lapJenis" class="border rounded-full px-3 py-2 text-[11px]"><option value="master">Master Barang</option><option value="masuk">Stok Masuk</option><option value="keluar">Stok Keluar</option><option value="rekap">Rekap Stok</option><option value="opname">Stok Opname</option><option value="supplier">Supplier</option></select>
+<select id="lapJenis" class="border rounded-full px-3 py-2 text-[11px]"><option value="master">Master Barang</option><option value="masuk">Stok Masuk</option><option value="keluar">Stok Keluar</option><option value="rekap">Rekap Stok</option><option value="opname">Stok Opname</option></select>
 <input id="lapDari" type="date" class="border rounded-full px-3 py-2 text-[11px]"><input id="lapSampai" type="date" class="border rounded-full px-3 py-2 text-[11px]">
-<button onclick="generateLaporan()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px] font-bold">Generate Laporan</button>
+<button onclick="generateLaporan()" class="bg-[#BE1E2D] text-white px-4 py-2 rounded-full text-[11px] font-bold">Generate</button>
 </div>
-<div class="flex gap-2 mt-3"><button onclick="exportExcel('laporan')" class="bg-blue-600 text-white px-4 py-2 rounded-full text-[11px]">Export Excel</button><button onclick="exportPDF('laporan')" class="bg-red-600 text-white px-4 py-2 rounded-full text-[11px]">Export PDF</button></div>
-<div class="bg-white rounded-2xl shadow mt-3 p-4 overflow-auto"><div id="laporanResult" class="text-[11px]">Pilih jenis laporan dan tanggal, klik Generate</div></div>
+<div class="flex gap-2 mt-3"><button onclick="openBantuanKode('laporan')" class="bg-blue-100 text-blue-700 px-3 py-2 rounded-full text-[10px]">📖 Bantuan Kode</button><button onclick="exportExcel('laporan')" class="bg-blue-600 text-white px-4 py-2 rounded-full text-[11px]">Excel</button><button onclick="exportPDF('laporan')" class="bg-red-600 text-white px-4 py-2 rounded-full text-[11px]">PDF</button></div>
+<div class="bg-white rounded-2xl shadow mt-3 p-4 overflow-auto"><div id="laporanResult" class="text-[11px]">Pilih jenis laporan</div></div>
 </div>
 
-<!-- MODALS -->
-<div id="modalMaster" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-lg p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b id="masterTitle">Tambah Barang</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><div class="grid grid-cols-2 gap-2"><input id="mKode" placeholder="Kode Barang (auto)" class="border rounded-xl px-3 py-2 text-[11px]"><input id="mKategori" placeholder="Kategori *" class="border rounded-xl px-3 py-2 text-[11px]"></div><input id="mNama" placeholder="Nama Barang *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><div class="grid grid-cols-2 gap-2"><input id="mSatuan" placeholder="Satuan ex: pcs, kg" class="border rounded-xl px-3 py-2 text-[11px]"><select id="mSumber" class="border rounded-xl px-3 py-2 text-[11px]"><option value="agrinas">🏢 Agrinas</option><option value="umkm">👩‍🌾 UMKM</option></select></div><div class="grid grid-cols-3 gap-2"><input id="mHargaBeli" type="number" placeholder="Harga Beli *" class="border rounded-xl px-3 py-2 text-[11px]"><input id="mHargaJual" type="number" placeholder="Harga Jual *" class="border rounded-xl px-3 py-2 text-[11px]"><input id="mStokAwal" type="number" placeholder="Stok Awal *" class="border rounded-xl px-3 py-2 text-[11px]"></div><div class="grid grid-cols-2 gap-2"><input id="mStokMin" type="number" placeholder="Stok Minimum *" class="border rounded-xl px-3 py-2 text-[11px]"><input id="mPemilik" placeholder="Pemilik UMKM (jika UMKM)" class="w-full border rounded-xl px-3 py-2 text-[11px]"></div><div class="border-2 border-dashed rounded-xl p-2 text-center bg-white"><input type="file" id="mFoto" accept="image/*" class="w-full text-[10px]"><div id="mPrevBox" class="hidden mt-2"><img id="mPrevImg" class="w-full h-32 object-contain bg-white border rounded-xl"></div></div><button id="saveMasterBtn" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 Simpan</button></div></div></div>
+<!-- MODAL BANTUAN KODE - KUNCI UTAMA -->
+<div id="modalBantuanKode" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-3xl p-5 max-h-[85vh] overflow-auto"><div class="flex justify-between items-center"><b class="text-[14px]">📖 Bantuan Kode Barang - Klik Kode untuk Pakai</b><button class="btnClose bg-slate-100 w-8 h-8 rounded-full">X</button></div><p class="text-[10px] text-slate-500 mt-1">Kode adalah kunci - klik salah satu kode, otomatis terisi di form yang sedang dibuka</p><div class="flex gap-2 mt-3"><input id="qBantuan" placeholder="🔍 Cari kode / nama / kategori..." class="flex-1 border rounded-full px-4 py-2 text-[11px]"><span id="bantuanTarget" class="bg-yellow-200 text-[10px] px-3 py-2 rounded-full">Target: Semua</span></div><div class="mt-3 overflow-auto max-h-[400px] border rounded-xl"><table class="w-full text-[11px]"><thead class="bg-[#BE1E2D] text-white sticky top-0"><tr><th class="p-2 text-left">Kode (Klik!)</th><th class="p-2 text-left">Nama Barang</th><th class="p-2">Kategori</th><th class="p-2">Stok</th><th class="p-2">Harga Jual</th><th class="p-2">Sumber</th></tr></thead><tbody id="tbodyBantuan"></tbody></table></div><p class="text-[9px] text-slate-500 mt-2">Tip: Di tab Master, Masuk, Keluar, Opname - buka form dulu baru klik bantuan kode untuk auto-isi</p></div></div>
 
-<div id="modalKartu" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-2xl p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b id="kartuTitle">Kartu Stok</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="flex gap-2 mt-3"><button onclick="exportExcel('kartu')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px]">Excel</button><button onclick="exportPDF('kartu')" class="bg-red-600 text-white px-3 py-1 rounded-full text-[10px]">PDF</button><button onclick="document.getElementById('modalKartu').style.display='none'" class="bg-slate-100 px-3 py-1 rounded-full text-[10px]">Tutup</button></div><div class="mt-3 overflow-auto"><table class="w-full text-[10px]"><thead class="bg-slate-100"><tr><th class="p-1">Tanggal</th><th class="p-1">Keterangan</th><th class="p-1">Masuk</th><th class="p-1">Keluar</th><th class="p-1">Saldo</th></tr></thead><tbody id="tbodyKartu"></tbody></table></div></div></div>
+<!-- MODAL MASTER -->
+<div id="modalMaster" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-lg p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b id="masterTitle">Tambah Barang</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><div class="grid grid-cols-2 gap-2"><input id="mKode" placeholder="Kode Barang (Kunci)" class="border-2 border-blue-300 rounded-xl px-3 py-2 text-[11px] bg-blue-50"><input id="mKategori" placeholder="Kategori *" class="border rounded-xl px-3 py-2 text-[11px]"></div><input id="mNama" placeholder="Nama Barang *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><div class="grid grid-cols-2 gap-2"><input id="mSatuan" placeholder="Satuan" class="border rounded-xl px-3 py-2 text-[11px]"><select id="mSumber" class="border rounded-xl px-3 py-2 text-[11px]"><option value="agrinas">🏢 Agrinas</option><option value="umkm">👩‍🌾 UMKM</option></select></div><div class="grid grid-cols-3 gap-2"><input id="mHargaBeli" type="number" placeholder="Beli" class="border rounded-xl px-3 py-2 text-[11px]"><input id="mHargaJual" type="number" placeholder="Jual *" class="border rounded-xl px-3 py-2 text-[11px]"><input id="mStokAwal" type="number" placeholder="Stok Awal" class="border rounded-xl px-3 py-2 text-[11px]"></div><div class="grid grid-cols-2 gap-2"><input id="mStokMin" type="number" placeholder="Stok Min" class="border rounded-xl px-3 py-2 text-[11px]"><input id="mPemilik" placeholder="Pemilik UMKM" class="border rounded-xl px-3 py-2 text-[11px]"></div><button onclick="openBantuanKode('master')" class="w-full bg-blue-50 text-blue-700 py-2 rounded-full text-[10px]">📖 Bantuan Kode - Lihat Kode Existing</button><button id="saveMasterBtn" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 Simpan</button></div></div></div>
 
-<div id="modalMasuk" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-md p-5"><div class="flex justify-between"><b>Tambah Stok Masuk</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><input id="masukTanggal" type="date" class="w-full border rounded-xl px-3 py-2 text-[11px]"><select id="masukKode" class="w-full border rounded-xl px-3 py-2 text-[11px]"></select><input id="masukJumlah" type="number" placeholder="Jumlah *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="masukSupplier" placeholder="Supplier *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="masukKet" placeholder="Keterangan" class="w-full border rounded-xl px-3 py-2 text-[11px]"><button id="saveMasukBtn" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 Simpan</button></div></div></div>
+<!-- MODAL MASUK -->
+<div id="modalMasuk" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-md p-5"><div class="flex justify-between"><b>Tambah Stok Masuk</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><input id="masukTanggal" type="date" class="w-full border rounded-xl px-3 py-2 text-[11px]"><div class="flex gap-2"><select id="masukKode" class="flex-1 border-2 border-blue-300 rounded-xl px-3 py-2 text-[11px] bg-blue-50"></select><button onclick="openBantuanKode('masuk')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">📖</button></div><p id="masukNamaPreview" class="text-[10px] text-slate-600"></p><input id="masukJumlah" type="number" placeholder="Jumlah *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="masukSupplier" placeholder="Supplier *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="masukKet" placeholder="Keterangan" class="w-full border rounded-xl px-3 py-2 text-[11px]"><button id="saveMasukBtn" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 Simpan</button></div></div></div>
 
-<div id="modalKeluar" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-md p-5"><div class="flex justify-between"><b>Tambah Stok Keluar</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><input id="keluarTanggal" type="date" class="w-full border rounded-xl px-3 py-2 text-[11px]"><select id="keluarKode" class="w-full border rounded-xl px-3 py-2 text-[11px]"></select><input id="keluarJumlah" type="number" placeholder="Jumlah *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="keluarPenerima" placeholder="Penerima *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="keluarKet" placeholder="Keterangan" class="w-full border rounded-xl px-3 py-2 text-[11px]"><button id="saveKeluarBtn" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 Simpan</button></div></div></div>
+<!-- MODAL KELUAR -->
+<div id="modalKeluar" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-md p-5"><div class="flex justify-between"><b>Tambah Stok Keluar</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><input id="keluarTanggal" type="date" class="w-full border rounded-xl px-3 py-2 text-[11px]"><div class="flex gap-2"><select id="keluarKode" class="flex-1 border-2 border-blue-300 rounded-xl px-3 py-2 text-[11px] bg-blue-50"></select><button onclick="openBantuanKode('keluar')" class="bg-blue-600 text-white px-3 py-2 rounded-full text-[10px]">📖</button></div><p id="keluarNamaPreview" class="text-[10px] text-slate-600"></p><input id="keluarJumlah" type="number" placeholder="Jumlah *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="keluarPenerima" placeholder="Penerima *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="keluarKet" placeholder="Keterangan" class="w-full border rounded-xl px-3 py-2 text-[11px]"><button id="saveKeluarBtn" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 Simpan</button></div></div></div>
 
-<div id="modalOpname" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-2xl p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b>Mulai Stok Opname</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><div class="grid grid-cols-2 gap-2"><input id="opTanggal" type="date" class="border rounded-xl px-3 py-2 text-[11px]"><input id="opPetugas" placeholder="Petugas *" class="border rounded-xl px-3 py-2 text-[11px]"></div><div class="border rounded-xl p-2 max-h-[300px] overflow-auto"><table class="w-full text-[10px]"><thead class="bg-slate-100"><tr><th>Kode</th><th>Nama</th><th>Sistem</th><th>Fisik</th><th>Ket</th></tr></thead><tbody id="tbodyOpnameForm"></tbody></table></div><div class="flex gap-2"><button id="batalOpnameBtn" class="flex-1 bg-slate-100 py-2.5 rounded-full text-[11px]">Batal</button><button id="saveOpnameBtn" class="flex-1 bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 Simpan Opname</button></div></div></div></div>
+<!-- MODAL OPNAME UPDATE -->
+<div id="modalOpname" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-4xl p-5 max-h-[90vh] overflow-auto"><div class="flex justify-between"><b>7. Mulai Stok Opname - Tanggal, Petugas, Daftar Barang</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-3"><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] font-bold">Tanggal *</label><input id="opTanggal" type="date" class="w-full border-2 border-blue-300 rounded-xl px-3 py-2 text-[11px] bg-blue-50"></div><div><label class="text-[10px] font-bold">Petugas *</label><input id="opPetugas" placeholder="Nama Petugas *" class="w-full border rounded-xl px-3 py-2 text-[11px]"></div></div><div class="flex gap-2"><button onclick="openBantuanKode('opname')" class="bg-blue-100 text-blue-700 px-3 py-2 rounded-full text-[10px] font-bold">📖 Bantuan Kode - Pilih Barang untuk Opname</button><span class="text-[10px] py-2">Daftar Barang akan muncul di bawah, isi stok fisik & keterangan</span></div><div class="border-2 rounded-xl overflow-auto max-h-[350px]"><table class="w-full text-[10px]"><thead class="bg-[#BE1E2D] text-white sticky top-0"><tr><th class="p-2 text-left">Kode</th><th class="p-2 text-left">Nama barang</th><th class="p-2">Stok sistem</th><th class="p-2">Stok fisik *</th><th class="p-2">Keterangan</th></tr></thead><tbody id="tbodyOpnameForm"></tbody></table></div><div class="flex gap-2 mt-3"><button id="batalOpnameBtn" class="flex-1 bg-slate-100 py-3 rounded-full text-[11px] font-bold">Batal</button><button id="saveOpnameBtn" class="flex-1 bg-[#BE1E2D] text-white py-3 rounded-full font-bold text-[11px]">💾 Simpan Opname</button></div></div></div></div>
 
 <div id="modalSupplier" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center;padding:16px"><div class="bg-white rounded-2xl w-full max-w-md p-5"><div class="flex justify-between"><b>Tambah Supplier</b><button class="btnClose bg-slate-100 w-7 h-7 rounded-full">X</button></div><div class="mt-3 space-y-2"><input id="supKode" placeholder="Kode Supplier *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="supNama" placeholder="Nama Supplier *" class="w-full border rounded-xl px-3 py-2 text-[11px]"><input id="supKontak" placeholder="Kontak / HP" class="w-full border rounded-xl px-3 py-2 text-[11px]"><button id="saveSupplierBtn" class="w-full bg-[#BE1E2D] text-white py-2.5 rounded-full font-bold text-[11px]">💾 Simpan</button></div></div></div>
 
@@ -177,116 +159,97 @@ let masuk=JSON.parse(localStorage.getItem(KEY_MASUK)||'{}');
 let keluar=JSON.parse(localStorage.getItem(KEY_KELUAR)||'{}');
 let opname=JSON.parse(localStorage.getItem(KEY_OPNAME)||'{}');
 let supplier=JSON.parse(localStorage.getItem(KEY_SUP)||'{}');
-let editId=null, kartuKode=null, tempFoto=null, laporanData=[];
-
-function closeAll(){document.querySelectorAll('#modalMaster,#modalKartu,#modalMasuk,#modalKeluar,#modalOpname,#modalSupplier').forEach(el=>el.style.display='none');}
+let editId=null, bantuanTarget='all', laporanData=[];
+function closeAll(){document.querySelectorAll('#modalMaster,#modalMasuk,#modalKeluar,#modalOpname,#modalSupplier,#modalBantuanKode').forEach(el=>el.style.display='none');}
 document.querySelectorAll('.btnClose').forEach(b=>b.addEventListener('click', closeAll));
 function switchTab(t){
   document.querySelectorAll('[id^=view-]').forEach(el=>el.style.display='none');
   document.getElementById('view-'+t).style.display='block';
-  document.querySelectorAll('[id^=tab-]').forEach(el=>el.className='bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold');
+  document.querySelectorAll('[id^=tab-]').forEach(el=>el.className='bg-white/20 whitespace-nowrap px-3 py-2 rounded-full text-[10px]');
   document.getElementById('tab-'+t).className='tab-active whitespace-nowrap px-3 py-2 rounded-full text-[10px] font-bold';
-  if(t==='dash') renderDash();
-  if(t==='master') renderMaster();
-  if(t==='masuk') renderMasuk();
-  if(t==='keluar') renderKeluar();
-  if(t==='rekap') renderRekap();
-  if(t==='supplier') renderSupplier();
-  if(t==='opname') renderOpname();
+  if(t==='dash') renderDash(); if(t==='master') renderMaster(); if(t==='masuk') renderMasuk(); if(t==='keluar') renderKeluar(); if(t==='rekap') renderRekap(); if(t==='supplier') renderSupplier(); if(t==='opname') renderOpname();
 }
 function genKode(){return 'BRG'+Date.now().toString().slice(-6);}
+function openBantuanKode(target='all'){
+  bantuanTarget=target; document.getElementById('bantuanTarget').textContent='Target: '+target;
+  document.getElementById('modalBantuanKode').style.display='flex'; renderBantuanKode();
+}
+function renderBantuanKode(){
+  const q=(document.getElementById('qBantuan').value||'').toLowerCase();
+  let list=Object.values(produk).filter(p=> !q || p.kode.toLowerCase().includes(q) || p.nama.toLowerCase().includes(q) || (p.kategori||'').toLowerCase().includes(q));
+  document.getElementById('tbodyBantuan').innerHTML=list.map(p=>`<tr class="border-b hover:bg-blue-50 cursor-pointer" onclick="pilihKode('${p.kode}')"><td class="p-2 font-bold text-blue-600 underline">📋 ${p.kode}</td><td class="p-2">${p.nama}</td><td class="p-2">${p.kategori}</td><td class="p-2 font-bold ${p.stok<=p.stokMin?'text-red-600':''}">${p.stok}</td><td class="p-2">Rp ${p.hargaJual.toLocaleString()}</td><td class="p-2">${p.sumber==='umkm'?'👩‍🌾 UMKM':'🏢 Agrinas'}</td></tr>`).join('')||'<tr><td colspan="6" class="p-4 text-center">Belum ada barang - tambah dulu di Master</td></tr>';
+}
+function pilihKode(kode){
+  // Auto isi ke form sesuai target
+  const p=Object.values(produk).find(x=>x.kode===kode); if(!p) return;
+  if(bantuanTarget==='master'){
+    document.getElementById('mKode').value=p.kode; document.getElementById('mNama').value=p.nama; document.getElementById('mKategori').value=p.kategori; document.getElementById('mSatuan').value=p.satuan; document.getElementById('mSumber').value=p.sumber; document.getElementById('mHargaBeli').value=p.hargaBeli; document.getElementById('mHargaJual').value=p.hargaJual; document.getElementById('mStokAwal').value=p.stokAwal; document.getElementById('mStokMin').value=p.stokMin; document.getElementById('mPemilik').value=p.pemilik||'';
+    alert('Kode '+kode+' dipilih - form Master terisi');
+  } else if(bantuanTarget==='masuk'){
+    document.getElementById('masukKode').value=kode; document.getElementById('masukNamaPreview').textContent=p.nama+' - Stok sistem: '+p.stok;
+  } else if(bantuanTarget==='keluar'){
+    document.getElementById('keluarKode').value=kode; document.getElementById('keluarNamaPreview').textContent=p.nama+' - Stok sistem: '+p.stok;
+  } else if(bantuanTarget==='opname'){
+    // di opname form, scroll ke kode tersebut
+    const el=document.querySelector(`.fisik[data-kode="${kode}"]`); if(el){ el.focus(); el.style.background='#fef08a'; setTimeout(()=>el.style.background='',1500); }
+  }
+  document.getElementById('modalBantuanKode').style.display='none';
+}
+document.getElementById('qBantuan')?.addEventListener('input', renderBantuanKode);
 function openMaster(id=null){
   editId=id; document.getElementById('modalMaster').style.display='flex';
   if(id&&produk[id]){
-    const p=produk[id]; document.getElementById('mKode').value=p.kode; document.getElementById('mNama').value=p.nama; document.getElementById('mKategori').value=p.kategori||''; document.getElementById('mSatuan').value=p.satuan||''; document.getElementById('mSumber').value=p.sumber||'agrinas'; document.getElementById('mHargaBeli').value=p.hargaBeli||0; document.getElementById('mHargaJual').value=p.hargaJual||p.harga||0; document.getElementById('mStokAwal').value=p.stokAwal||p.stok||0; document.getElementById('mStokMin').value=p.stokMin||5; document.getElementById('mPemilik').value=p.pemilik||''; tempFoto=p.foto||null;
-    if(p.foto){document.getElementById('mPrevImg').src=p.foto; document.getElementById('mPrevBox').classList.remove('hidden');}
+    const p=produk[id]; document.getElementById('mKode').value=p.kode; document.getElementById('mNama').value=p.nama; document.getElementById('mKategori').value=p.kategori||''; document.getElementById('mSatuan').value=p.satuan||''; document.getElementById('mSumber').value=p.sumber||'agrinas'; document.getElementById('mHargaBeli').value=p.hargaBeli||0; document.getElementById('mHargaJual').value=p.hargaJual||0; document.getElementById('mStokAwal').value=p.stokAwal||0; document.getElementById('mStokMin').value=p.stokMin||5; document.getElementById('mPemilik').value=p.pemilik||'';
   } else {
-    document.getElementById('mKode').value=genKode(); ['mNama','mKategori','mSatuan','mHargaBeli','mHargaJual','mStokAwal','mStokMin','mPemilik'].forEach(i=>document.getElementById(i).value=''); document.getElementById('mStokMin').value=5; document.getElementById('mPrevBox').classList.add('hidden'); tempFoto=null;
+    document.getElementById('mKode').value=genKode(); ['mNama','mKategori','mSatuan','mHargaBeli','mHargaJual','mStokAwal','mStokMin','mPemilik'].forEach(i=>document.getElementById(i).value=''); document.getElementById('mStokMin').value=5;
   }
 }
-document.getElementById('mFoto')?.addEventListener('change', function(e){const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{const im=new Image(); im.onload=()=>{const c=document.createElement('canvas'); let w=im.width,h=im.height; const max=600; if(w>max||h>max){const ratio=Math.min(max/w,max/h); w*=ratio; h*=ratio;} c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); tempFoto=c.toDataURL('image/jpeg',0.8); document.getElementById('mPrevImg').src=tempFoto; document.getElementById('mPrevBox').classList.remove('hidden');}; im.src=ev.target.result;}; r.readAsDataURL(f);});
 function saveMaster(){
   const kode=document.getElementById('mKode').value.trim()||genKode(); const nama=document.getElementById('mNama').value.trim(); const kategori=document.getElementById('mKategori').value.trim()||'Umum'; const satuan=document.getElementById('mSatuan').value.trim()||'pcs'; const sumber=document.getElementById('mSumber').value; const hargaBeli=parseInt(document.getElementById('mHargaBeli').value)||0; const hargaJual=parseInt(document.getElementById('mHargaJual').value)||0; const stokAwal=parseInt(document.getElementById('mStokAwal').value)||0; const stokMin=parseInt(document.getElementById('mStokMin').value)||5; const pemilik=document.getElementById('mPemilik').value.trim();
-  if(!nama||!hargaJual) return alert('Isi nama & harga jual');
-  const id=editId||kode; const old=produk[id]||{};
-  // hitung stok akhir dari rekap
-  const masukQty=Object.values(masuk).filter(m=>m.kode===kode).reduce((s,m)=>s+parseInt(m.jumlah||0),0);
-  const keluarQty=Object.values(keluar).filter(k=>k.kode===kode).reduce((s,k)=>s+parseInt(k.jumlah||0),0);
-  const stok=stokAwal + masukQty - keluarQty;
-  produk[id]={id,kode,nama,kategori,satuan,sumber,hargaBeli,hargaJual,harga:hargaJual,stok,stokAwal,stokMin,pemilik,foto:tempFoto!==null?tempFoto:(old.foto||null),updatedAt:Date.now()};
-  // sync juga ke produk-kdkmp-final biar katalog-belanja tetap update
-  localStorage.setItem(KEY_PROD, JSON.stringify(produk));
-  if(window.db){ window.set(window.ref(window.db,'produk-kdkmp-full/'+id), produk[id]); window.set(window.ref(window.db,'produk-kdkmp-final/'+id), {nama,kategori: [kategori], harga:hargaJual, stok, sumber, pemilik, foto:produk[id].foto, hargaBeli, hargaBeliAgrinas:hargaBeli, updatedAt:Date.now()}); }
-  closeAll(); renderDash(); renderMaster();
+  if(!nama||!hargaJual) return alert('Isi nama & jual');
+  const id=editId||kode; const old=produk[id]||{}; const masukQty=Object.values(masuk).filter(m=>m.kode===kode).reduce((s,m)=>s+m.jumlah,0); const keluarQty=Object.values(keluar).filter(k=>k.kode===kode).reduce((s,k)=>s+k.jumlah,0); const stok=stokAwal+masukQty-keluarQty;
+  produk[id]={id,kode,nama,kategori,satuan,sumber,hargaBeli,hargaJual,harga:hargaJual,stok,stokAwal,stokMin,pemilik,updatedAt:Date.now()};
+  localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db){ window.set(window.ref(window.db,'produk-kdkmp-full/'+id), produk[id]); window.set(window.ref(window.db,'produk-kdkmp-final/'+id), {nama,kategori:[kategori],harga:hargaJual,stok,sumber,pemilik,hargaBeli,updatedAt:Date.now()}); } closeAll(); renderDash(); renderMaster();
 }
-function hapusMaster(id){if(!confirm('Hapus barang?')) return; delete produk[id]; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db){ window.remove(window.ref(window.db,'produk-kdkmp-full/'+id)); window.remove(window.ref(window.db,'produk-kdkmp-final/'+id)); } renderDash(); renderMaster();}
-function openKartu(kode){
-  kartuKode=kode; document.getElementById('modalKartu').style.display='flex'; document.getElementById('kartuTitle').textContent='Kartu Stok - '+kode;
-  const p=Object.values(produk).find(x=>x.kode===kode);
-  let saldo=p?parseInt(p.stokAwal||0):0;
-  const all=[...Object.values(masuk).filter(m=>m.kode===kode).map(m=>({tgl:m.tanggal, ket:`Masuk - ${m.supplier} - ${m.keterangan}`, masuk:m.jumlah, keluar:0})), ...Object.values(keluar).filter(k=>k.kode===kode).map(k=>({tgl:k.tanggal, ket:`Keluar - ${k.penerima} - ${k.keterangan}`, masuk:0, keluar:k.jumlah}))].sort((a,b)=> new Date(a.tgl)-new Date(b.tgl));
-  let rows=`<tr><td class="p-1 border">${p?new Date(p.updatedAt).toLocaleDateString():''}</td><td class="p-1 border">Stok Awal</td><td class="p-1 border"></td><td class="p-1 border"></td><td class="p-1 border">${saldo}</td></tr>`;
-  all.forEach(r=>{
-    saldo+=parseInt(r.masuk||0)-parseInt(r.keluar||0);
-    rows+=`<tr><td class="p-1 border">${r.tgl}</td><td class="p-1 border">${r.ket}</td><td class="p-1 border text-blue-600">${r.masuk||''}</td><td class="p-1 border text-red-600">${r.keluar||''}</td><td class="p-1 border font-bold">${saldo}</td></tr>`;
-  });
-  document.getElementById('tbodyKartu').innerHTML=rows;
-}
+function hapusMaster(id){if(!confirm('Hapus?')) return; delete produk[id]; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db){ window.remove(window.ref(window.db,'produk-kdkmp-full/'+id)); window.remove(window.ref(window.db,'produk-kdkmp-final/'+id)); } renderDash(); renderMaster();}
 function renderDash(){
-  const all=Object.values(produk);
-  document.getElementById('dTotal').textContent=all.length;
+  const all=Object.values(produk); document.getElementById('dTotal').textContent=all.length;
   const now=new Date(); const bulan=now.getMonth(), tahun=now.getFullYear();
-  const masukBulan=Object.values(masuk).filter(m=>{ const d=new Date(m.tanggal); return d.getMonth()===bulan && d.getFullYear()===tahun; }).reduce((s,m)=>s+parseInt(m.jumlah||0),0);
-  const keluarBulan=Object.values(keluar).filter(k=>{ const d=new Date(k.tanggal); return d.getMonth()===bulan && d.getFullYear()===tahun; }).reduce((s,k)=>s+parseInt(k.jumlah||0),0);
-  document.getElementById('dMasukBulan').textContent=masukBulan;
-  document.getElementById('dKeluarBulan').textContent=keluarBulan;
-  const hampirHabis=all.filter(p=> (p.stok||0) <= (p.stokMin||5));
-  document.getElementById('dHampirHabis').textContent=hampirHabis.length;
-  const topBanyak=[...all].sort((a,b)=> (b.stok||0)-(a.stok||0)).slice(0,5);
-  document.getElementById('dTopBanyak').innerHTML=topBanyak.map(p=>`<tr><td class="p-1">${p.kode}</td><td class="p-1">${p.nama}</td><td class="p-1">${p.kategori}</td><td class="p-1 font-bold">${p.stok}</td></tr>`).join('')||'<tr><td colspan="4" class="p-2">Belum ada</td></tr>';
-  document.getElementById('dTopMenipis').innerHTML=hampirHabis.map(p=>`<tr><td class="p-1">${p.kode}</td><td class="p-1">${p.nama}</td><td class="p-1">${p.kategori}</td><td class="p-1 text-red-600 font-bold">${p.stok}</td><td class="p-1">${p.stokMin}</td></tr>`).join('')||'<tr><td colspan="5" class="p-2">Aman</td></tr>';
-  document.getElementById('liveInfo').textContent=`| Agrinas: ${all.filter(p=> (p.sumber||'agrinas')==='agrinas').length} | UMKM: ${all.filter(p=>p.sumber==='umkm').length}`;
+  document.getElementById('dMasukBulan').textContent=Object.values(masuk).filter(m=>{const d=new Date(m.tanggal); return d.getMonth()===bulan && d.getFullYear()===tahun;}).reduce((s,m)=>s+m.jumlah,0);
+  document.getElementById('dKeluarBulan').textContent=Object.values(keluar).filter(k=>{const d=new Date(k.tanggal); return d.getMonth()===bulan && d.getFullYear()===tahun;}).reduce((s,k)=>s+k.jumlah,0);
+  const hampirHabis=all.filter(p=> (p.stok||0) <= (p.stokMin||5)); document.getElementById('dHampirHabis').textContent=hampirHabis.length;
+  document.getElementById('dTopBanyak').innerHTML=[...all].sort((a,b)=>b.stok-a.stok).slice(0,5).map(p=>`<tr><td class="p-1">${p.kode}</td><td class="p-1">${p.nama}</td><td class="p-1">${p.kategori}</td><td class="p-1 font-bold">${p.stok}</td></tr>`).join('')||'<tr><td colspan="4">-</td></tr>';
+  document.getElementById('dTopMenipis').innerHTML=hampirHabis.map(p=>`<tr><td class="p-1">${p.kode}</td><td class="p-1">${p.nama}</td><td class="p-1">${p.kategori}</td><td class="p-1 text-red-600">${p.stok}</td><td class="p-1">${p.stokMin}</td></tr>`).join('')||'<tr><td colspan="5">Aman</td></tr>';
+  document.getElementById('liveInfo').textContent=`| Agrinas:${all.filter(p=>p.sumber==='agrinas').length} UMKM:${all.filter(p=>p.sumber==='umkm').length}`;
 }
 function renderMaster(){
-  const q=(document.getElementById('qMaster').value||'').toLowerCase(); const fKat=document.getElementById('fKategori').value; const fSumber=document.getElementById('fSumber').value;
-  const cats=[...new Set(Object.values(produk).map(p=>p.kategori).filter(Boolean))]; document.getElementById('fKategori').innerHTML='<option value="">Semua Kategori</option>'+cats.map(c=>`<option value="${c}" ${fKat===c?'selected':''}>${c}</option>`).join('');
-  const list=Object.entries(produk).filter(([id,p])=>{
-    if(q && !(p.kode.toLowerCase().includes(q) || p.nama.toLowerCase().includes(q) || (p.kategori||'').toLowerCase().includes(q))) return false;
-    if(fKat && p.kategori!==fKat) return false;
-    if(fSumber && (p.sumber||'agrinas')!==fSumber) return false;
-    return true;
-  });
-  document.getElementById('tbodyMaster').innerHTML=list.map(([id,p])=>`<tr class="border-b hover:bg-slate-50"><td class="p-2">${p.kode}</td><td class="p-2"><p class="font-bold">${p.nama}</p><p class="text-[9px]">${p.pemilik?`👩‍🌾 ${p.pemilik}`:''}</p></td><td class="p-2">${p.kategori}</td><td class="p-2">${p.satuan}</td><td class="p-2">${p.sumber==='umkm'?'👩‍🌾 UMKM':'🏢 Agrinas'}</td><td class="p-2">Rp ${p.hargaBeli.toLocaleString()}</td><td class="p-2">Rp ${p.hargaJual.toLocaleString()}</td><td class="p-2 font-bold ${p.stok<=p.stokMin?'text-red-600':''}">${p.stok}</td><td class="p-2">${p.stokMin}</td><td class="p-2"><div class="flex gap-1 flex-wrap"><button onclick="openKartu('${p.kode}')" class="bg-purple-600 text-white px-2 py-1 rounded-full text-[9px]">Kartu</button><button onclick="openMaster('${id}')" class="bg-blue-600 text-white px-2 py-1 rounded-full text-[9px]">Edit</button><button onclick="hapusMaster('${id}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></div></td></tr>`).join('')||'<tr><td colspan="10" class="p-8 text-center">Belum ada barang</td></tr>';
-  // isi dropdown stok masuk/keluar
-  document.getElementById('masukKode').innerHTML=Object.values(produk).map(p=>`<option value="${p.kode}">${p.kode} - ${p.nama}</option>`).join('');
+  const q=(document.getElementById('qMaster').value||'').toLowerCase(); const fKat=document.getElementById('fKategori').value;
+  const cats=[...new Set(Object.values(produk).map(p=>p.kategori).filter(Boolean))]; document.getElementById('fKategori').innerHTML='<option value="">Semua Kategori</option>'+cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  const list=Object.entries(produk).filter(([id,p])=>{ if(q && !(p.kode.toLowerCase().includes(q) || p.nama.toLowerCase().includes(q))) return false; if(fKat && p.kategori!==fKat) return false; return true; });
+  document.getElementById('tbodyMaster').innerHTML=list.map(([id,p])=>`<tr class="border-b hover:bg-slate-50"><td class="p-2 font-bold text-blue-600"><button onclick="openBantuanKode('master'); pilihKode('${p.kode}')" class="underline">📋 ${p.kode}</button></td><td class="p-2">${p.nama}</td><td class="p-2">${p.kategori}</td><td class="p-2">${p.satuan}</td><td class="p-2">${p.sumber==='umkm'?'👩‍🌾 UMKM':'🏢 Agrinas'}</td><td class="p-2">Rp ${p.hargaBeli.toLocaleString()}</td><td class="p-2">Rp ${p.hargaJual.toLocaleString()}</td><td class="p-2 font-bold ${p.stok<=p.stokMin?'text-red-600':''}">${p.stok}</td><td class="p-2">${p.stokMin}</td><td class="p-2"><div class="flex gap-1"><button onclick="openMaster('${id}')" class="bg-blue-600 text-white px-2 py-1 rounded-full text-[9px]">Edit</button><button onclick="hapusMaster('${id}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></div></td></tr>`).join('')||'<tr><td colspan="10" class="p-8 text-center">Belum ada</td></tr>';
+  document.getElementById('masukKode').innerHTML=Object.values(produk).map(p=>`<option value="${p.kode}">${p.kode} - ${p.nama} (Stok ${p.stok})</option>`).join('');
   document.getElementById('keluarKode').innerHTML=Object.values(produk).map(p=>`<option value="${p.kode}">${p.kode} - ${p.nama} (Stok ${p.stok})</option>`).join('');
 }
-function openMasuk(){document.getElementById('modalMasuk').style.display='flex'; document.getElementById('masukTanggal').value=new Date().toISOString().slice(0,10); renderMaster();}
+function openMasuk(){document.getElementById('modalMasuk').style.display='flex'; document.getElementById('masukTanggal').value=new Date().toISOString().slice(0,10); renderMaster(); document.getElementById('masukKode').addEventListener('change', function(){ const p=Object.values(produk).find(x=>x.kode===this.value); document.getElementById('masukNamaPreview').textContent=p?p.nama+' - Stok: '+p.stok:''; });}
 function saveMasuk(){
   const tanggal=document.getElementById('masukTanggal').value; const kode=document.getElementById('masukKode').value; const jumlah=parseInt(document.getElementById('masukJumlah').value)||0; const supplierVal=document.getElementById('masukSupplier').value.trim(); const ket=document.getElementById('masukKet').value.trim();
   if(!tanggal||!kode||!jumlah) return alert('Isi semua');
   const id=Date.now().toString(); masuk[id]={id,tanggal,kode,jumlah,supplier:supplierVal,keterangan:ket,createdAt:Date.now()};
-  // update stok produk
-  const prodId=Object.keys(produk).find(k=>produk[k].kode===kode); if(prodId){ produk[prodId].stok=(produk[prodId].stok||0)+jumlah; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db){ window.update(window.ref(window.db,'produk-kdkmp-full/'+prodId), {stok:produk[prodId].stok}); window.update(window.ref(window.db,'produk-kdkmp-final/'+prodId), {stok:produk[prodId].stok}); } }
+  const prodId=Object.keys(produk).find(k=>produk[k].kode===kode); if(prodId){ produk[prodId].stok+=jumlah; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db){ window.update(window.ref(window.db,'produk-kdkmp-full/'+prodId), {stok:produk[prodId].stok}); window.update(window.ref(window.db,'produk-kdkmp-final/'+prodId), {stok:produk[prodId].stok}); } }
   localStorage.setItem(KEY_MASUK, JSON.stringify(masuk)); if(window.db) window.set(window.ref(window.db,'stok-masuk-full/'+id), masuk[id]);
-  // rekap supplier
-  if(supplierVal){ const supId=supplierVal.toLowerCase().replace(/\s+/g,'_'); supplier[supId]=supplier[supId]||{kode:supId, nama:supplierVal, kontak:'', total:0}; supplier[supId].total+=jumlah; localStorage.setItem(KEY_SUP, JSON.stringify(supplier)); if(window.db) window.set(window.ref(window.db,'supplier-full/'+supId), supplier[supId]); }
+  if(supplierVal){ const supId=supplierVal.toLowerCase().replace(/\s+/g,'_'); supplier[supId]=supplier[supId]||{kode:supId,nama:supplierVal,kontak:'',total:0}; supplier[supId].total+=jumlah; localStorage.setItem(KEY_SUP, JSON.stringify(supplier)); if(window.db) window.set(window.ref(window.db,'supplier-full/'+supId), supplier[supId]); }
   closeAll(); renderMasuk(); renderDash(); renderRekap();
 }
 function renderMasuk(){
   const q=(document.getElementById('qMasuk').value||'').toLowerCase(); const dari=document.getElementById('fMasukDari').value; const sampai=document.getElementById('fMasukSampai').value;
   let list=Object.values(masuk).sort((a,b)=> new Date(b.tanggal)-new Date(a.tanggal));
-  if(q) list=list.filter(m=> (m.kode.toLowerCase().includes(q) || (produk[Object.keys(produk).find(k=>produk[k].kode===m.kode)]?.nama||'').toLowerCase().includes(q) || m.supplier.toLowerCase().includes(q)));
+  if(q) list=list.filter(m=> m.kode.toLowerCase().includes(q) || m.supplier.toLowerCase().includes(q));
   if(dari) list=list.filter(m=> m.tanggal>=dari); if(sampai) list=list.filter(m=> m.tanggal<=sampai);
-  document.getElementById('tbodyMasuk').innerHTML=list.map((m,i)=>`<tr class="border-b"><td class="p-2">${i+1}</td><td class="p-2">${m.tanggal}</td><td class="p-2">${m.kode}</td><td class="p-2 text-left">${produk[Object.keys(produk).find(k=>produk[k].kode===m.kode)]?.nama||''}</td><td class="p-2 text-blue-600 font-bold">${m.jumlah}</td><td class="p-2">${m.supplier}</td><td class="p-2">${m.keterangan}</td><td class="p-2"><button onclick="editMasuk('${m.id}')" class="bg-blue-600 text-white px-2 py-1 rounded-full text-[9px]">Edit</button><button onclick="hapusMasuk('${m.id}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></td></tr>`).join('')||'<tr><td colspan="8" class="p-4 text-center">Belum ada</td></tr>';
+  document.getElementById('tbodyMasuk').innerHTML=list.map((m,i)=>`<tr class="border-b"><td class="p-2">${i+1}</td><td class="p-2">${m.tanggal}</td><td class="p-2 font-bold text-blue-600"><button onclick="openBantuanKode('masuk'); pilihKode('${m.kode}')" class="underline">${m.kode}</button></td><td class="p-2 text-left">${produk[Object.keys(produk).find(k=>produk[k].kode===m.kode)]?.nama||''}</td><td class="p-2 text-blue-600 font-bold">${m.jumlah}</td><td class="p-2">${m.supplier}</td><td class="p-2">${m.keterangan}</td><td class="p-2"><button onclick="hapusMasuk('${m.id}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></td></tr>`).join('')||'<tr><td colspan="8" class="p-4 text-center">Belum ada</td></tr>';
 }
-function editMasuk(id){const m=masuk[id]; if(!m) return; openMasuk(); document.getElementById('masukTanggal').value=m.tanggal; document.getElementById('masukKode').value=m.kode; document.getElementById('masukJumlah').value=m.jumlah; document.getElementById('masukSupplier').value=m.supplier; document.getElementById('masukKet').value=m.keterangan; // hapus dulu yang lama untuk edit
-  const prodId=Object.keys(produk).find(k=>produk[k].kode===m.kode); if(prodId){ produk[prodId].stok-=m.jumlah; }
-  delete masuk[id]; localStorage.setItem(KEY_MASUK, JSON.stringify(masuk)); if(window.db) window.remove(window.ref(window.db,'stok-masuk-full/'+id));
-}
-function hapusMasuk(id){if(!confirm('Hapus? Stok akan dikurangi')) return; const m=masuk[id]; const prodId=Object.keys(produk).find(k=>produk[k].kode===m.kode); if(prodId){ produk[prodId].stok-=m.jumlah; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db) window.update(window.ref(window.db,'produk-kdkmp-full/'+prodId), {stok:produk[prodId].stok}); } delete masuk[id]; localStorage.setItem(KEY_MASUK, JSON.stringify(masuk)); if(window.db) window.remove(window.ref(window.db,'stok-masuk-full/'+id)); renderMasuk(); renderDash(); renderRekap();}
+function hapusMasuk(id){if(!confirm('Hapus?')) return; const m=masuk[id]; const prodId=Object.keys(produk).find(k=>produk[k].kode===m.kode); if(prodId){ produk[prodId].stok-=m.jumlah; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db) window.update(window.ref(window.db,'produk-kdkmp-full/'+prodId), {stok:produk[prodId].stok}); } delete masuk[id]; localStorage.setItem(KEY_MASUK, JSON.stringify(masuk)); if(window.db) window.remove(window.ref(window.db,'stok-masuk-full/'+id)); renderMasuk(); renderDash(); renderRekap();}
 
-function openKeluar(){document.getElementById('modalKeluar').style.display='flex'; document.getElementById('keluarTanggal').value=new Date().toISOString().slice(0,10); renderMaster();}
+function openKeluar(){document.getElementById('modalKeluar').style.display='flex'; document.getElementById('keluarTanggal').value=new Date().toISOString().slice(0,10); renderMaster(); document.getElementById('keluarKode').addEventListener('change', function(){ const p=Object.values(produk).find(x=>x.kode===this.value); document.getElementById('keluarNamaPreview').textContent=p?p.nama+' - Stok: '+p.stok:''; });}
 function saveKeluar(){
   const tanggal=document.getElementById('keluarTanggal').value; const kode=document.getElementById('keluarKode').value; const jumlah=parseInt(document.getElementById('keluarJumlah').value)||0; const penerima=document.getElementById('keluarPenerima').value.trim(); const ket=document.getElementById('keluarKet').value.trim();
   if(!tanggal||!kode||!jumlah) return alert('Isi semua');
@@ -297,48 +260,37 @@ function saveKeluar(){
   closeAll(); renderKeluar(); renderDash(); renderRekap();
 }
 function renderKeluar(){
-  const q=(document.getElementById('qKeluar').value||'').toLowerCase(); const dari=document.getElementById('fKeluarDari').value; const sampai=document.getElementById('fKeluarSampai').value;
-  let list=Object.values(keluar).sort((a,b)=> new Date(b.tanggal)-new Date(a.tanggal));
+  const q=(document.getElementById('qKeluar').value||'').toLowerCase(); let list=Object.values(keluar).sort((a,b)=> new Date(b.tanggal)-new Date(a.tanggal));
   if(q) list=list.filter(k=> k.kode.toLowerCase().includes(q) || k.penerima.toLowerCase().includes(q));
-  if(dari) list=list.filter(k=> k.tanggal>=dari); if(sampai) list=list.filter(k=> k.tanggal<=sampai);
-  document.getElementById('tbodyKeluar').innerHTML=list.map((k,i)=>`<tr class="border-b"><td class="p-2">${i+1}</td><td class="p-2">${k.tanggal}</td><td class="p-2">${k.kode}</td><td class="p-2 text-left">${produk[Object.keys(produk).find(p=>produk[p].kode===k.kode)]?.nama||''}</td><td class="p-2 text-orange-600 font-bold">${k.jumlah}</td><td class="p-2">${k.penerima}</td><td class="p-2">${k.keterangan}</td><td class="p-2"><button onclick="editKeluar('${k.id}')" class="bg-blue-600 text-white px-2 py-1 rounded-full text-[9px]">Edit</button><button onclick="hapusKeluar('${k.id}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></td></tr>`).join('')||'<tr><td colspan="8" class="p-4 text-center">Belum ada</td></tr>';
+  document.getElementById('tbodyKeluar').innerHTML=list.map((k,i)=>`<tr class="border-b"><td class="p-2">${i+1}</td><td class="p-2">${k.tanggal}</td><td class="p-2 font-bold text-blue-600"><button onclick="openBantuanKode('keluar'); pilihKode('${k.kode}')" class="underline">${k.kode}</button></td><td class="p-2 text-left">${produk[Object.keys(produk).find(p=>produk[p].kode===k.kode)]?.nama||''}</td><td class="p-2 text-orange-600 font-bold">${k.jumlah}</td><td class="p-2">${k.penerima}</td><td class="p-2">${k.keterangan}</td><td class="p-2"><button onclick="hapusKeluar('${k.id}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></td></tr>`).join('')||'<tr><td colspan="8" class="p-4 text-center">Belum ada</td></tr>';
 }
-function editKeluar(id){const k=keluar[id]; if(!k) return; openKeluar(); document.getElementById('keluarTanggal').value=k.tanggal; document.getElementById('keluarKode').value=k.kode; document.getElementById('keluarJumlah').value=k.jumlah; document.getElementById('keluarPenerima').value=k.penerima; document.getElementById('keluarKet').value=k.keterangan; const prodId=Object.keys(produk).find(p=>produk[p].kode===k.kode); if(prodId) produk[prodId].stok+=k.jumlah; delete keluar[id]; localStorage.setItem(KEY_KELUAR, JSON.stringify(keluar)); if(window.db) window.remove(window.ref(window.db,'stok-keluar-full/'+id));}
-function hapusKeluar(id){if(!confirm('Hapus? Stok akan dikembalikan')) return; const k=keluar[id]; const prodId=Object.keys(produk).find(p=>produk[p].kode===k.kode); if(prodId){ produk[prodId].stok+=k.jumlah; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db) window.update(window.ref(window.db,'produk-kdkmp-full/'+prodId), {stok:produk[prodId].stok}); } delete keluar[id]; localStorage.setItem(KEY_KELUAR, JSON.stringify(keluar)); if(window.db) window.remove(window.ref(window.db,'stok-keluar-full/'+id)); renderKeluar(); renderDash(); renderRekap();}
-
+function hapusKeluar(id){if(!confirm('Hapus?')) return; const k=keluar[id]; const prodId=Object.keys(produk).find(p=>produk[p].kode===k.kode); if(prodId){ produk[prodId].stok+=k.jumlah; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db) window.update(window.ref(window.db,'produk-kdkmp-full/'+prodId), {stok:produk[prodId].stok}); } delete keluar[id]; localStorage.setItem(KEY_KELUAR, JSON.stringify(keluar)); if(window.db) window.remove(window.ref(window.db,'stok-keluar-full/'+id)); renderKeluar(); renderDash(); renderRekap();}
 function renderRekap(){
   const q=(document.getElementById('qRekap').value||'').toLowerCase();
-  const list=Object.values(produk).map(p=>{
-    const masukQty=Object.values(masuk).filter(m=>m.kode===p.kode).reduce((s,m)=>s+parseInt(m.jumlah||0),0);
-    const keluarQty=Object.values(keluar).filter(k=>k.kode===p.kode).reduce((s,k)=>s+parseInt(k.jumlah||0),0);
-    const awal=parseInt(p.stokAwal||0); const akhir=awal+masukQty-keluarQty;
-    return {...p, masukQty, keluarQty, awal, akhir};
-  }).filter(p=> !q || p.kode.toLowerCase().includes(q) || p.nama.toLowerCase().includes(q));
-  document.getElementById('tbodyRekap').innerHTML=list.map(p=>`<tr class="border-b"><td class="p-2">${p.kode}</td><td class="p-2 text-left">${p.nama}</td><td class="p-2">${p.kategori}</td><td class="p-2">${p.awal}</td><td class="p-2 text-blue-600 font-bold">${p.masukQty}</td><td class="p-2 text-orange-600 font-bold">${p.keluarQty}</td><td class="p-2 font-black ${p.akhir<=p.stokMin?'text-red-600':''}">${p.akhir}</td><td class="p-2">${p.stokMin}</td></tr>`).join('')||'<tr><td colspan="8" class="p-4 text-center">Belum ada</td></tr>';
+  const list=Object.values(produk).map(p=>{ const mq=Object.values(masuk).filter(m=>m.kode===p.kode).reduce((s,m)=>s+m.jumlah,0); const kq=Object.values(keluar).filter(k=>k.kode===p.kode).reduce((s,k)=>s+k.jumlah,0); const awal=p.stokAwal||0; const akhir=awal+mq-kq; return {...p,mq,kq,awal,akhir}; }).filter(p=> !q || p.kode.toLowerCase().includes(q) || p.nama.toLowerCase().includes(q));
+  document.getElementById('tbodyRekap').innerHTML=list.map(p=>`<tr class="border-b"><td class="p-2 font-bold text-blue-600"><button onclick="openBantuanKode('rekap'); pilihKode('${p.kode}')" class="underline">${p.kode}</button></td><td class="p-2 text-left">${p.nama}</td><td class="p-2">${p.kategori}</td><td class="p-2">${p.awal}</td><td class="p-2 text-blue-600 font-bold">${p.mq}</td><td class="p-2 text-orange-600 font-bold">${p.kq}</td><td class="p-2 font-black ${p.akhir<=p.stokMin?'text-red-600':''}">${p.akhir}</td></tr>`).join('')||'<tr><td colspan="7" class="p-4 text-center">Belum ada</td></tr>';
 }
-function renderSupplier(){
-  document.getElementById('tbodySupplier').innerHTML=Object.values(supplier).map(s=>`<tr class="border-b"><td class="p-2">${s.kode}</td><td class="p-2">${s.nama}</td><td class="p-2">${s.kontak}</td><td class="p-2 font-bold">${s.total} pcs</td><td class="p-2"><button onclick="hapusSupplier('${s.kode}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></td></tr>`).join('')||'<tr><td colspan="5" class="p-4 text-center">Belum ada supplier</td></tr>';
-}
+function renderSupplier(){document.getElementById('tbodySupplier').innerHTML=Object.values(supplier).map(s=>`<tr class="border-b"><td class="p-2">${s.kode}</td><td class="p-2">${s.nama}</td><td class="p-2">${s.kontak}</td><td class="p-2 font-bold">${s.total} pcs</td><td class="p-2"><button onclick="hapusSupplier('${s.kode}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></td></tr>`).join('')||'<tr><td colspan="5" class="p-4 text-center">Belum ada</td></tr>';}
 function openSupplier(){document.getElementById('modalSupplier').style.display='flex'; document.getElementById('supKode').value='SUP'+Date.now().toString().slice(-4);}
 function saveSupplier(){const kode=document.getElementById('supKode').value.trim(); const nama=document.getElementById('supNama').value.trim(); const kontak=document.getElementById('supKontak').value.trim(); if(!kode||!nama) return alert('Isi'); supplier[kode]={kode,nama,kontak,total:supplier[kode]?.total||0}; localStorage.setItem(KEY_SUP, JSON.stringify(supplier)); if(window.db) window.set(window.ref(window.db,'supplier-full/'+kode), supplier[kode]); closeAll(); renderSupplier();}
 function hapusSupplier(kode){if(!confirm('Hapus?')) return; delete supplier[kode]; localStorage.setItem(KEY_SUP, JSON.stringify(supplier)); if(window.db) window.remove(window.ref(window.db,'supplier-full/'+kode)); renderSupplier();}
 
 function openOpname(){
   document.getElementById('modalOpname').style.display='flex'; document.getElementById('opTanggal').value=new Date().toISOString().slice(0,10);
-  document.getElementById('tbodyOpnameForm').innerHTML=Object.values(produk).map(p=>`<tr><td class="p-1">${p.kode}</td><td class="p-1">${p.nama}</td><td class="p-1 text-center"><span class="sistem" data-kode="${p.kode}">${p.stok}</span></td><td class="p-1"><input type="number" class="fisik w-[70px] border rounded px-1 py-1 text-[11px]" data-kode="${p.kode}" value="${p.stok}"></td><td class="p-1"><input type="text" class="ket w-[100px] border rounded px-1 py-1 text-[10px]" data-kode="${p.kode}" placeholder="Ket"></td></tr>`).join('');
+  document.getElementById('tbodyOpnameForm').innerHTML=Object.values(produk).map(p=>`<tr class="border-b"><td class="p-2 font-bold text-blue-600">${p.kode}</td><td class="p-2 text-left">${p.nama}</td><td class="p-2 text-center"><span class="sistem font-bold" data-kode="${p.kode}">${p.stok}</span></td><td class="p-2"><input type="number" class="fisik w-[80px] border-2 border-orange-300 rounded px-2 py-1 text-[11px] bg-orange-50" data-kode="${p.kode}" value="${p.stok}" placeholder="Fisik"></td><td class="p-2"><input type="text" class="ket w-[120px] border rounded px-2 py-1 text-[10px]" data-kode="${p.kode}" placeholder="Keterangan"></td></tr>`).join('');
 }
 function saveOpname(){
-  const tanggal=document.getElementById('opTanggal').value; const petugas=document.getElementById('opPetugas').value.trim(); if(!tanggal||!petugas) return alert('Isi tanggal & petugas');
-  const fisikEls=document.querySelectorAll('.fisik'); fisikEls.forEach(el=>{
-    const kode=el.dataset.kode; const fisik=parseInt(el.value)||0; const sistem=parseInt(document.querySelector(`.sistem[data-kode="${kode}"]`).textContent)||0; const ket=document.querySelector(`.ket[data-kode="${kode}"]`).value.trim();
-    const selisih=fisik-sistem; let keteranganAuto= selisih===0?'sesuai':selisih<0?'kekurangan '+Math.abs(selisih):'kelebihan '+selisih;
-    const id=Date.now().toString()+'_'+kode; opname[id]={id,tanggal,petugas,kode,sistem,fisik,selisih,keterangan:ket?ket+' | '+keteranganAuto:keteranganAuto,status: selisih===0?'sesuai':'tidak sesuai', createdAt:Date.now()};
+  const tanggal=document.getElementById('opTanggal').value; const petugas=document.getElementById('opPetugas').value.trim(); if(!tanggal||!petugas) return alert('Isi Tanggal & Petugas');
+  const fisikEls=document.querySelectorAll('.fisik'); if(fisikEls.length===0) return alert('Tidak ada barang');
+  fisikEls.forEach(el=>{
+    const kode=el.dataset.kode; const fisik=parseInt(el.value)||0; const sistem=parseInt(document.querySelector(`.sistem[data-kode="${kode}"]`).textContent)||0; const ketInput=document.querySelector(`.ket[data-kode="${kode}"]`).value.trim();
+    const selisih=fisik-sistem; let ketAuto= selisih===0?'sesuai':selisih<0?`kekurangan ${Math.abs(selisih)}`:`kelebihan ${selisih}`;
+    const id=Date.now().toString()+'_'+kode; opname[id]={id,tanggal,petugas,kode,sistem,fisik,selisih,keterangan:ketInput?ketInput+' | '+ketAuto:ketAuto,status: selisih===0?'sesuai':'tidak sesuai', createdAt:Date.now()};
     if(window.db) window.set(window.ref(window.db,'opname-full/'+id), opname[id]);
-    // update stok sistem = fisik (hasil opname)
     const prodId=Object.keys(produk).find(k=>produk[k].kode===kode); if(prodId){ produk[prodId].stok=fisik; if(window.db) window.update(window.ref(window.db,'produk-kdkmp-full/'+prodId), {stok:fisik}); }
   });
   localStorage.setItem(KEY_PROD, JSON.stringify(produk)); localStorage.setItem(KEY_OPNAME, JSON.stringify(opname));
-  closeAll(); renderOpname(); renderDash(); renderMaster();
+  closeAll(); renderOpname(); renderDash(); renderMaster(); alert('Opname disimpan - Tanggal: '+tanggal+' Petugas: '+petugas);
 }
 function renderOpname(){
   const q=(document.getElementById('qOpname').value||'').toLowerCase(); const dari=document.getElementById('fOpnameDari').value; const sampai=document.getElementById('fOpnameSampai').value;
@@ -347,73 +299,36 @@ function renderOpname(){
   if(dari) list=list.filter(o=> o.tanggal>=dari); if(sampai) list=list.filter(o=> o.tanggal<=sampai);
   document.getElementById('tbodyOpname').innerHTML=list.map(o=>{
     const p=Object.values(produk).find(x=>x.kode===o.kode);
-    return `<tr class="border-b"><td class="p-2">${o.tanggal}<br><span class="text-[9px]">${o.petugas}</span></td><td class="p-2">${o.kode}</td><td class="p-2 text-left">${p?.nama||''}</td><td class="p-2">${o.sistem}</td><td class="p-2 font-bold">${o.fisik}</td><td class="p-2 ${o.selisih<0?'text-red-600':o.selisih>0?'text-green-600':''}">${o.selisih}</td><td class="p-2">${o.keterangan}</td><td class="p-2"><span class="px-2 py-0.5 rounded-full text-[9px] ${o.status==='sesuai'?'bg-green-100':'bg-red-100'}">${o.status}</span></td><td class="p-2"><button onclick="hapusOpname('${o.id}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></td></tr>`;
-  }).join('')||'<tr><td colspan="9" class="p-4 text-center">Belum ada opname</td></tr>';
+    return `<tr class="border-b"><td class="p-2">${o.tanggal}</td><td class="p-2">${o.petugas}</td><td class="p-2 font-bold text-blue-600"><button onclick="openBantuanKode('opname'); pilihKode('${o.kode}')" class="underline">${o.kode}</button></td><td class="p-2 text-left">${p?.nama||''}</td><td class="p-2">${o.sistem}</td><td class="p-2 font-bold">${o.fisik}</td><td class="p-2 ${o.selisih<0?'text-red-600':o.selisih>0?'text-green-600':''}">${o.selisih}</td><td class="p-2">${o.keterangan}</td><td class="p-2"><span class="px-2 py-0.5 rounded-full text-[9px] ${o.status==='sesuai'?'bg-green-100':'bg-red-100'}">${o.status}</span></td><td class="p-2"><button onclick="hapusOpname('${o.id}')" class="bg-red-600 text-white px-2 py-1 rounded-full text-[9px]">Hapus</button></td></tr>`;
+  }).join('')||'<tr><td colspan="10" class="p-4 text-center">Belum ada opname - klik Mulai Opname, isi Tanggal, Petugas, Daftar Barang (Kode, Nama, Stok sistem, Stok fisik, Keterangan), pilih Batal/Simpan</td></tr>';
 }
 function hapusOpname(id){if(!confirm('Hapus opname?')) return; delete opname[id]; localStorage.setItem(KEY_OPNAME, JSON.stringify(opname)); if(window.db) window.remove(window.ref(window.db,'opname-full/'+id)); renderOpname();}
-
 function generateLaporan(){
   const jenis=document.getElementById('lapJenis').value; const dari=document.getElementById('lapDari').value; const sampai=document.getElementById('lapSampai').value;
   let html=''; laporanData=[];
-  if(jenis==='master'){
-    let list=Object.values(produk); if(dari) list=list.filter(p=> new Date(p.updatedAt)>=new Date(dari)); laporanData=list;
-    html=`<table class="w-full text-[10px] border"><tr class="bg-slate-100"><th class="border p-1">Kode</th><th class="border p-1">Nama</th><th class="border p-1">Kat</th><th class="border p-1">Stok</th><th class="border p-1">Jual</th></tr>${list.map(p=>`<tr><td class="border p-1">${p.kode}</td><td class="border p-1">${p.nama}</td><td class="border p-1">${p.kategori}</td><td class="border p-1">${p.stok}</td><td class="border p-1">Rp ${p.hargaJual.toLocaleString()}</td></tr>`).join('')}</table>`;
-  } else if(jenis==='masuk'){
-    let list=Object.values(masuk); if(dari) list=list.filter(m=> m.tanggal>=dari); if(sampai) list=list.filter(m=> m.tanggal<=sampai); laporanData=list;
-    html=`<table class="w-full text-[10px] border"><tr class="bg-blue-50"><th class="border p-1">Tanggal</th><th class="border p-1">Kode</th><th class="border p-1">Nama</th><th class="border p-1">Jumlah</th><th class="border p-1">Supplier</th></tr>${list.map(m=>`<tr><td class="border p-1">${m.tanggal}</td><td class="border p-1">${m.kode}</td><td class="border p-1">${produk[Object.keys(produk).find(k=>produk[k].kode===m.kode)]?.nama||''}</td><td class="border p-1">${m.jumlah}</td><td class="border p-1">${m.supplier}</td></tr>`).join('')}</table>`;
-  } else if(jenis==='keluar'){
-    let list=Object.values(keluar); if(dari) list=list.filter(k=> k.tanggal>=dari); if(sampai) list=list.filter(k=> k.tanggal<=sampai); laporanData=list;
-    html=`<table class="w-full text-[10px] border"><tr class="bg-orange-50"><th class="border p-1">Tanggal</th><th class="border p-1">Kode</th><th class="border p-1">Nama</th><th class="border p-1">Jumlah</th><th class="border p-1">Penerima</th></tr>${list.map(k=>`<tr><td class="border p-1">${k.tanggal}</td><td class="border p-1">${k.kode}</td><td class="border p-1">${produk[Object.keys(produk).find(p=>produk[p].kode===k.kode)]?.nama||''}</td><td class="border p-1">${k.jumlah}</td><td class="border p-1">${k.penerima}</td></tr>`).join('')}</table>`;
-  } else if(jenis==='rekap'){
-    const list=Object.values(produk).map(p=>{ const mq=Object.values(masuk).filter(m=>m.kode===p.kode).reduce((s,m)=>s+m.jumlah,0); const kq=Object.values(keluar).filter(k=>k.kode===p.kode).reduce((s,k)=>s+k.jumlah,0); return {...p,mq,kq,awal:p.stokAwal||0,akhir:(p.stokAwal||0)+mq-kq}; }); laporanData=list;
-    html=`<table class="w-full text-[10px] border"><tr class="bg-slate-100"><th class="border p-1">Kode</th><th class="border p-1">Nama</th><th class="border p-1">Awal</th><th class="border p-1">Masuk</th><th class="border p-1">Keluar</th><th class="border p-1">Akhir</th></tr>${list.map(p=>`<tr><td class="border p-1">${p.kode}</td><td class="border p-1">${p.nama}</td><td class="border p-1">${p.awal}</td><td class="border p-1">${p.mq}</td><td class="border p-1">${p.kq}</td><td class="border p-1 font-bold">${p.akhir}</td></tr>`).join('')}</table>`;
-  } else if(jenis==='opname'){
-    let list=Object.values(opname); if(dari) list=list.filter(o=> o.tanggal>=dari); if(sampai) list=list.filter(o=> o.tanggal<=sampai); laporanData=list;
-    html=`<table class="w-full text-[10px] border"><tr class="bg-purple-50"><th class="border p-1">Tanggal</th><th class="border p-1">Kode</th><th class="border p-1">Sistem</th><th class="border p-1">Fisik</th><th class="border p-1">Selisih</th><th class="border p-1">Ket</th></tr>${list.map(o=>`<tr><td class="border p-1">${o.tanggal}</td><td class="border p-1">${o.kode}</td><td class="border p-1">${o.sistem}</td><td class="border p-1">${o.fisik}</td><td class="border p-1">${o.selisih}</td><td class="border p-1">${o.keterangan}</td></tr>`).join('')}</table>`;
-  } else if(jenis==='supplier'){
-    laporanData=Object.values(supplier); html=`<table class="w-full text-[10px] border"><tr><th class="border p-1">Kode</th><th class="border p-1">Nama</th><th class="border p-1">Total</th></tr>${laporanData.map(s=>`<tr><td class="border p-1">${s.kode}</td><td class="border p-1">${s.nama}</td><td class="border p-1">${s.total}</td></tr>`).join('')}</table>`;
-  }
+  if(jenis==='master'){ let list=Object.values(produk); if(dari) list=list.filter(p=> new Date(p.updatedAt)>=new Date(dari)); laporanData=list; html=`<table class="w-full text-[10px] border"><tr class="bg-slate-100"><th class="border p-1">Kode</th><th class="border p-1">Nama</th><th class="border p-1">Kat</th><th class="border p-1">Stok</th><th class="border p-1">Jual</th></tr>${list.map(p=>`<tr><td class="border p-1">${p.kode}</td><td class="border p-1">${p.nama}</td><td class="border p-1">${p.kategori}</td><td class="border p-1">${p.stok}</td><td class="border p-1">Rp ${p.hargaJual.toLocaleString()}</td></tr>`).join('')}</table>`; }
+  else if(jenis==='masuk'){ let list=Object.values(masuk); if(dari) list=list.filter(m=> m.tanggal>=dari); if(sampai) list=list.filter(m=> m.tanggal<=sampai); laporanData=list; html=`<table class="w-full text-[10px] border"><tr class="bg-blue-50"><th class="border p-1">Tanggal</th><th class="border p-1">Kode</th><th class="border p-1">Nama</th><th class="border p-1">Jumlah</th><th class="border p-1">Supplier</th></tr>${list.map(m=>`<tr><td class="border p-1">${m.tanggal}</td><td class="border p-1">${m.kode}</td><td class="border p-1">${produk[Object.keys(produk).find(k=>produk[k].kode===m.kode)]?.nama||''}</td><td class="border p-1">${m.jumlah}</td><td class="border p-1">${m.supplier}</td></tr>`).join('')}</table>`; }
+  else if(jenis==='keluar'){ let list=Object.values(keluar); if(dari) list=list.filter(k=> k.tanggal>=dari); if(sampai) list=list.filter(k=> k.tanggal<=sampai); laporanData=list; html=`<table class="w-full text-[10px] border"><tr class="bg-orange-50"><th class="border p-1">Tanggal</th><th class="border p-1">Kode</th><th class="border p-1">Nama</th><th class="border p-1">Jumlah</th><th class="border p-1">Penerima</th></tr>${list.map(k=>`<tr><td class="border p-1">${k.tanggal}</td><td class="border p-1">${k.kode}</td><td class="border p-1">${produk[Object.keys(produk).find(p=>produk[p].kode===k.kode)]?.nama||''}</td><td class="border p-1">${k.jumlah}</td><td class="border p-1">${k.penerima}</td></tr>`).join('')}</table>`; }
+  else if(jenis==='rekap'){ const list=Object.values(produk).map(p=>{ const mq=Object.values(masuk).filter(m=>m.kode===p.kode).reduce((s,m)=>s+m.jumlah,0); const kq=Object.values(keluar).filter(k=>k.kode===p.kode).reduce((s,k)=>s+k.jumlah,0); return {...p,mq,kq,awal:p.stokAwal||0,akhir:(p.stokAwal||0)+mq-kq}; }); laporanData=list; html=`<table class="w-full text-[10px] border"><tr class="bg-slate-100"><th class="border p-1">Kode</th><th class="border p-1">Nama</th><th class="border p-1">Awal</th><th class="border p-1">Masuk</th><th class="border p-1">Keluar</th><th class="border p-1">Akhir</th></tr>${list.map(p=>`<tr><td class="border p-1">${p.kode}</td><td class="border p-1">${p.nama}</td><td class="border p-1">${p.awal}</td><td class="border p-1">${p.mq}</td><td class="border p-1">${p.kq}</td><td class="border p-1 font-bold">${p.akhir}</td></tr>`).join('')}</table>`; }
+  else if(jenis==='opname'){ let list=Object.values(opname); if(dari) list=list.filter(o=> o.tanggal>=dari); if(sampai) list=list.filter(o=> o.tanggal<=sampai); laporanData=list; html=`<table class="w-full text-[10px] border"><tr class="bg-purple-50"><th class="border p-1">Tanggal</th><th class="border p-1">Petugas</th><th class="border p-1">Kode</th><th class="border p-1">Sistem</th><th class="border p-1">Fisik</th><th class="border p-1">Selisih</th><th class="border p-1">Ket</th></tr>${list.map(o=>`<tr><td class="border p-1">${o.tanggal}</td><td class="border p-1">${o.petugas}</td><td class="border p-1">${o.kode}</td><td class="border p-1">${o.sistem}</td><td class="border p-1">${o.fisik}</td><td class="border p-1">${o.selisih}</td><td class="border p-1">${o.keterangan}</td></tr>`).join('')}</table>`; }
   document.getElementById('laporanResult').innerHTML=html||'Tidak ada data';
 }
 function exportExcel(tipe){
-  let data=[]; let fileName=tipoFileName(tipe);
+  let data=[]; let fileName=`${tipe}-${new Date().toISOString().slice(0,10)}`;
   if(tipe==='master') data=Object.values(produk).map(p=>({Kode:p.kode,Nama:p.nama,Kategori:p.kategori,Satuan:p.satuan,Sumber:p.sumber,HargaBeli:p.hargaBeli,HargaJual:p.hargaJual,StokAwal:p.stokAwal,Stok:p.stok,StokMin:p.stokMin,Pemilik:p.pemilik}));
   else if(tipe==='masuk') data=Object.values(masuk).map(m=>({Tanggal:m.tanggal,Kode:m.kode,Nama:produk[Object.keys(produk).find(k=>produk[k].kode===m.kode)]?.nama||'',Jumlah:m.jumlah,Supplier:m.supplier,Keterangan:m.keterangan}));
   else if(tipe==='keluar') data=Object.values(keluar).map(k=>({Tanggal:k.tanggal,Kode:k.kode,Nama:produk[Object.keys(produk).find(p=>produk[p].kode===k.kode)]?.nama||'',Jumlah:k.jumlah,Penerima:k.penerima,Keterangan:k.keterangan}));
   else if(tipe==='rekap') data=Object.values(produk).map(p=>{ const mq=Object.values(masuk).filter(m=>m.kode===p.kode).reduce((s,m)=>s+m.jumlah,0); const kq=Object.values(keluar).filter(k=>k.kode===p.kode).reduce((s,k)=>s+k.jumlah,0); return {Kode:p.kode,Nama:p.nama,Kategori:p.kategori,StokAwal:p.stokAwal,Masuk:mq,Keluar:kq,Akhir:(p.stokAwal||0)+mq-kq,StokMin:p.stokMin}; });
   else if(tipe==='opname') data=Object.values(opname).map(o=>({Tanggal:o.tanggal,Petugas:o.petugas,Kode:o.kode,Nama:produk[Object.keys(produk).find(k=>produk[k].kode===o.kode)]?.nama||'',Sistem:o.sistem,Fisik:o.fisik,Selisih:o.selisih,Keterangan:o.keterangan,Status:o.status}));
-  else if(tipe==='kartu'){ const kode=kartuKode; const p=Object.values(produk).find(x=>x.kode===kode); let saldo=parseInt(p?.stokAwal||0); const all=[...Object.values(masuk).filter(m=>m.kode===kode).map(m=>({tgl:m.tanggal,ket:`Masuk ${m.supplier}`,masuk:m.jumlah,keluar:0})),...Object.values(keluar).filter(k=>k.kode===kode).map(k=>({tgl:k.tanggal,ket:`Keluar ${k.penerima}`,masuk:0,keluar:k.jumlah}))].sort((a,b)=> new Date(a.tgl)-new Date(b.tgl)); data=[{Tanggal:'Awal',Keterangan:'Stok Awal',Masuk:'',Keluar:'',Saldo:saldo}]; all.forEach(r=>{ saldo+=r.masuk-r.keluar; data.push({Tanggal:r.tgl,Keterangan:r.ket,Masuk:r.masuk,Keluar:r.keluar,Saldo:saldo}); }); }
   else if(tipe==='laporan') data=laporanData;
-  else if(tipe==='supplier') data=Object.values(supplier);
   if(data.length===0) return alert('Tidak ada data');
   const ws=XLSX.utils.json_to_sheet(data); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,tipe); XLSX.writeFile(wb,fileName+'.xlsx');
 }
 function exportPDF(tipe){
-  const {jsPDF}=window.jspdf; const doc=new jsPDF(); doc.text(`Laporan ${tipe} - Kasih Kopdes - ${new Date().toLocaleDateString()}`, 10, 10);
-  let data=[]; if(tipe==='master') data=Object.values(produk).map(p=>[p.kode,p.nama,p.kategori,p.stok,p.hargaJual]); else if(tipe==='masuk') data=Object.values(masuk).map(m=>[m.tanggal,m.kode,m.jumlah,m.supplier]); else if(tipe==='keluar') data=Object.values(keluar).map(k=>[k.tanggal,k.kode,k.jumlah,k.penerima]); else if(tipe==='rekap') data=Object.values(produk).map(p=>{ const mq=Object.values(masuk).filter(m=>m.kode===p.kode).reduce((s,m)=>s+m.jumlah,0); const kq=Object.values(keluar).filter(k=>k.kode===p.kode).reduce((s,k)=>s+k.jumlah,0); return [p.kode,p.nama,p.stokAwal||0,mq,kq,(p.stokAwal||0)+mq-kq]; }); else if(tipe==='opname') data=Object.values(opname).map(o=>[o.tanggal,o.kode,o.sistem,o.fisik,o.selisih,o.keterangan]); else if(tipe==='laporan') data=laporanData.map(d=>Object.values(d));
-  if(data.length===0) return alert('Tidak ada data');
-  doc.autoTable({head:[Object.keys(tipe==='master'?{Kode:'',Nama:'',Kat:'',Stok:'',Jual:''}:data[0]||{}).map(k=>k)], body:data, startY:20, styles:{fontSize:8}});
-  doc.save(tipoFileName(tipe)+'.pdf');
+  const {jsPDF}=window.jspdf; const doc=new jsPDF(); doc.text(`Laporan ${tipe} - ${new Date().toLocaleDateString()}`, 10, 10);
+  let data=[]; if(tipe==='master') data=Object.values(produk).map(p=>[p.kode,p.nama,p.kategori,p.stok,p.hargaJual]); else if(tipe==='masuk') data=Object.values(masuk).map(m=>[m.tanggal,m.kode,m.jumlah,m.supplier]); else if(tipe==='keluar') data=Object.values(keluar).map(k=>[k.tanggal,k.kode,k.jumlah,k.penerima]); else if(tipe==='rekap') data=Object.values(produk).map(p=>{ const mq=Object.values(masuk).filter(m=>m.kode===p.kode).reduce((s,m)=>s+m.jumlah,0); const kq=Object.values(keluar).filter(k=>k.kode===p.kode).reduce((s,k)=>s+k.jumlah,0); return [p.kode,p.nama,p.stokAwal||0,mq,kq,(p.stokAwal||0)+mq-kq]; }); else if(tipe==='opname') data=Object.values(opname).map(o=>[o.tanggal,o.petugas,o.kode,o.sistem,o.fisik,o.selisih,o.keterangan]);
+  if(data.length===0) return alert('Tidak ada data'); doc.autoTable({body:data, startY:20, styles:{fontSize:8}}); doc.save(tipe+'.pdf');
 }
-function tipoFileName(t){return `${t}-${new Date().toISOString().slice(0,10)}`;}
-function hapusSemua(tipe){
-  if(!confirm(`Hapus semua data ${tipe}?`)) return;
-  if(tipe==='master'){ produk={}; localStorage.setItem(KEY_PROD, JSON.stringify(produk)); if(window.db) window.remove(window.ref(window.db,'produk-kdkmp-full')); }
-  if(tipe==='masuk'){ masuk={}; localStorage.setItem(KEY_MASUK, JSON.stringify(masuk)); if(window.db) window.remove(window.ref(window.db,'stok-masuk-full')); }
-  if(tipe==='keluar'){ keluar={}; localStorage.setItem(KEY_KELUAR, JSON.stringify(keluar)); if(window.db) window.remove(window.ref(window.db,'stok-keluar-full')); }
-  if(tipe==='opname'){ opname={}; localStorage.setItem(KEY_OPNAME, JSON.stringify(opname)); if(window.db) window.remove(window.ref(window.db,'opname-full')); }
-  alert('Dihapus'); renderDash(); renderMaster(); renderMasuk(); renderKeluar(); renderRekap(); renderOpname();
-}
-
-// Import Excel Master
-document.getElementById('importMaster')?.addEventListener('change', function(e){
-  const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=ev=>{
-    const wb=XLSX.read(ev.target.result,{type:'binary'}); const ws=wb.Sheets[wb.SheetNames[0]]; const json=XLSX.utils.sheet_to_json(ws);
-    json.forEach(row=>{ const kode=row.Kode||genKode(); const id=kode; produk[id]={id,kode,nama:row.Nama||row.nama||'',kategori:row.Kategori||'Umum',satuan:row.Satuan||'pcs',sumber:(row.Sumber||'agrinas').toLowerCase(),hargaBeli:parseInt(row.HargaBeli||0),hargaJual:parseInt(row.HargaJual||0),harga:parseInt(row.HargaJual||0),stokAwal:parseInt(row.StokAwal||row.Stok||0),stok:parseInt(row.StokAwal||row.Stok||0),stokMin:parseInt(row.StokMin||5),pemilik:row.Pemilik||'',foto:null,updatedAt:Date.now()}; if(window.db) window.set(window.ref(window.db,'produk-kdkmp-full/'+id), produk[id]); });
-    localStorage.setItem(KEY_PROD, JSON.stringify(produk)); alert('Import '+json.length+' barang'); renderDash(); renderMaster();
-  }; r.readAsBinaryString(file);
-});
-
 document.getElementById('saveMasterBtn')?.addEventListener('click', saveMaster);
 document.getElementById('saveMasukBtn')?.addEventListener('click', saveMasuk);
 document.getElementById('saveKeluarBtn')?.addEventListener('click', saveKeluar);
@@ -425,17 +340,11 @@ document.getElementById('qMasuk')?.addEventListener('input', renderMasuk);
 document.getElementById('qKeluar')?.addEventListener('input', renderKeluar);
 document.getElementById('qRekap')?.addEventListener('input', renderRekap);
 document.getElementById('qOpname')?.addEventListener('input', renderOpname);
-document.getElementById('fMasukDari')?.addEventListener('change', renderMasuk);
-document.getElementById('fMasukSampai')?.addEventListener('change', renderMasuk);
-document.getElementById('fKeluarDari')?.addEventListener('change', renderKeluar);
-document.getElementById('fKeluarSampai')?.addEventListener('change', renderKeluar);
-
 renderDash(); renderMaster();
-
 setTimeout(()=>{
   try{
     if(window.db){
-      window.onValue(window.ref(window.db,'produk-kdkmp-full'), snap=>{ const v=snap.val(); if(v && Object.keys(v).length>0){ localStorage.setItem(KEY_PROD, JSON.stringify(v)); produk=v; document.getElementById('syncStatus').textContent=`✅ LIVE SYNC - ${Object.keys(v).length} barang`; document.getElementById('syncStatus').className='bg-green-300 text-black px-2 py-0.5 rounded-full text-[9px]'; renderDash(); renderMaster(); renderRekap(); } });
+      window.onValue(window.ref(window.db,'produk-kdkmp-full'), snap=>{ const v=snap.val(); if(v && Object.keys(v).length>0){ localStorage.setItem(KEY_PROD, JSON.stringify(v)); produk=v; document.getElementById('syncStatus').textContent=`✅ LIVE SYNC - ${Object.keys(v).length} barang`; renderDash(); renderMaster(); renderRekap(); } });
       window.onValue(window.ref(window.db,'stok-masuk-full'), snap=>{ const v=snap.val(); if(v){ localStorage.setItem(KEY_MASUK, JSON.stringify(v)); masuk=v; renderMasuk(); renderDash(); renderRekap(); } });
       window.onValue(window.ref(window.db,'stok-keluar-full'), snap=>{ const v=snap.val(); if(v){ localStorage.setItem(KEY_KELUAR, JSON.stringify(v)); keluar=v; renderKeluar(); renderDash(); renderRekap(); } });
       window.onValue(window.ref(window.db,'opname-full'), snap=>{ const v=snap.val(); if(v){ localStorage.setItem(KEY_OPNAME, JSON.stringify(v)); opname=v; renderOpname(); } });
