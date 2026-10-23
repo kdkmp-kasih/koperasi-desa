@@ -77,7 +77,12 @@
 <button id="btnGeraiStatus" style="display:none" class="bg-purple-600 text-white px-3 py-1 rounded-full text-[10px]">Gerai</button>
 <button id="addBtn" style="display:none" class="bg-white text-[#BE1E2D] px-3 py-1 rounded-full text-[10px] font-bold">+ Produk</button>
 </div>
-<div id="migrasiInfo" style="display:none" class="mt-2 bg-white/20 p-2 rounded-xl text-[10px]"><p id="migrasiText"></p></div>
+<div id="migrasiInfo" style="display:block" class="mt-2 bg-yellow-100 border-2 border-yellow-400 p-3 rounded-xl text-[11px] text-black">
+<p id="migrasiText">Menunggu...</p>
+<p id="firebaseStatus" class="font-bold mt-1"></p>
+<button id="btnForceSync" class="mt-2 bg-[#BE1E2D] text-white px-3 py-2 rounded-full text-[10px]">PAKSA SYNC LAPTOP KE HP</button>
+<button id="btnClearCache" class="mt-1 bg-black text-white px-3 py-1 rounded-full text-[9px]">Hapus Cache HP</button>
+</div>
 </div>
 </div>
 <div class="max-w-7xl mx-auto p-3">
@@ -555,6 +560,37 @@ setTimeout(()=>{
     }
   }catch(e){}
 },1200);
+// DEBUG SYNC
+function updateDebugInfo(){
+  const produkCount = Object.keys(JSON.parse(localStorage.getItem('produk-kdkmp-final')||'{}')).length;
+  const statusEl = document.getElementById('firebaseStatus');
+  const textEl = document.getElementById('migrasiText');
+  if(textEl) textEl.innerHTML = `Produk di HP/Laptop ini: ${produkCount} | Firebase: ${window.db ? 'CONNECT' : 'BELUM CONNECT - API KEY SALAH'}`;
+  if(statusEl) statusEl.textContent = window.db ? 'Firebase OK - coba klik PAKSA SYNC' : 'Firebase GAGAL - cek apiKey & databaseURL di Bagian 1';
+}
+setTimeout(updateDebugInfo, 1500);
+
+document.getElementById('btnForceSync')?.addEventListener('click', async function(){
+  this.textContent = 'Syncing...';
+  try{
+    const localData = JSON.parse(localStorage.getItem('produk-kdkmp-final')||'{}');
+    if(Object.keys(localData).length===0){ alert('Di device ini produk 0, buka di LAPTOP yang ada produknya lalu klik ini'); this.textContent='PAKSA SYNC'; return; }
+    for(const [id, data] of Object.entries(localData)){
+      await window.set(window.ref(window.db,'produk-kdkmp-final/'+id), data);
+    }
+    alert('Berhasil sync '+Object.keys(localData).length+' produk ke Firebase! Sekarang buka HP dengan ?v=baru');
+    this.textContent='DONE - BUKA HP';
+  }catch(e){
+    alert('Gagal sync: '+e.message+' - Rules belum Publish?');
+    this.textContent='GAGAL';
+  }
+});
+
+document.getElementById('btnClearCache')?.addEventListener('click', function(){
+  localStorage.removeItem('produk-kdkmp-final');
+  localStorage.removeItem('users-kdkmp-final');
+  location.reload();
+});
 </script>
 </body>
 </html>
